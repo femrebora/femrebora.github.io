@@ -6,15 +6,15 @@ The site is a small research journal: a typography-led homepage with teasers, pl
 
 ## Pages
 
-| Route           | Contents                                                                                   |
-| --------------- | ------------------------------------------------------------------------------------------ |
-| `/`             | Introduction, and teasers for writing, the research spotlight, selected work, and contact  |
-| `/research/`    | Research interests, completed work, methods, and the thesis case study                     |
-| `/blog/`        | Writing index with filters, categories, tags, and RSS (canonical writing path)             |
-| `/work/`        | Selected work, including the ECEGEN website case study                                     |
-| `/about/`       | Narrative, education and experience, the career timeline, skills, and languages            |
-| `/cv/`          | A printable HTML CV built from shared data, with a link to the sanitized PDF               |
-Research and project detail pages keep their existing paths (`/research/trail-resistance/`, `/work/ecegen/`), and the homepage keeps the legacy anchors `#research`, `#background`, `#work`, `#blog`, and `#contact`.
+| Route                                                                                                                                                                                                                 | Contents                                                                                  |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| `/`                                                                                                                                                                                                                   | Introduction, and teasers for writing, the research spotlight, selected work, and contact |
+| `/research/`                                                                                                                                                                                                          | Research interests, completed work, methods, and the thesis case study                    |
+| `/blog/`                                                                                                                                                                                                              | Writing index with filters, categories, tags, and RSS (canonical writing path)            |
+| `/work/`                                                                                                                                                                                                              | Selected work, including the ECEGEN website case study                                    |
+| `/about/`                                                                                                                                                                                                             | Narrative, education and experience, the career timeline, skills, and languages           |
+| `/cv/`                                                                                                                                                                                                                | A printable HTML CV built from shared data, with a link to the sanitized PDF              |
+| Research and project detail pages keep their existing paths (`/research/trail-resistance/`, `/work/ecegen/`), and the homepage keeps the legacy anchors `#research`, `#background`, `#work`, `#blog`, and `#contact`. |
 
 ## Built with
 
