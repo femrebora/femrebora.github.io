@@ -2,44 +2,48 @@
 
 ## Rendering and routing
 
-Astro builds HTML for the single page at `/`, the blog index at `/blog/`, and detail pages under `/research/`, `/work/`, and `/blog/` for approved content. Research, background, selected work, the latest posts, and contact are sections of `/`, addressed as `/#research`, `/#background`, `/#work`, `/#blog`, and `/#contact`. A standalone `404.html` supports GitHub Pages. There are no server endpoints at runtime: `rss.xml.ts` executes at build time. Trailing slashes match directory-based static hosting.
+Astro builds static HTML for a set of pages: the homepage at `/`; indexes at `/research/`, `/work/`, `/blog/`, `/about/`, `/cv/`, and `/credentials/`; and detail pages under `/research/` and `/work/` plus `/blog/[slug]/`. A standalone `404.html` supports GitHub Pages. There are no server endpoints at runtime: `rss.xml.ts` executes at build time. Trailing slashes match directory-based static hosting.
+
+The homepage is an overview, not the whole site: it introduces the work and links to the dedicated pages. It keeps the legacy anchors `#research`, `#background`, `#work`, `#blog`, and `#contact` so older links still resolve. `/blog/` is the canonical writing index; the navigation label is "Writing". Research and project detail routes keep their existing paths.
 
 The official sitemap integration receives only generated routes. All detail routes use the same content helpers as their indexes. `isPublished` rejects drafts and future-dated writing before routing or rendering. New content is visible only after a build.
 
 ## Content model
 
-| Collection | Purpose                                    | Key additions to common metadata                                                           |
-| ---------- | ------------------------------------------ | ------------------------------------------------------------------------------------------ |
-| writing    | Articles and essays                        | publishedDate, updatedDate, category, heroImage, canonicalURL, references, relatedProjects |
-| research   | Research contexts and outputs              | kind, status, methods, links, order                                                        |
-| projects   | Selected technical work                    | category, stack, website, repository, order                                                |
-| notes      | Original observations / sourced quotations | discriminated kind; quotations require author, source, locator                             |
+| Collection | Purpose                                    | Key additions to common metadata                                                                     |
+| ---------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
+| writing    | Articles and essays                        | publishedDate, updatedDate, category, language, heroImage, canonicalURL, references, relatedProjects |
+| research   | Research contexts and outputs              | kind, status, methods, links, order, role, question, contribution, outputs                           |
+| projects   | Selected technical work                    | category, stack, website, repository, order, contribution                                            |
+| notes      | Original observations / sourced quotations | discriminated kind; quotations require author, source, locator                                       |
 
-Every collection has title, description, draft (defaults to true), featured, and tags. Schemas run at build time. Dates use UTC when rendered. Updated dates cannot precede publication dates. Hero images require nonempty alt text.
+Every collection has title, description, draft (defaults to true), featured, and tags. Schemas run at build time. Dates use UTC when rendered. Updated dates cannot precede publication dates. Hero images require nonempty alt text. Writing entries carry a `language` field (`en` or `tr`) used for the document `lang`; it defaults to `en` and no empty language switcher is rendered.
 
 `src/data/profile.ts` keeps personal data separate from presentation. Typed arrays hold experience, education, credentials, capabilities, and languages. Biography, education, employment, tools, and contact links come from the owner-supplied September 2026 CV. The Erasmus period is identified as exchange study. The public PDF is a sanitized copy with phone details removed; the original is not stored in the repository. Credentials remain pending because issuer/date details were not supplied. There are no fabricated employers, degrees, dates, credentials, quotes, research findings, or published writing.
 
-The research entry reflects the context supplied by the owner. The ECEGEN entry uses repository evidence pinned to commit `49793deada55e7bef3668042cbd0f4c8ea559cd1`; it distinguishes checked-in deployment configuration from verified live infrastructure.
+The research entry reflects the context supplied by the owner; its question and contribution fields restate the thesis aim and the documented analysis work, with the cautious "candidates require validation" wording preserved. The ECEGEN entry uses repository evidence pinned to commit `49793deada55e7bef3668042cbd0f4c8ea559cd1`; it distinguishes checked-in deployment configuration from verified live infrastructure, and its contribution text explicitly avoids a job-title or sole-authorship claim.
 
 ## Presentation
 
-`BaseLayout` owns the document, metadata, JSON-LD, header, footer, and early theme selection. Components handle reusable content patterns. Route templates compose these components and render Markdown through Astro's `render()`.
+`BaseLayout` owns the document, metadata, JSON-LD, masthead, footer, and early theme selection. Components handle reusable content patterns (post list, records, career timeline, icons). Route templates compose these components and render Markdown through Astro's `render()`.
 
-CSS tokens define a cool paper background, graphite ink, muted secondary text, and a single warm accent: rust on the light theme and a copper of the same hue family on the dark theme. The dark theme is a first-class alternative with its own surfaces and contrast choices. IBM Plex Sans serves the interface, headings, and labels; Source Serif 4 is reserved for ledes and long-form reading; IBM Plex Mono is limited to dates, tool lists, and code. All fonts are local assets.
+CSS tokens define a warm paper background (`#F7F5F0`), deep ink, muted secondary text, and a restrained forest-green accent (`#185C50`). The dark theme is designed separately with warm near-black surfaces and a lightened sage accent, not a mechanical inversion. Newsreader serves expressive headings and long-form reading; DM Sans serves navigation, labels, and interface text. Both are local assets with latin and latin-ext subsets, so Turkish renders correctly. There is no external font request.
 
-The site is built around a sticky index rail: section navigation and an "elsewhere" cluster (CV, GitHub, LinkedIn, contact, RSS, theme) on desktop. Below 900px it becomes a top bar: the name, CV link, and theme control share one row, and all five sections fit a second row without sideways scrolling, each with a 44px touch target. It works without JavaScript. Research and work are presented as structured records (kind, status, methods, stack, links) rather than decorative cards, and there is no decorative sequence figure.
+Navigation is a compact horizontal masthead: wordmark, Writing, Research, Work, About, CV, and a theme control. On small screens the inline nav is hidden and a `<details>` disclosure menu ("Menu") exposes the same links; it opens without JavaScript, and the summary and theme control meet the 44px touch-target minimum. Research and work are presented as structured records and case studies rather than decorative cards.
 
-The introduction and portrait share one grid (`.intro`): the portrait holds the right column on wide screens and sits beside the name on phones. `ProjectRecord` renders a project, placing text and screenshot side by side from 1100px and stacking them below that. From 1180px each section pairs a pinned title column with its content, and the page widens to 1560px so large screens are used without stretching text past a readable measure.
+The homepage is typography-led and asymmetric: an expressive introduction, then a two-column feature grid (a pinned label column beside the content) for Writing, the Research spotlight, Selected work, and Background/Contact. The personal photograph is an About-page element only, not the homepage's dominant visual. `ProjectRecord` places a project's text and screenshot side by side from 1040px and stacks them below that.
 
-`GenomeTrack` draws education, exchange, research, and work as features on one time axis, positioned from the `start` and `end` months in `src/data/profile.ts`. Each feature is a link to its written record in the lists below, so the timeline works without JavaScript; with it, hovering or focusing a feature highlights its record, a readout names it, and a cursor reports the month under the pointer. Labels sit inside a feature when they fit and beside it when they do not. On narrow screens the lanes scroll sideways with the track names pinned. Supplied images are never cropped: frames size to the image's intrinsic proportions, which a browser test asserts.
+`GenomeTrack` draws education, exchange, research, and work as features on one time axis, positioned from the `start` and `end` months in `src/data/profile.ts`. Each feature is a link to its written record in the lists above, so the timeline works without JavaScript; with it, hovering or focusing a feature highlights its record, a readout names it, and a cursor reports the month under the pointer. On narrow screens the lanes scroll sideways with the track names pinned. Supplied images are never cropped: frames size to the image's intrinsic proportions, which a browser test asserts.
 
-Article text is limited to 70 characters per line in the reading face, with generous leading, sans-serif hierarchical headings, tables, footnotes, and theme-aware Shiki highlighting. Long code and tables scroll inside the article. The contents list is sticky beside the reading column on larger screens and becomes a normal document section on phones.
+Article text is limited to 68 characters per line in the reading face, with generous leading, serif hierarchical headings, tables, footnotes, references, a table of contents, related reading, previous/next navigation, and theme-aware Shiki highlighting. Long code and tables scroll inside the article. The contents list is sticky beside the reading column on larger screens and becomes a normal document section on phones. Section headings receive a small link (`.heading-anchor`) through a tiny progress-enhancement script; the headings keep their `id`s and the contents list works without it.
 
 ## Client JavaScript
 
-Client-side JavaScript is limited to theme control, marking the section in view on the rail, the timeline's hover details, and the blog category/topic filter. There is no framework hydration. The theme is set before first paint, respects system preference until explicitly chosen, persists when local storage is available, and remains functional when storage is blocked. Without JavaScript, CSS respects the system theme and all content/navigation remain usable; inactive controls are hidden.
+Client-side JavaScript is limited to theme control, the blog category/topic filter, the career-timeline hover details, the article heading links, and the CV print button. There is no framework hydration. The theme is set before first paint, respects system preference until explicitly chosen, persists when local storage is available, and remains functional when storage is blocked. Without JavaScript, CSS respects the system theme, the mobile menu opens natively, and all content and navigation remain usable; inactive controls are hidden.
 
 Filters are progressive enhancement: all published articles are visible without scripts. They never determine publication visibility; filtering drafts happens at build time.
+
+Markdown is rendered by Astro 7's default processor. The homepage heading-link script is the only reason no rehype plugin is required, which keeps the default processor and the lockfile free of extra Markdown dependencies.
 
 ## Accessibility, metadata, and deployment
 
@@ -53,8 +57,8 @@ Only `dist/` is uploaded by the Astro GitHub Action. PRs validate; authorized fu
 
 - Astro check for strict component and TypeScript diagnostics; Prettier for formatting.
 - Node tests for publication behavior and reading-time bounds.
-- An isolated temporary copy of the site tests actual Markdown/MDX article builds, footnotes, tables, contents lists, previous/next navigation, related work, RSS, sitemap, and draft/future-date exclusion. Test articles never enter the deliverable site.
+- An isolated temporary copy of the site tests actual Markdown/MDX article builds, footnotes, tables, contents lists, previous/next navigation, related reading, RSS, sitemap, and draft/future-date exclusion. Test articles never enter the deliverable site.
 - A generated-output checker follows every local link, asset, and fragment and verifies metadata and required output files.
-- Playwright checks public routes at 320, 375, 768, 1280, and 1440 pixels; axe checks both themes. Additional tests cover keyboard use, persistence, no-JavaScript navigation, blocked storage, reduced motion, phone navigation fit and touch-target size, and image loading and proportions.
+- Playwright checks all public routes at 320, 375, 768, 1280, and 1440 pixels; axe checks both themes. Additional tests cover keyboard use, persistence, no-JavaScript navigation (including the mobile menu), blocked storage, reduced motion, phone menu fit and touch-target size, the career timeline, image loading and proportions, and the article layout.
 
 Automated checks have practical limits: no remote Pages deployment is exercised locally, no owner credentials are independently attested, and automated accessibility scanning is not a full manual accessibility audit.

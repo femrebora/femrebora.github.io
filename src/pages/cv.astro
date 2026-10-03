@@ -1,0 +1,119 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+import {
+  profile,
+  experience,
+  education,
+  capabilities,
+  languages,
+  credentials,
+} from '../data/profile';
+---
+
+<BaseLayout
+  title="Curriculum vitae"
+  description="Curriculum vitae of F. Emre Bora: education, professional and research experience, technical skills, and languages."
+>
+  <div class="cv">
+    <header class="cv-header">
+      <h1>{profile.fullName}</h1>
+      <p class="cv-title">
+        Bioinformatician · Genetics, bioinformatics &amp; computational biology
+      </p>
+      <div class="cv-contact">
+        {profile.email && (
+          <a href={`mailto:${profile.email}`}>{profile.email}</a>
+        )}
+        {profile.linkedin && (
+          <a href={profile.linkedin}>linkedin.com/in/femre-bora</a>
+        )}
+        <a href={profile.github}>github.com/femrebora</a>
+      </div>
+      <div class="cv-actions">
+        <a class="button" href={profile.cv} download>
+          Download PDF <Icon name="download" />
+        </a>
+        <button class="button button-secondary" type="button" id="print-cv">
+          Print this page
+        </button>
+      </div>
+    </header>
+
+    <section class="cv-section">
+      <h2>Summary</h2>
+      <p>{profile.introduction}</p>
+    </section>
+
+    <section class="cv-section">
+      <h2>Professional &amp; research experience</h2>
+      <ol class="cv-entries">
+        {experience.map((entry) => (
+          <li class="cv-entry">
+            <header>
+              <h3>{entry.title}</h3>
+              <span class="cv-when">{entry.period}</span>
+            </header>
+            <p class="cv-where">{entry.institution}</p>
+            <p>{entry.description}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="cv-section">
+      <h2>Education</h2>
+      <ol class="cv-entries">
+        {education.map((entry) => (
+          <li class="cv-entry">
+            <header>
+              <h3>{entry.title}</h3>
+              <span class="cv-when">{entry.period}</span>
+            </header>
+            <p class="cv-where">{entry.institution}</p>
+            <p>{entry.description}</p>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="cv-section">
+      <h2>Technical skills</h2>
+      <dl class="cv-skills">
+        {capabilities.map((group) => (
+          <div>
+            <dt>{group.domain}</dt>
+            <dd>{group.items.join('; ')}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section class="cv-section">
+      <h2>Languages</h2>
+      <dl class="cv-skills">
+        {languages.map((language) => (
+          <div>
+            <dt>{language.name}</dt>
+            <dd>{language.description}</dd>
+          </div>
+        ))}
+      </dl>
+    </section>
+
+    <section class="cv-section">
+      <h2>Credentials</h2>
+      <p>
+        {credentials.length > 0
+          ? `${credentials.length} published credential${credentials.length === 1 ? '' : 's'}. `
+          : 'No credentials have been approved for publication yet. '}
+        <a href="/credentials/">See the credentials page</a>.
+      </p>
+    </section>
+  </div>
+  <script>
+    document
+      .querySelector('#print-cv')
+      ?.addEventListener('click', () => window.print());
+  </script>
+</BaseLayout>

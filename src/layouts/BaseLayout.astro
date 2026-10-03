@@ -10,6 +10,7 @@ interface Props {
   image?: { src: string; alt: string };
   article?: { published: Date; updated?: Date; tags: string[] };
   noindex?: boolean;
+  lang?: string;
 }
 const {
   title,
@@ -21,6 +22,7 @@ const {
   },
   article,
   noindex = false,
+  lang = 'en',
 } = Astro.props;
 const pageTitle = title
   ? `${title} — ${profile.name}`
@@ -68,7 +70,7 @@ const structured = {
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={lang}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -92,12 +94,12 @@ const structured = {
     <meta name="color-scheme" content="light dark" />
     <meta
       name="theme-color"
-      content="#f6f7f8"
+      content="#f7f5f0"
       media="(prefers-color-scheme: light)"
     />
     <meta
       name="theme-color"
-      content="#0e1216"
+      content="#15130f"
       media="(prefers-color-scheme: dark)"
     />
     {noindex && <meta name="robots" content="noindex, follow" />}
@@ -146,14 +148,14 @@ const structured = {
     <a href="#main" class="skip-link">
       Skip to content
     </a>
-    <div class="app">
+    <div class="site">
       <Header />
-      <div class="content">
-        <main id="main" tabindex="-1">
+      <main id="main" tabindex="-1" class="main">
+        <div class="wrap">
           <slot />
-        </main>
-        <Footer />
-      </div>
+        </div>
+      </main>
+      <Footer />
     </div>
   </body>
 </html>

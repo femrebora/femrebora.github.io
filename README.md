@@ -2,34 +2,37 @@
 
 Source for [femrebora.github.io](https://femrebora.github.io), the personal site of F. Emre Bora, a bioinformatician working across clinical genomics, cancer functional genomics, and computational biology.
 
-The site presents research, background, selected software work, a blog, and a CV. It is a static site with no backend, no analytics, and no third-party requests.
+The site is a small research journal: a typography-led homepage with teasers, plus dedicated pages for research, writing, selected work, background, CV, and credentials. It is a static site with no backend, no analytics, and no third-party requests.
 
-## What is on the site
+## Pages
 
-The site is a single page with a section for each part of the profile, plus detail pages for the thesis, projects, and blog posts.
+| Route           | Contents                                                                                   |
+| --------------- | ------------------------------------------------------------------------------------------ |
+| `/`             | Introduction, and teasers for writing, the research spotlight, selected work, and contact  |
+| `/research/`    | Research interests, completed work, methods, and the thesis case study                     |
+| `/blog/`        | Writing index with filters, categories, tags, and RSS (canonical writing path)             |
+| `/work/`        | Selected work, including the ECEGEN website case study                                     |
+| `/about/`       | Narrative, education and experience, the career timeline, skills, and languages            |
+| `/cv/`          | A printable HTML CV built from shared data, with a link to the sanitized PDF               |
+| `/credentials/` | Certificates and education evidence, with an honest empty state until entries are approved |
 
-| Section       | Contents                                                                                    |
-| ------------- | ------------------------------------------------------------------------------------------- |
-| Introduction  | Who I am, current role and affiliation, and a CV download                                   |
-| Research      | The MSc thesis on TRAIL resistance in glioblastoma, research interests, and methods         |
-| Background    | A genome-browser-style timeline of education, research, and work, with skills and languages |
-| Selected work | Technical projects, including the ECEGEN website                                            |
-| Blog          | Notes and essays on bioinformatics and scientific computing, with RSS                       |
-| Contact       | Email, LinkedIn, GitHub, and the CV                                                         |
+Research and project detail pages keep their existing paths (`/research/trail-resistance/`, `/work/ecegen/`), and the homepage keeps the legacy anchors `#research`, `#background`, `#work`, `#blog`, and `#contact`.
 
 ## Built with
 
 - [Astro](https://astro.build) 7 with strict TypeScript, generating static HTML
 - [Tailwind CSS](https://tailwindcss.com) v4 and a small set of design tokens in one stylesheet
 - Astro Content Collections for Markdown and MDX, with schemas checked at build time
-- Self-hosted IBM Plex Sans, Source Serif 4, and IBM Plex Mono
+- Self-hosted Newsreader (display and reading) and DM Sans (interface), latin and latin-ext for Turkish
 - GitHub Actions for verification and deployment to GitHub Pages
 
-Client-side JavaScript is limited to the theme switch, section tracking in the navigation, timeline hover details, and the blog filters. All content and navigation work without it.
+Client-side JavaScript is limited to the theme switch, the blog filters, the About career-timeline details, the article heading links, and the CV print button. All content and navigation work without it.
 
 ## Design
 
-A sticky navigation rail on wide screens that becomes a compact top bar on phones, light and dark themes with a single warm accent, and a serif reading face for long-form text. The background section draws education, research, and work as features on a shared time axis, in the manner of a genome browser; each feature links to its written record. Research and projects are shown as structured records rather than cards. Motion is limited to hover feedback and a short cross-fade between pages, and is switched off for visitors who prefer reduced motion.
+A warm editorial "contemporary research journal": warm paper (`#F7F5F0`) and deep ink, a restrained forest-green accent (`#185C50`), Newsreader for expressive headings and long-form reading, and DM Sans for navigation and interface text. The masthead is a compact horizontal bar — name, Writing, Research, Work, About, CV, and a theme control — with a no-JavaScript disclosure menu on small screens. Pages share one system but play different roles: an expressive introduction, a concise writing index, a larger research feature, and an image-led ECEGEN work preview. See [the design note](docs/DESIGN.md).
+
+The About page draws education, exchange, research, and work as features on a shared time axis in the manner of a genome browser; each feature links to its written record, and the written lists carry the full detail. Motion is limited to short hover feedback and a subtle entrance for timeline features, and is switched off for visitors who prefer reduced motion.
 
 ## Run it locally
 
@@ -60,15 +63,15 @@ npm run test:browser
 
 ```text
 src/
-  components/    Navigation rail, records, timeline, icons
+  components/    Masthead, records, post list, career timeline, icons
   content/       Writing, research, projects, and notes in Markdown/MDX
-  data/          Profile, experience, education, and skills
+  data/          Profile, experience, education, skills, and credentials
   layouts/       Shared document shell, metadata, and themes
   pages/         Routes, RSS feed, and 404
   styles/        Design tokens and all styling
 public/          Images, CV, favicon, and social preview
 tests/           Publication rules and browser checks
-docs/            Architecture, maintenance, and verification notes
+docs/            Architecture, design, maintenance, and verification notes
 ```
 
 ## Quality checks
@@ -78,6 +81,7 @@ Every push runs formatting, type checking, unit tests, a production build, and a
 ## Documentation
 
 - [Architecture](docs/ARCHITECTURE.md): rendering, content model, presentation, and accessibility
+- [Design note](docs/DESIGN.md): the visual system and content workflow
 - [Maintaining the site](docs/MAINTAINING.md): adding content, publishing, and dependency notes
 - [Verification record](docs/VERIFICATION.md): what was tested and the results
 

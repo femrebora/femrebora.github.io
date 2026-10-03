@@ -122,6 +122,33 @@ Local verification (Node.js 24.18.0, Playwright Chromium):
 
 Full-page screenshots were inspected at 375, 1440, and 1920px in both themes, with the timeline also checked in its hover state and on a phone.
 
+## Redesign v3 — "Contemporary research journal" — 4 October 2026
+
+At the owner's request the presentation was replaced again, this time with a warm editorial research journal, and the content was spread back out of the single page. The starting point for this pass was commit `16b5cef` ("merge site into a single page with a genome-style timeline") with a clean working tree; the baseline `npm run verify` was green and the site built 5 pages.
+
+Presentation changes: warm paper `#F7F5F0` with a forest-green accent `#185C50`; Newsreader for display and reading, DM Sans for interface, both self-hosted with latin-ext for Turkish; a compact horizontal masthead (`F. Emre Bora | Writing | Research | Work | About | CV`) with a no-JavaScript `<details>` menu on small screens; a designed dark theme. The sticky rail, IBM Plex/Source Serif, the single-page layout, and the rust/copper accent were removed. Three unused font packages were uninstalled and no new runtime dependency was added: Astro 7's default Markdown processor is kept, and article heading links are a small progressive-enhancement script instead of a rehype plugin (which would have required the optional `@astrojs/markdown-remark` package and a deprecated config key).
+
+Information architecture: `/` is now an overview (introduction, writing, research spotlight, ECEGEN work preview, background/contact) that retains the `#research`, `#background`, `#work`, `#blog`, and `#contact` anchors. New pages `/research/`, `/work/`, `/about/`, `/cv/`, and `/credentials/` were introduced; `/blog/` remains the canonical writing index; `/research/trail-resistance/` and `/work/ecegen/` keep their URLs; `/rss.xml` and the sanitized PDF path are unchanged. The personal photograph moved to About; the genome-style timeline moved to About as a secondary feature beside the written lists.
+
+Content was not invented: `src/data/profile.ts` and the collections remain the source of truth, the A Coruña period is still an Erasmus exchange, the writing feed is still an honest empty state, and the excluded project names do not appear in source, output, metadata, or documentation. Structured, owner-verifiable fields (`role`, `question`, `contribution`, `outputs`, project `contribution`, and writing `language`) were added to the schemas so facts live in one place. The ECEGEN contribution text explicitly avoids a job-title or sole-authorship claim, and that gap is recorded in `CONTENT-TODO.md`.
+
+Local verification (Node.js 24.18.0, local Google Chrome):
+
+| Check                  | Result                                                                                                            |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `npm run format:check` | Passed (Prettier)                                                                                                 |
+| `npm run check`        | 0 errors, 0 warnings, 0 hints                                                                                     |
+| `npm test`             | 3 passed, 0 failed                                                                                                |
+| `npm run build`        | 10 static pages plus RSS, sitemap, assets, robots, `.nojekyll`                                                    |
+| `npm run verify:site`  | 10 HTML pages; 309 local links, assets, and anchors; no broken targets or template leaks                          |
+| `npx playwright test`  | 12 passed, including axe WCAG A/AA scans of all 10 routes in both themes and the article fixture                  |
+| Responsive checks      | All routes fit 320, 375, 768, 1280, and 1440px without horizontal overflow                                        |
+| No-JavaScript          | Desktop nav and the mobile `<details>` menu reach every page with scripts disabled                                |
+| CV download            | Actual PDF served and downloaded; `/cv/` page also offers a print action                                          |
+| Article layout         | Isolated Markdown/MDX fixture checked in both themes: TOC, table, code, footnotes, heading links, related reading |
+
+Screenshots were captured by the browser suite for `/`, `/research/`, `/research/trail-resistance/`, `/work/`, `/work/ecegen/`, `/about/`, `/cv/`, `/credentials/`, and `/blog/` at 375, 1440, and 1920px in both themes, then inspected. No commits, pushes, merges, history rewrites, or GitHub setting changes were performed; the changes remain local and uncommitted.
+
 ## Deployment and content limits
 
 The root-domain Astro configuration and GitHub Actions workflow are ready for review. Publishing still requires the owner to select GitHub Actions in Pages settings and authorize a commit/push. Neither deployment nor settings changes were attempted.

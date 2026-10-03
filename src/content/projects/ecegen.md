@@ -9,6 +9,7 @@ tags: [Healthcare, Web development]
 website: https://www.ecegen.com/
 repository: https://github.com/ECEGEN/website
 order: 1
+contribution: 'Described from the public repository as a selected-work example. It does not imply a specific job title, an employment relationship, or sole authorship.'
 image:
   src: /images/ecegen-homepage.webp
   alt: 'ECEGEN website homepage with Turkish navigation, test catalogue search, online appointments, and a genomic analysis feature.'

@@ -1,28 +1,45 @@
 ---
 import { profile } from '../data/profile';
 import Icon from './Icon.astro';
-// Sections of the single page. `route` is the detail-page prefix that belongs to a section.
-const links: { id: string; label: string; route?: string }[] = [
-  { id: 'research', label: 'Research', route: '/research/' },
-  { id: 'background', label: 'Background' },
-  { id: 'work', label: 'Work', route: '/work/' },
-  { id: 'blog', label: 'Blog', route: '/blog/' },
-  { id: 'contact', label: 'Contact' },
+const links: { href: string; label: string; match: string }[] = [
+  { href: '/blog/', label: 'Writing', match: '/blog/' },
+  { href: '/research/', label: 'Research', match: '/research/' },
+  { href: '/work/', label: 'Work', match: '/work/' },
+  { href: '/about/', label: 'About', match: '/about/' },
+  { href: '/cv/', label: 'CV', match: '/cv/' },
 ];
 const path = Astro.url.pathname;
+const current = (match: string) =>
+  match === '/blog/' ? path.startsWith('/blog/') : path.startsWith(match);
 const onHome = path === '/';
 ---
 
-<header class="rail">
-  <div class="rail-top">
-    <a class="rail-brand" href="/">
-      <span class="rail-name">{profile.name}</span>
-      <span class="rail-role">Bioinformatics / Computational biology</span>
+<header class="masthead">
+  <div class="wrap masthead-inner">
+    <a class="wordmark" href="/" aria-current={onHome ? 'page' : undefined}>
+      <strong>{profile.name}</strong>
+      <span>Bioinformatics · Computational biology</span>
     </a>
-    <div class="rail-quick">
-      <a class="icon-btn" href={profile.cv || '/about/#cv'} download>
-        <Icon name="download" /> CV
-      </a>
+    <nav class="site-nav site-nav--inline" aria-label="Main navigation">
+      {links.map(({ href, label, match }) => (
+        <a href={href} aria-current={current(match) ? 'page' : undefined}>
+          {label}
+        </a>
+      ))}
+    </nav>
+    <div class="masthead-actions">
+      <details class="site-menu">
+        <summary>
+          <Icon name="menu" /> Menu
+        </summary>
+        <nav aria-label="Site sections">
+          {links.map(({ href, label, match }) => (
+            <a href={href} aria-current={current(match) ? 'page' : undefined}>
+              {label}
+            </a>
+          ))}
+        </nav>
+      </details>
       <button
         class="theme-toggle"
         type="button"
@@ -38,34 +55,6 @@ const onHome = path === '/';
         </span>
       </button>
     </div>
-  </div>
-  <nav class="rail-nav" aria-label="Main navigation">
-    {links.map(({ id, label, route }) => (
-      <a
-        href={`/#${id}`}
-        data-section={onHome ? id : undefined}
-        aria-current={route && path.startsWith(route) ? 'page' : undefined}
-      >
-        {label}
-      </a>
-    ))}
-  </nav>
-  <div class="rail-actions">
-    <span class="label">Elsewhere</span>
-    <a href={profile.github}>
-      <Icon name="github" /> GitHub
-    </a>
-    {profile.linkedin && (
-      <a href={profile.linkedin}>
-        <Icon name="linkedin" /> LinkedIn
-      </a>
-    )}
-    <a href={profile.email ? `mailto:${profile.email}` : '/about/#contact'}>
-      <Icon name="mail" /> Contact
-    </a>
-    <a href="/rss.xml">
-      <Icon name="rss" /> RSS
-    </a>
   </div>
 </header>
 <script>
@@ -101,40 +90,5 @@ const onHome = path === '/';
     preference.addEventListener('change', (event) => {
       if (!manual) apply(event.matches);
     });
-  }
-
-  // On the single page, the rail marks whichever section is being read.
-  const sectionLinks = [
-    ...document.querySelectorAll<HTMLAnchorElement>(
-      '.rail-nav a[data-section]',
-    ),
-  ];
-  if (sectionLinks.length && 'IntersectionObserver' in window) {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (!entry.isIntersecting) continue;
-          for (const link of sectionLinks) {
-            if (link.dataset.section === entry.target.id)
-              link.setAttribute('aria-current', 'location');
-            else link.removeAttribute('aria-current');
-          }
-        }
-      },
-      { rootMargin: '-30% 0px -60% 0px' },
-    );
-    for (const link of sectionLinks) {
-      const section = document.getElementById(link.dataset.section ?? '');
-      if (section) observer.observe(section);
-    }
-    // Above the first section nothing is current.
-    window.addEventListener(
-      'scroll',
-      () => {
-        if (window.scrollY < 80)
-          for (const link of sectionLinks) link.removeAttribute('aria-current');
-      },
-      { passive: true },
-    );
   }
 </script>

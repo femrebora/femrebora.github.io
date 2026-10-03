@@ -19,6 +19,7 @@ const writing = defineCollection({
       publishedDate: z.coerce.date(),
       updatedDate: z.coerce.date().optional(),
       category: z.string().default('Notes'),
+      language: z.enum(['en', 'tr']).default('en'),
       heroImage: image.optional(),
       canonicalURL: z.url().optional(),
       references: z.array(reference).default([]),
@@ -51,6 +52,10 @@ const research = defineCollection({
     methods: z.array(z.string()).default([]),
     links: z.array(reference).default([]),
     order: z.number().default(0),
+    role: z.string().optional(),
+    question: z.string().optional(),
+    contribution: z.string().optional(),
+    outputs: z.array(z.string()).default([]),
   }),
 });
 const projects = defineCollection({
@@ -69,6 +74,7 @@ const projects = defineCollection({
     website: z.url().optional(),
     repository: z.url().optional(),
     order: z.number().default(0),
+    contribution: z.string().optional(),
   }),
 });
 const notes = defineCollection({

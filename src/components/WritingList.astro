@@ -4,42 +4,78 @@ import { formatDate, readingTime } from '../lib/content';
 import Icon from './Icon.astro';
 interface Props {
   articles: CollectionEntry<'writing'>[];
+  /** On the homepage, promote the newest article and list the rest. */
+  featured?: boolean;
 }
-const { articles } = Astro.props;
+const { articles, featured = false } = Astro.props;
+const [top, ...rest] = articles;
+const listed = featured ? rest : articles;
 ---
 
 {articles.length ? (
-  <ol class="writing-list">
-    {articles.map((post) => (
-      <li>
-        <div class="article-date">
-          <time datetime={post.data.publishedDate.toISOString()}>
-            {formatDate(post.data.publishedDate)}
+  <>
+    {featured && top && (
+      <article class="post-featured">
+        <div class="post-date">
+          <time datetime={top.data.publishedDate.toISOString()}>
+            {formatDate(top.data.publishedDate)}
           </time>
-          <span>{readingTime(post.body)} min read</span>
+          <span>{readingTime(top.body)} min read</span>
         </div>
         <div>
-          <span class="label label-muted">{post.data.category}</span>
+          <span class="label label-muted">{top.data.category}</span>
           <h3>
-            <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+            <a href={`/blog/${top.id}/`}>{top.data.title}</a>
           </h3>
-          <p>{post.data.description}</p>
+          <p class="lede">{top.data.description}</p>
+          <div class="record-actions">
+            <a class="link-arrow" href={`/blog/${top.id}/`}>
+              Read the article <Icon name="arrow-right" />
+            </a>
+          </div>
         </div>
-        <span class="list-arrow" aria-hidden="true">
-          <Icon name="arrow-right" />
-        </span>
-      </li>
-    ))}
-  </ol>
+      </article>
+    )}
+    {listed.length > 0 && (
+      <ol class="post-list">
+        {listed.map((post) => (
+          <li>
+            <div class="post-date">
+              <time datetime={post.data.publishedDate.toISOString()}>
+                {formatDate(post.data.publishedDate)}
+              </time>
+              <span>{readingTime(post.body)} min read</span>
+            </div>
+            <div>
+              <span class="label label-muted">{post.data.category}</span>
+              <h3>
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+              </h3>
+              <p>{post.data.description}</p>
+            </div>
+            <span class="list-arrow" aria-hidden="true">
+              <Icon name="arrow-right" />
+            </span>
+          </li>
+        ))}
+      </ol>
+    )}
+  </>
 ) : (
-  <div class="writing-empty">
-    <h3>A place for the work behind the results.</h3>
+  <div class="empty-note">
+    <h3>A home for notes and essays.</h3>
     <p>
-      Notes and essays on bioinformatics, genomics, and scientific computing
-      will be published here. No articles have been published yet.
+      I write about bioinformatics, genomics, research, and scientific
+      computing. The first articles are in preparation — no posts have been
+      published yet.
     </p>
-    <a class="link-arrow" href="/rss.xml">
-      Follow new posts via RSS <Icon name="rss" />
-    </a>
+    <div class="record-actions">
+      <a class="link-arrow" href="/blog/">
+        Visit the writing page <Icon name="arrow-right" />
+      </a>
+      <a class="link-arrow" href="/rss.xml">
+        Follow via RSS <Icon name="rss" />
+      </a>
+    </div>
   </div>
 )}

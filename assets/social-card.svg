@@ -1,23 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
-  <rect width="1200" height="630" fill="#0e1216"/>
-  <rect x="72" y="72" width="4" height="486" rx="2" fill="#f2a83b"/>
-  <text x="100" y="96" font-family="monospace" font-size="15" letter-spacing="4" fill="#f2a83b">BIOINFORMATICS / COMPUTATIONAL BIOLOGY</text>
-  <text x="100" y="248" font-family="sans-serif" font-size="94" font-weight="600" letter-spacing="-4" fill="#e7edf1">F. Emre Bora</text>
-  <text x="104" y="308" font-family="sans-serif" font-size="26" fill="#c8d3da">Genetics · Bioinformatics · Computational Biology</text>
-  <text x="104" y="374" font-family="sans-serif" font-size="20" fill="#9db0bb">Research in clinical genomics and cancer functional genomics,</text>
-  <text x="104" y="404" font-family="sans-serif" font-size="20" fill="#9db0bb">with the software that supports reproducible analysis.</text>
+  <rect width="1200" height="630" fill="#F7F5F0"/>
+  <rect x="72" y="72" width="4" height="486" rx="2" fill="#185C50"/>
+  <text x="100" y="98" font-family="sans-serif" font-size="15" letter-spacing="4" fill="#185C50">BIOINFORMATICS / COMPUTATIONAL BIOLOGY</text>
+  <text x="98" y="250" font-family="Georgia, serif" font-size="96" font-weight="600" letter-spacing="-2" fill="#1E2523">F. Emre Bora</text>
+  <text x="104" y="312" font-family="sans-serif" font-size="26" fill="#3C4441">Genetics · Bioinformatics · Computational Biology</text>
+  <text x="104" y="378" font-family="sans-serif" font-size="20" fill="#555F5B">Research in clinical genomics and cancer functional genomics,</text>
+  <text x="104" y="408" font-family="sans-serif" font-size="20" fill="#555F5B">with the software that supports reproducible analysis.</text>
   <g>
-    <rect x="800" y="180" width="328" height="1" fill="#28333b"/>
-    <rect x="800" y="250" width="328" height="1" fill="#28333b"/>
-    <rect x="800" y="320" width="328" height="1" fill="#28333b"/>
-    <rect x="800" y="390" width="328" height="1" fill="#28333b"/>
-    <rect x="812" y="196" width="150" height="7" rx="3" fill="#3a4750"/>
-    <rect x="812" y="266" width="220" height="7" rx="3" fill="#3a4750"/>
-    <rect x="812" y="336" width="180" height="7" rx="3" fill="#3a4750"/>
-    <rect x="812" y="406" width="120" height="7" rx="3" fill="#3a4750"/>
-    <rect x="812" y="196" width="52" height="7" rx="3" fill="#f2a83b"/>
-    <circle cx="1120" cy="199" r="4" fill="#f2a83b"/>
+    <rect x="800" y="180" width="328" height="1" fill="#DDDCD3"/>
+    <rect x="800" y="250" width="328" height="1" fill="#DDDCD3"/>
+    <rect x="800" y="320" width="328" height="1" fill="#DDDCD3"/>
+    <rect x="800" y="390" width="328" height="1" fill="#DDDCD3"/>
+    <rect x="812" y="196" width="54" height="7" rx="3" fill="#185C50"/>
+    <rect x="878" y="196" width="150" height="7" rx="3" fill="#C6C3B6"/>
+    <rect x="812" y="266" width="220" height="7" rx="3" fill="#C6C3B6"/>
+    <rect x="812" y="336" width="180" height="7" rx="3" fill="#C6C3B6"/>
+    <rect x="812" y="406" width="120" height="7" rx="3" fill="#C6C3B6"/>
   </g>
-  <text x="100" y="566" font-family="monospace" font-size="15" fill="#9db0bb">femrebora.github.io</text>
-  <text x="1128" y="566" text-anchor="end" font-family="monospace" font-size="13" letter-spacing="3" fill="#9db0bb">RESEARCH / WRITING / WORK</text>
+  <text x="100" y="566" font-family="monospace" font-size="15" fill="#555F5B">femrebora.github.io</text>
+  <text x="1128" y="566" text-anchor="end" font-family="sans-serif" font-size="13" letter-spacing="3" fill="#555F5B">RESEARCH / WRITING / WORK</text>
 </svg>

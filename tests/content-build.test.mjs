@@ -89,7 +89,7 @@ test(
       );
       for (const expected of [
         'A test-only expression: 4.',
-        'Related work',
+        'Related reading',
         'id="references"',
         '/blog/qa-formatting/',
       ])

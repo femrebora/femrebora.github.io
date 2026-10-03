@@ -1,260 +1,165 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import SectionHeading from '../components/SectionHeading.astro';
 import WritingList from '../components/WritingList.astro';
-import Timeline from '../components/Timeline.astro';
-import GenomeTrack from '../components/GenomeTrack.astro';
-import ResearchNotes from '../components/ResearchNotes.astro';
-import Icon from '../components/Icon.astro';
-import ProfilePhoto from '../components/ProfilePhoto.astro';
 import ProjectRecord from '../components/ProjectRecord.astro';
-import {
-  profile,
-  interests,
-  experience,
-  education,
-  credentials,
-  capabilities,
-  languages,
-} from '../data/profile';
+import Icon from '../components/Icon.astro';
+import { profile, interests } from '../data/profile';
 import { getWriting, getResearch, getProjects } from '../lib/content';
-const articles = (await getWriting()).slice(0, 4);
-const research = await getResearch();
+const articles = await getWriting();
+const researchEntries = await getResearch();
+const research =
+  researchEntries.find((entry) => entry.data.featured) ?? researchEntries[0];
 const projects = await getProjects();
+const featuredProject =
+  projects.find((project) => project.data.featured) ?? projects[0];
 ---
 
 <BaseLayout>
-  <div class="page onepage">
-    <div class="page-inner">
-      <header class="hero">
-        <div class="intro">
-          <div class="intro-head">
-            <p class="label">Bioinformatics · Computational biology</p>
-            <h1 class="hero-name">{profile.name}</h1>
-          </div>
-          <ProfilePhoto />
-          <div class="intro-body">
-            <p class="lede">{profile.introduction}</p>
-            <div class="hero-actions">
-              <a class="button" href="#research">
-                Explore research <Icon name="arrow-right" />
-              </a>
-              <a class="link-arrow" href="#background">
-                Background <Icon name="arrow-right" />
-              </a>
-              <a class="link-arrow" href={profile.cv || '#contact'}>
-                Curriculum vitae <Icon name="download" />
-              </a>
-            </div>
-          </div>
-        </div>
-        <dl class="meta-grid hero-meta">
-          <div>
-            <dt>Role</dt>
-            <dd>Bioinformatician</dd>
-          </div>
-          <div>
-            <dt>Affiliation</dt>
-            <dd>Ecegen Genetic Diseases Assessment Center</dd>
-          </div>
-          <div>
-            <dt>Education</dt>
-            <dd>MSc Biotechnology · Bezmialem Vakif University, 2026</dd>
-          </div>
-          <div>
-            <dt>Focus</dt>
-            <dd>{profile.fields}</dd>
-          </div>
-        </dl>
-      </header>
+  <header class="intro">
+    <p class="label">Bioinformatician · Genetics &amp; computational biology</p>
+    <h1>{profile.name}</h1>
+    <p class="lede">{profile.introduction}</p>
+    <div class="hero-actions">
+      <a class="button" href="/research/">
+        Research <Icon name="arrow-right" />
+      </a>
+      <a class="button button-secondary" href="/cv/">
+        Curriculum vitae <Icon name="download" />
+      </a>
+      <a class="link-arrow" href="/blog/">
+        Writing <Icon name="arrow-right" />
+      </a>
+    </div>
+  </header>
 
-      <section class="section" id="research" aria-labelledby="research-title">
-        <SectionHeading id="research-title" title="Research" />
-        <div class="section-body">
-          {research.map((entry) => (
-            <article class="record">
-              <div class="record-head">
-                <span class="label">{entry.data.kind}</span>
-                <span class="record-status">{entry.data.status}</span>
-              </div>
-              <h3 class="record-title">
-                <a href={`/research/${entry.id}/`}>
-                  {entry.data.title} <Icon name="arrow-right" />
-                </a>
-              </h3>
-              <p class="record-desc">{entry.data.description}</p>
-              <dl class="meta-grid">
+  <section class="feature" id="blog" aria-labelledby="blog-title">
+    <div class="feature-grid">
+      <div class="feature-label">
+        <h2 id="blog-title">Writing</h2>
+        <p class="meta">Notes &amp; essays</p>
+        <a class="link-arrow" href="/blog/">
+          All writing <Icon name="arrow-right" />
+        </a>
+      </div>
+      <div>
+        <WritingList articles={articles} featured />
+      </div>
+    </div>
+  </section>
+
+  <section class="feature" id="research" aria-labelledby="research-title">
+    <div class="feature-grid">
+      <div class="feature-label">
+        <h2 id="research-title">Research</h2>
+        <p class="meta">Genomics &amp; functional genetics</p>
+        <a class="link-arrow" href="/research/">
+          All research <Icon name="arrow-right" />
+        </a>
+      </div>
+      <div>
+        {research && (
+          <article class="record">
+            <div class="record-head">
+              <span class="label">MSc thesis</span>
+              <span class="record-status">{research.data.status}</span>
+            </div>
+            <h3 class="record-title">
+              <a href={`/research/${research.id}/`}>
+                {research.data.title} <Icon name="arrow-right" />
+              </a>
+            </h3>
+            <p class="record-desc">{research.data.description}</p>
+            <dl class="meta-grid">
+              {research.data.question && (
+                <div>
+                  <dt>Question</dt>
+                  <dd>{research.data.question}</dd>
+                </div>
+              )}
+              {research.data.contribution && (
+                <div>
+                  <dt>My contribution</dt>
+                  <dd>{research.data.contribution}</dd>
+                </div>
+              )}
+              {research.data.methods.length > 0 && (
                 <div>
                   <dt>Methods</dt>
-                  <dd>{entry.data.methods.join(' · ')}</dd>
+                  <dd>{research.data.methods.join(' · ')}</dd>
                 </div>
-                <div>
-                  <dt>Topics</dt>
-                  <dd>{entry.data.tags.join(' · ')}</dd>
-                </div>
-              </dl>
-              <div class="record-actions">
-                <a class="link-arrow" href={`/research/${entry.id}/`}>
-                  Read the research overview <Icon name="arrow-right" />
-                </a>
-              </div>
-            </article>
-          ))}
-          <h3 class="subsection-title">Research interests</h3>
-          <ul class="interest-grid">
-            {interests.map((interest) => (
-              <li>
-                <h4>{interest.title}</h4>
-                <p>{interest.description}</p>
-                <p class="interest-topics">{interest.topics.join(' · ')}</p>
-              </li>
-            ))}
-          </ul>
-          <h3 class="subsection-title">Methods & approaches</h3>
-          <p class="lede">
-            My graduate work combined pooled CRISPR/Cas9 screen analysis with
-            MAGeCK RRA, pathway enrichment, and integration of transcriptomic,
-            metabolomic, and TCGA-GBM data.
-          </p>
-          <p class="meta method-note">
-            Detailed methods, analysis materials, and research outputs will be
-            added as they become available for sharing. Screen-derived
-            candidates require validation before they can support conclusions
-            about biological mechanisms.
-          </p>
-          <ResearchNotes />
-        </div>
-      </section>
-
-      <section
-        class="section"
-        id="background"
-        aria-labelledby="background-title"
-      >
-        <SectionHeading id="background-title" title="Background" />
-        <div class="section-body">
-          <div class="prose profile-bio">
-            {profile.biography.map((paragraph) => (
-              <p>{paragraph}</p>
-            ))}
-          </div>
-          <GenomeTrack entries={[...education, ...experience]} />
-          <div class="record-columns">
-            <div>
-              <h3 class="subsection-title" id="experience">
-                Professional & research experience
-              </h3>
-              <Timeline entries={experience} />
-            </div>
-            <div>
-              <h3 class="subsection-title" id="education">
-                Education
-              </h3>
-              <Timeline entries={education} />
-            </div>
-          </div>
-          <h3 class="subsection-title" id="skills">
-            Areas of work
-          </h3>
-          <div class="capabilities">
-            {capabilities.map((group) => (
-              <div>
-                <h4>{group.domain}</h4>
-                <ul>
-                  {group.items.map((item) => (
-                    <li>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <h3 class="subsection-title" id="languages">
-            Languages
-          </h3>
-          <dl class="language-list">
-            {languages.map((language) => (
-              <div>
-                <dt>{language.name}</dt>
-                <dd>{language.description}</dd>
-              </div>
-            ))}
-          </dl>
-          {credentials.length > 0 && (
-            <>
-              <h3 class="subsection-title" id="credentials">
-                Credentials
-              </h3>
-              <ul class="credential-list">
-                {credentials.map((credential) => (
-                  <li>
-                    <h4>{credential.title}</h4>
-                    <p>
-                      {credential.institution} · {credential.date}
-                    </p>
-                    <p>{credential.description}</p>
-                    {credential.preview && (
-                      <img
-                        src={credential.preview.src}
-                        alt={credential.preview.alt}
-                        loading="lazy"
-                        width="640"
-                        height="450"
-                      />
-                    )}
-                    {credential.credentialURL && (
-                      <a class="link-arrow" href={credential.credentialURL}>
-                        View credential <Icon name="external" />
-                      </a>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
-        </div>
-      </section>
-
-      <section class="section" id="work" aria-labelledby="work-title">
-        <SectionHeading id="work-title" title="Selected work" />
-        <div class="section-body">
-          <p class="section-intro">
-            Alongside research, I build software and technical systems. This is
-            a small selection of that work.
-          </p>
-          {projects.map((project) => (
-            <ProjectRecord project={project} heading="h3" />
-          ))}
-        </div>
-      </section>
-
-      <section class="section" id="blog" aria-labelledby="blog-title">
-        <SectionHeading
-          id="blog-title"
-          title="Blog"
-          href="/blog/"
-          link="All posts"
-        />
-        <div class="section-body">
-          <WritingList articles={articles} />
-        </div>
-      </section>
-
-      <section class="section" id="contact" aria-labelledby="contact-title">
-        <SectionHeading id="contact-title" title="Contact & CV" />
-        <div class="section-body">
-          <p class="lede">
-            {profile.email ? (
-              <a class="contact-email" href={`mailto:${profile.email}`}>
-                {profile.email}
+              )}
+            </dl>
+            <div class="record-actions">
+              <a class="link-arrow" href={`/research/${research.id}/`}>
+                Research overview <Icon name="arrow-right" />
               </a>
-            ) : (
-              'Direct contact details will be added here.'
-            )}
-          </p>
-          <div class="hero-actions">
-            {profile.cv && (
-              <a class="button" href={profile.cv} download>
-                Download CV <Icon name="download" />
+            </div>
+          </article>
+        )}
+        <h3 class="subsection-title">Research interests</h3>
+        <ul class="interest-grid">
+          {interests.map((interest) => (
+            <li>
+              <h3>{interest.title}</h3>
+              <p>{interest.description}</p>
+              <p class="interest-topics">{interest.topics.join(' · ')}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature" id="work" aria-labelledby="work-title">
+    <div class="feature-grid">
+      <div class="feature-label">
+        <h2 id="work-title">Selected work</h2>
+        <p class="meta">Software &amp; systems</p>
+        <a class="link-arrow" href="/work/">
+          All work <Icon name="arrow-right" />
+        </a>
+      </div>
+      <div>
+        <p class="section-intro">
+          Alongside research, I build software and technical systems. This is a
+          small selection of that work.
+        </p>
+        {featuredProject && (
+          <ProjectRecord project={featuredProject} heading="h3" eager />
+        )}
+      </div>
+    </div>
+  </section>
+
+  <section class="feature" id="background" aria-labelledby="background-title">
+    <div class="feature-grid">
+      <div class="feature-label">
+        <h2 id="background-title">Background</h2>
+        <p class="meta">Education &amp; experience</p>
+      </div>
+      <div>
+        <div class="prose profile-bio">
+          {profile.biography.slice(0, 2).map((paragraph) => (
+            <p>{paragraph}</p>
+          ))}
+        </div>
+        <div class="record-actions background-links">
+          <a class="link-arrow" href="/about/">
+            About <Icon name="arrow-right" />
+          </a>
+          <a class="link-arrow" href="/cv/">
+            Curriculum vitae <Icon name="arrow-right" />
+          </a>
+          <a class="link-arrow" href="/credentials/">
+            Credentials <Icon name="arrow-right" />
+          </a>
+        </div>
+        <div id="contact" class="contact-block">
+          <h3 class="subsection-title">Contact</h3>
+          <div class="contact-list">
+            {profile.email && (
+              <a class="link-arrow" href={`mailto:${profile.email}`}>
+                {profile.email} <Icon name="mail" />
               </a>
             )}
             {profile.linkedin && (
@@ -265,9 +170,12 @@ const projects = await getProjects();
             <a class="link-arrow" href={profile.github}>
               GitHub <Icon name="external" />
             </a>
+            <a class="link-arrow" href={profile.cv}>
+              Download CV (PDF) <Icon name="download" />
+            </a>
           </div>
         </div>
-      </section>
+      </div>
     </div>
-  </div>
+  </section>
 </BaseLayout>

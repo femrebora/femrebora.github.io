@@ -26,7 +26,15 @@ const { Content, headings } = await render(entry);
 const toc = headings.filter(
   (heading) => heading.depth === 2 || heading.depth === 3,
 );
-const related = (await getProjects()).filter((project) =>
+const allPosts = await getWriting();
+const relatedPosts = allPosts
+  .filter(
+    (post) =>
+      post.id !== entry.id &&
+      post.data.tags.some((tag) => entry.data.tags.includes(tag)),
+  )
+  .slice(0, 3);
+const relatedProjects = (await getProjects()).filter((project) =>
   entry.data.relatedProjects.includes(project.id),
 );
 ---
@@ -36,114 +44,138 @@ const related = (await getProjects()).filter((project) =>
   description={entry.data.description}
   canonicalURL={entry.data.canonicalURL}
   image={entry.data.heroImage}
+  lang={entry.data.language}
   article={{
     published: entry.data.publishedDate,
     updated: entry.data.updatedDate,
     tags: entry.data.tags,
   }}
 >
-  <div class="page detail-shell">
-    <div class="page-inner">
-      <a class="back-link" href="/blog/">
-        <Icon name="arrow-left" /> Blog
-      </a>
-      <header class="page-head detail-heading article-heading">
-        <p class="label">{entry.data.category}</p>
-        <h1>{entry.data.title}</h1>
-        <p class="lede">{entry.data.description}</p>
-        <div class="article-byline">
-          <span>{profile.name}</span>
-          <time datetime={entry.data.publishedDate.toISOString()}>
-            {formatDate(entry.data.publishedDate)}
+  <div class="detail-shell">
+    <a class="back-link" href="/blog/">
+      <Icon name="arrow-left" /> Writing
+    </a>
+    <header class="page-head detail-heading">
+      <p class="label">{entry.data.category}</p>
+      <h1>{entry.data.title}</h1>
+      <p class="lede">{entry.data.description}</p>
+      <div class="article-byline">
+        <span>{profile.name}</span>
+        <time datetime={entry.data.publishedDate.toISOString()}>
+          {formatDate(entry.data.publishedDate)}
+        </time>
+        <span>{readingTime(entry.body)} min read</span>
+      </div>
+      {entry.data.updatedDate && (
+        <p class="updated-date">
+          Updated{' '}
+          <time datetime={entry.data.updatedDate.toISOString()}>
+            {formatDate(entry.data.updatedDate)}
           </time>
-          <span>{readingTime(entry.body)} min read</span>
-        </div>
-        {entry.data.updatedDate && (
-          <p class="updated-date">
-            Updated{' '}
-            <time datetime={entry.data.updatedDate.toISOString()}>
-              {formatDate(entry.data.updatedDate)}
-            </time>
-          </p>
-        )}
-        {entry.data.tags.length > 0 && (
-          <p class="tag-list">
-            {entry.data.tags.map((tag) => (
-              <span>{tag}</span>
-            ))}
-          </p>
-        )}
-      </header>
-      {entry.data.heroImage && (
-        <figure class="article-hero">
-          <img
-            src={entry.data.heroImage.src}
-            alt={entry.data.heroImage.alt}
-            width="1200"
-            height="630"
-            fetchpriority="high"
-          />
-        </figure>
+        </p>
       )}
-      <div class="detail-body">
-        <aside class="detail-aside">
-          {toc.length >= 4 && (
-            <nav class="toc" aria-label="Table of contents">
-              <p class="label">On this page</p>
+      {entry.data.tags.length > 0 && (
+        <p class="tag-list">
+          {entry.data.tags.map((tag) => (
+            <span>{tag}</span>
+          ))}
+        </p>
+      )}
+    </header>
+    {entry.data.heroImage && (
+      <figure class="article-hero">
+        <img
+          src={entry.data.heroImage.src}
+          alt={entry.data.heroImage.alt}
+          width="1200"
+          height="630"
+          fetchpriority="high"
+        />
+      </figure>
+    )}
+    <div class="article-body">
+      <aside class="detail-aside">
+        {toc.length >= 4 && (
+          <nav class="toc" aria-label="Table of contents">
+            <p class="label">On this page</p>
+            <ol>
+              {toc.map((heading) => (
+                <li class:list={{ 'toc-nested': heading.depth === 3 }}>
+                  <a href={`#${heading.slug}`}>{heading.text}</a>
+                </li>
+              ))}
+            </ol>
+          </nav>
+        )}
+      </aside>
+      <div>
+        <article class="prose">
+          <Content />
+          {entry.data.references.length > 0 && (
+            <section aria-labelledby="references">
+              <h2 id="references">References</h2>
               <ol>
-                {toc.map((heading) => (
-                  <li class:list={{ 'toc-nested': heading.depth === 3 }}>
-                    <a href={`#${heading.slug}`}>{heading.text}</a>
+                {entry.data.references.map((reference) => (
+                  <li>
+                    <a href={reference.url}>{reference.title}</a>
                   </li>
                 ))}
               </ol>
-            </nav>
+            </section>
           )}
-        </aside>
-        <div>
-          <article class="prose">
-            <Content />
-            {entry.data.references.length > 0 && (
-              <section aria-labelledby="references">
-                <h2 id="references">References</h2>
-                <ol>
-                  {entry.data.references.map((reference) => (
-                    <li>
-                      <a href={reference.url}>{reference.title}</a>
-                    </li>
-                  ))}
-                </ol>
-              </section>
-            )}
-          </article>
-          {related.length > 0 && (
-            <aside class="article-related">
-              <h2>Related work</h2>
-              {related.map((project) => (
-                <a class="link-arrow" href={`/work/${project.id}/`}>
-                  {project.data.title} <Icon name="arrow-right" />
-                </a>
+        </article>
+        {(relatedPosts.length > 0 || relatedProjects.length > 0) && (
+          <aside class="article-related">
+            <h2>Related reading</h2>
+            <ul>
+              {relatedPosts.map((post) => (
+                <li>
+                  <a class="link-arrow" href={`/blog/${post.id}/`}>
+                    {post.data.title} <Icon name="arrow-right" />
+                  </a>
+                </li>
               ))}
-            </aside>
-          )}
-          {(older || newer) && (
-            <nav class="article-pagination" aria-label="More writing">
-              {older && (
-                <a href={`/blog/${older.id}/`}>
-                  <span>← Previous article</span>
-                  {older.data.title}
-                </a>
-              )}
-              {newer && (
-                <a href={`/blog/${newer.id}/`}>
-                  <span>Next article →</span>
-                  {newer.data.title}
-                </a>
-              )}
-            </nav>
-          )}
-        </div>
+              {relatedProjects.map((project) => (
+                <li>
+                  <a class="link-arrow" href={`/work/${project.id}/`}>
+                    {project.data.title} <Icon name="arrow-right" />
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </aside>
+        )}
+        {(older || newer) && (
+          <nav class="article-pagination" aria-label="More writing">
+            {older && (
+              <a href={`/blog/${older.id}/`}>
+                <span>← Previous article</span>
+                {older.data.title}
+              </a>
+            )}
+            {newer && (
+              <a href={`/blog/${newer.id}/`}>
+                <span>Next article →</span>
+                {newer.data.title}
+              </a>
+            )}
+          </nav>
+        )}
       </div>
     </div>
   </div>
+  <script>
+    // Progressive enhancement: link each section heading. Headings keep their
+    // ids (and the table of contents works) without this.
+    for (const heading of document.querySelectorAll<HTMLElement>(
+      '.prose h2[id], .prose h3[id], .prose h4[id]',
+    )) {
+      const link = document.createElement('a');
+      link.href = `#${heading.id}`;
+      link.className = 'heading-anchor';
+      link.setAttribute('aria-label', 'Link to this section');
+      link.textContent = '#';
+      heading.append(link);
+    }
+  </script>
 </BaseLayout>

@@ -58,9 +58,14 @@ async function loadImages(page: import('@playwright/test').Page) {
 
 const routes = [
   '/',
+  '/research/',
   '/research/trail-resistance/',
-  '/blog/',
+  '/work/',
   '/work/ecegen/',
+  '/about/',
+  '/cv/',
+  '/credentials/',
+  '/blog/',
   '/404.html',
 ];
 
@@ -89,7 +94,7 @@ for (const theme of ['light', 'dark'] as const) {
   test(`${theme} theme has no automated WCAG A/AA accessibility violations`, async ({
     page,
   }) => {
-    test.setTimeout(90000);
+    test.setTimeout(120000);
     await page.emulateMedia({ colorScheme: theme });
     for (const route of routes) {
       await page.goto(route);
@@ -121,23 +126,39 @@ test('theme selection persists, follows the system until selected, and is keyboa
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 });
 
-test('navigation works without JavaScript; reduced motion and blocked storage are supported', async ({
+test('navigation works without JavaScript, including the mobile menu; reduced motion and blocked storage are supported', async ({
   browser,
   page,
 }) => {
-  const context = await browser.newContext({
+  const desktop = await browser.newContext({
+    javaScriptEnabled: false,
+    viewport: { width: 1440, height: 900 },
+  });
+  const noJs = await desktop.newPage();
+  await noJs.goto('http://127.0.0.1:4321/');
+  await noJs
+    .getByRole('navigation', { name: 'Main navigation' })
+    .getByRole('link', { name: 'Research', exact: true })
+    .click();
+  await expect(noJs).toHaveURL(/\/research\/$/);
+  await expect(noJs.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(noJs.getByRole('button')).toHaveCount(0);
+  await desktop.close();
+
+  const mobile = await browser.newContext({
     javaScriptEnabled: false,
     viewport: { width: 375, height: 812 },
   });
-  const noJs = await context.newPage();
-  await noJs.goto('http://127.0.0.1:4321/');
-  await noJs.getByRole('link', { name: 'Research', exact: true }).click();
-  await expect(noJs).toHaveURL(/\/#research$/);
+  const noJsMobile = await mobile.newPage();
+  await noJsMobile.goto('http://127.0.0.1:4321/');
+  await noJsMobile.locator('.site-menu > summary').click();
   await expect(
-    noJs.getByRole('heading', { name: 'Research', exact: true }),
-  ).toBeInViewport();
-  await expect(noJs.getByRole('button')).toHaveCount(0);
-  await context.close();
+    noJsMobile
+      .locator('.site-menu nav')
+      .getByRole('link', { name: 'Research', exact: true }),
+  ).toBeVisible();
+  await mobile.close();
+
   await page.addInitScript(() => {
     Object.defineProperty(window, 'localStorage', {
       get() {
@@ -166,58 +187,58 @@ test('keyboard skip link reaches main content and CV links serve a downloadable 
   ).toBeFocused();
   await page.keyboard.press('Enter');
   await expect(page.locator('main')).toBeFocused();
-  const cv = page.getByRole('link', { name: 'CV', exact: true });
-  await expect(cv).toHaveAttribute('href', '/cv/furkan-emre-bora-cv.pdf');
+  const navCv = page
+    .getByRole('navigation', { name: 'Main navigation' })
+    .getByRole('link', { name: 'CV', exact: true });
+  await expect(navCv).toHaveAttribute('href', '/cv/');
   const response = await page.request.get('/cv/furkan-emre-bora-cv.pdf');
   expect(response.ok()).toBe(true);
   expect(response.headers()['content-type']).toContain('application/pdf');
   expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-');
-  await page.goto('/#contact');
+  await page.goto('/cv/');
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('link', { name: 'Download CV' }).click();
+  await page.getByRole('link', { name: 'Download PDF' }).click();
   expect((await downloadPromise).suggestedFilename()).toBe(
     'furkan-emre-bora-cv.pdf',
   );
 });
 
-test('phone navigation shows every section without scrolling and offers 44px touch targets', async ({
+test('the mobile menu opens with 44px targets and never overflows', async ({
   page,
 }) => {
   for (const width of [320, 375]) {
     await page.setViewportSize({ width, height: 812 });
     await page.goto('/');
-    const nav = page.getByRole('navigation', { name: 'Main navigation' });
     expect(
-      await nav.evaluate(
-        (element) => element.scrollWidth <= element.clientWidth,
-      ),
-      `navigation scrolls sideways at ${width}px`,
+      await page
+        .locator('.masthead-inner')
+        .evaluate((element) => element.scrollWidth <= element.clientWidth),
+      `masthead overflows at ${width}px`,
     ).toBe(true);
-    const targets = [
-      ...(await nav.getByRole('link').all()),
-      page.getByRole('link', { name: 'CV', exact: true }),
-      page.getByRole('button', { name: /Use (dark|light) theme/ }),
-    ];
-    expect(targets).toHaveLength(7);
-    for (const target of targets) {
-      await expect(target).toBeInViewport({ ratio: 1 });
-      const box = (await target.boundingBox())!;
-      expect(box.height, await target.innerText()).toBeGreaterThanOrEqual(44);
+    await page.locator('.site-menu > summary').click();
+    const menuLinks = page.locator('.site-menu nav a');
+    await expect(menuLinks).toHaveCount(5);
+    for (const link of await menuLinks.all()) {
+      await expect(link).toBeVisible();
+      const box = (await link.boundingBox())!;
+      expect(box.height, await link.innerText()).toBeGreaterThanOrEqual(44);
     }
+    const theme = page.getByRole('button', { name: /Use (dark|light) theme/ });
+    expect((await theme.boundingBox())!.height).toBeGreaterThanOrEqual(44);
   }
 });
 
-test('the single page marks the section in view and the timeline links features to records', async ({
+test('pages mark the current section and the About timeline links features to records', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
-  await page.goto('/');
+  await page.goto('/research/');
   const nav = page.getByRole('navigation', { name: 'Main navigation' });
-  await expect(nav.locator('[aria-current]')).toHaveCount(0);
-  await nav.getByRole('link', { name: 'Background', exact: true }).click();
-  await expect(page).toHaveURL(/#background$/);
-  await expect(nav.locator('[aria-current]')).toHaveText('Background');
+  await expect(
+    nav.getByRole('link', { name: 'Research', exact: true }),
+  ).toHaveAttribute('aria-current', 'page');
 
+  await page.goto('/about/');
   const features = page.locator('.track-feature');
   await expect(features).toHaveCount(7);
   const feature = page.locator('.track-feature[data-entry="msc"]');
@@ -227,7 +248,7 @@ test('the single page marks the section in view and the timeline links features 
     'Bezmialem Vakif University',
   );
   await feature.click();
-  await expect(page).toHaveURL(/#msc$/);
+  await expect(page).toHaveURL(/\/about\/#msc$/);
   await expect(page.locator('#msc')).toBeInViewport();
 });
 
@@ -235,7 +256,7 @@ test('supplied images load at their intrinsic proportions on every page', async 
   page,
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  for (const route of ['/', '/work/ecegen/']) {
+  for (const route of ['/', '/work/ecegen/', '/about/']) {
     await page.goto(route);
     await loadImages(page);
     for (const image of await page.locator('main img').all()) {
@@ -254,9 +275,14 @@ test('supplied images load at their intrinsic proportions on every page', async 
 test('capture the production design for visual review', async ({ page }) => {
   const previews = [
     ['/', 'home'],
+    ['/research/', 'research'],
     ['/research/trail-resistance/', 'trail-resistance'],
-    ['/blog/', 'blog'],
+    ['/work/', 'work'],
     ['/work/ecegen/', 'ecegen'],
+    ['/about/', 'about'],
+    ['/cv/', 'cv'],
+    ['/credentials/', 'credentials'],
+    ['/blog/', 'blog'],
   ];
   for (const theme of ['light', 'dark'] as const) {
     await page.emulateMedia({ colorScheme: theme });
@@ -266,7 +292,7 @@ test('capture the production design for visual review', async ({ page }) => {
         await page.goto(route);
         await page.evaluate(() => document.fonts.ready);
         await loadImages(page);
-        // Let the timeline's opening animation finish before capturing.
+        // Let any CSS animations (the career timeline) finish before capturing.
         await page.evaluate(() =>
           Promise.all(
             document.getAnimations().map((a) => a.finished.catch(() => null)),
@@ -295,6 +321,7 @@ test('long-form Markdown and MDX remain readable and accessible in both themes',
       ).toBeVisible();
       await expect(page.locator('table')).toBeVisible();
       await expect(page.locator('pre')).toBeVisible();
+      await expect(page.locator('.heading-anchor').first()).toBeAttached();
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= innerWidth,
@@ -315,7 +342,7 @@ test('long-form Markdown and MDX remain readable and accessible in both themes',
     'A test-only expression: 4.',
   );
   await expect(
-    page.getByRole('heading', { name: 'Related work' }),
+    page.getByRole('heading', { name: 'Related reading' }),
   ).toBeVisible();
 });
 
@@ -324,13 +351,13 @@ test('writing filters show matching articles and recover from an empty result', 
 }) => {
   await routeFixture(page);
   await page.goto('http://content.test/blog/');
-  await expect(page.locator('.writing-list > li:visible')).toHaveCount(2);
+  await expect(page.locator('.post-list > li:visible')).toHaveCount(2);
   await page.getByLabel('Category', { exact: true }).selectOption('Software');
-  await expect(page.locator('.writing-list > li:visible')).toHaveCount(1);
+  await expect(page.locator('.post-list > li:visible')).toHaveCount(1);
   await page.getByLabel('Topic', { exact: true }).selectOption('Notes');
-  await expect(page.locator('.writing-list > li:visible')).toHaveCount(0);
+  await expect(page.locator('.post-list > li:visible')).toHaveCount(0);
   await expect(page.locator('.filter-empty')).toBeVisible();
   await page.getByLabel('Category', { exact: true }).selectOption('');
   await page.getByLabel('Topic', { exact: true }).selectOption('');
-  await expect(page.locator('.writing-list > li:visible')).toHaveCount(2);
+  await expect(page.locator('.post-list > li:visible')).toHaveCount(2);
 });

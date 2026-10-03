@@ -14,6 +14,10 @@ methods:
     Multi-omics integration,
   ]
 order: 1
+role: Project Assistant / Graduate Researcher, Cingoz Lab (Sept 2024 – June 2026)
+question: How do metabolic genes shape resistance to TRAIL in glioblastoma?
+contribution: Bioinformatic analysis of a pooled CRISPR/Cas9 metabolic gene screen — sequencing readout processing and quality assessment, sgRNA-level MAGeCK RRA prioritisation of candidate genes, pathway enrichment, and integration with transcriptomic, metabolomic, and TCGA-GBM data.
+outputs: []
 ---
 
 ## Research context

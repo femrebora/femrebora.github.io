@@ -4,6 +4,7 @@ description: 'An unpublished authoring template for a scientific or technical ar
 publishedDate: 2026-10-03
 tags: [Notes]
 category: Notes
+language: en
 draft: true
 featured: false
 # updatedDate: 2026-10-04

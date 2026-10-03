@@ -22,45 +22,49 @@ const { Content } = await render(entry);
   description={entry.data.description}
   image={entry.data.image}
 >
-  <div class="page detail-shell">
-    <div class="page-narrow">
-      <a class="back-link" href="/#work">
-        <Icon name="arrow-left" /> Selected work
-      </a>
-      <header class="page-head detail-heading">
-        <p class="label">{entry.data.category}</p>
-        <h1>{entry.data.title}</h1>
-        <p class="lede">{entry.data.description}</p>
-      </header>
-      {entry.data.image && <ProjectPreview image={entry.data.image} eager />}
-      <div class="record-bar">
-        <div>
-          <span class="label">Stack</span>
-          <ul>
-            {entry.data.stack.map((item) => (
-              <li>{item}</li>
-            ))}
-          </ul>
-        </div>
-        {(entry.data.website || entry.data.repository) && (
-          <div>
-            <span class="label">Links</span>
-            {entry.data.website && (
-              <a class="link-arrow" href={entry.data.website}>
-                Live website <Icon name="external" />
-              </a>
-            )}
-            {entry.data.repository && (
-              <a class="link-arrow" href={entry.data.repository}>
-                Source repository <Icon name="external" />
-              </a>
-            )}
-          </div>
-        )}
+  <div class="detail-shell">
+    <a class="back-link" href="/work/">
+      <Icon name="arrow-left" /> Selected work
+    </a>
+    <header class="page-head detail-heading">
+      <p class="label">{entry.data.category}</p>
+      <h1>{entry.data.title}</h1>
+      <p class="lede">{entry.data.description}</p>
+    </header>
+    {entry.data.image && <ProjectPreview image={entry.data.image} eager />}
+    <div class="record-bar">
+      <div>
+        <span class="label">Stack</span>
+        <ul>
+          {entry.data.stack.map((item) => (
+            <li>{item}</li>
+          ))}
+        </ul>
       </div>
-      <article class="prose">
-        <Content />
-      </article>
+      {entry.data.contribution && (
+        <div>
+          <span class="label">Contribution</span>
+          <p>{entry.data.contribution}</p>
+        </div>
+      )}
+      {(entry.data.website || entry.data.repository) && (
+        <div>
+          <span class="label">Links</span>
+          {entry.data.website && (
+            <a class="link-arrow" href={entry.data.website}>
+              Live website <Icon name="external" />
+            </a>
+          )}
+          {entry.data.repository && (
+            <a class="link-arrow" href={entry.data.repository}>
+              Source repository <Icon name="external" />
+            </a>
+          )}
+        </div>
+      )}
     </div>
+    <article class="prose">
+      <Content />
+    </article>
   </div>
 </BaseLayout>
