@@ -2,7 +2,7 @@
 
 ## Rendering and routing
 
-Astro builds HTML for `/`, `/research/`, `/writing/`, `/work/`, `/about/`, and all approved content detail pages. A standalone `404.html` supports GitHub Pages. There are no server endpoints at runtime: `rss.xml.ts` executes at build time. Trailing slashes match directory-based static hosting.
+Astro builds HTML for the single page at `/`, the blog index at `/blog/`, and detail pages under `/research/`, `/work/`, and `/blog/` for approved content. Research, background, selected work, the latest posts, and contact are sections of `/`, addressed as `/#research`, `/#background`, `/#work`, `/#blog`, and `/#contact`. A standalone `404.html` supports GitHub Pages. There are no server endpoints at runtime: `rss.xml.ts` executes at build time. Trailing slashes match directory-based static hosting.
 
 The official sitemap integration receives only generated routes. All detail routes use the same content helpers as their indexes. `isPublished` rejects drafts and future-dated writing before routing or rendering. New content is visible only after a build.
 
@@ -29,13 +29,15 @@ CSS tokens define a cool paper background, graphite ink, muted secondary text, a
 
 The site is built around a sticky index rail: section navigation and an "elsewhere" cluster (CV, GitHub, LinkedIn, contact, RSS, theme) on desktop. Below 900px it becomes a top bar: the name, CV link, and theme control share one row, and all five sections fit a second row without sideways scrolling, each with a 44px touch target. It works without JavaScript. Research and work are presented as structured records (kind, status, methods, stack, links) rather than decorative cards, and there is no decorative sequence figure.
 
-The introduction and portrait share one grid (`.intro`) on Home and About: the portrait holds the right column on wide screens and sits beside the name on phones. `ProjectRecord` renders a project on Home and the work index, placing text and screenshot side by side from 1100px and stacking them below that. Supplied images are never cropped: frames size to the image's intrinsic proportions, which a browser test asserts.
+The introduction and portrait share one grid (`.intro`): the portrait holds the right column on wide screens and sits beside the name on phones. `ProjectRecord` renders a project, placing text and screenshot side by side from 1100px and stacking them below that. From 1180px each section pairs a pinned title column with its content, and the page widens to 1560px so large screens are used without stretching text past a readable measure.
+
+`GenomeTrack` draws education, exchange, research, and work as features on one time axis, positioned from the `start` and `end` months in `src/data/profile.ts`. Each feature is a link to its written record in the lists below, so the timeline works without JavaScript; with it, hovering or focusing a feature highlights its record, a readout names it, and a cursor reports the month under the pointer. Labels sit inside a feature when they fit and beside it when they do not. On narrow screens the lanes scroll sideways with the track names pinned. Supplied images are never cropped: frames size to the image's intrinsic proportions, which a browser test asserts.
 
 Article text is limited to 70 characters per line in the reading face, with generous leading, sans-serif hierarchical headings, tables, footnotes, and theme-aware Shiki highlighting. Long code and tables scroll inside the article. The contents list is sticky beside the reading column on larger screens and becomes a normal document section on phones.
 
 ## Client JavaScript
 
-Only theme control and the writing category/topic filter use client-side JavaScript. There is no framework hydration. The theme is set before first paint, respects system preference until explicitly chosen, persists when local storage is available, and remains functional when storage is blocked. Without JavaScript, CSS respects the system theme and all content/navigation remain usable; inactive controls are hidden.
+Client-side JavaScript is limited to theme control, marking the section in view on the rail, the timeline's hover details, and the blog category/topic filter. There is no framework hydration. The theme is set before first paint, respects system preference until explicitly chosen, persists when local storage is available, and remains functional when storage is blocked. Without JavaScript, CSS respects the system theme and all content/navigation remain usable; inactive controls are hidden.
 
 Filters are progressive enhancement: all published articles are visible without scripts. They never determine publication visibility; filtering drafts happens at build time.
 

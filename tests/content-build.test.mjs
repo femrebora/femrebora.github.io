@@ -70,7 +70,7 @@ test(
         },
       );
       const article = await readFile(
-        join(fixture, 'dist/writing/qa-formatting/index.html'),
+        join(fixture, 'dist/blog/qa-formatting/index.html'),
         'utf8',
       );
       for (const expected of [
@@ -80,23 +80,23 @@ test(
         'Table of contents',
         'BlogPosting',
         'min read',
-        '/writing/qa-newer/',
+        '/blog/qa-newer/',
       ])
         assert.ok(article.includes(expected), `Article missing ${expected}`);
       const mdx = await readFile(
-        join(fixture, 'dist/writing/qa-newer/index.html'),
+        join(fixture, 'dist/blog/qa-newer/index.html'),
         'utf8',
       );
       for (const expected of [
         'A test-only expression: 4.',
         'Related work',
         'id="references"',
-        '/writing/qa-formatting/',
+        '/blog/qa-formatting/',
       ])
         assert.ok(mdx.includes(expected), `MDX missing ${expected}`);
       for (const path of [
         'index.html',
-        'writing/index.html',
+        'blog/index.html',
         'rss.xml',
         'sitemap-0.xml',
       ]) {
@@ -112,10 +112,10 @@ test(
         assert.ok(!html.includes('article-template'), `${path} exposed draft`);
       }
       await assert.rejects(
-        access(join(fixture, 'dist/writing/article-template/index.html')),
+        access(join(fixture, 'dist/blog/article-template/index.html')),
       );
       await assert.rejects(
-        access(join(fixture, 'dist/writing/qa-future/index.html')),
+        access(join(fixture, 'dist/blog/qa-future/index.html')),
       );
       // Browser QA uses this isolated artifact; it never enters production dist/.
       await rm(join(root, 'test-results/content-fixture'), {

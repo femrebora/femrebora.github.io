@@ -58,12 +58,9 @@ async function loadImages(page: import('@playwright/test').Page) {
 
 const routes = [
   '/',
-  '/research/',
   '/research/trail-resistance/',
-  '/writing/',
-  '/work/',
+  '/blog/',
   '/work/ecegen/',
-  '/about/',
   '/404.html',
 ];
 
@@ -120,7 +117,7 @@ test('theme selection persists, follows the system until selected, and is keyboa
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
   await page.reload();
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-  await page.getByRole('link', { name: 'About', exact: true }).click();
+  await page.goto('/blog/');
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 });
 
@@ -135,7 +132,10 @@ test('navigation works without JavaScript; reduced motion and blocked storage ar
   const noJs = await context.newPage();
   await noJs.goto('http://127.0.0.1:4321/');
   await noJs.getByRole('link', { name: 'Research', exact: true }).click();
-  await expect(noJs).toHaveURL(/\/research\/$/);
+  await expect(noJs).toHaveURL(/\/#research$/);
+  await expect(
+    noJs.getByRole('heading', { name: 'Research', exact: true }),
+  ).toBeInViewport();
   await expect(noJs.getByRole('button')).toHaveCount(0);
   await context.close();
   await page.addInitScript(() => {
@@ -172,7 +172,7 @@ test('keyboard skip link reaches main content and CV links serve a downloadable 
   expect(response.ok()).toBe(true);
   expect(response.headers()['content-type']).toContain('application/pdf');
   expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-');
-  await page.goto('/about/#cv');
+  await page.goto('/#contact');
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('link', { name: 'Download CV' }).click();
   expect((await downloadPromise).suggestedFilename()).toBe(
@@ -207,11 +207,35 @@ test('phone navigation shows every section without scrolling and offers 44px tou
   }
 });
 
+test('the single page marks the section in view and the timeline links features to records', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.goto('/');
+  const nav = page.getByRole('navigation', { name: 'Main navigation' });
+  await expect(nav.locator('[aria-current]')).toHaveCount(0);
+  await nav.getByRole('link', { name: 'Background', exact: true }).click();
+  await expect(page).toHaveURL(/#background$/);
+  await expect(nav.locator('[aria-current]')).toHaveText('Background');
+
+  const features = page.locator('.track-feature');
+  await expect(features).toHaveCount(7);
+  const feature = page.locator('.track-feature[data-entry="msc"]');
+  await feature.hover();
+  await expect(page.locator('#msc')).toHaveClass(/is-active/);
+  await expect(page.locator('.track-readout')).toContainText(
+    'Bezmialem Vakif University',
+  );
+  await feature.click();
+  await expect(page).toHaveURL(/#msc$/);
+  await expect(page.locator('#msc')).toBeInViewport();
+});
+
 test('supplied images load at their intrinsic proportions on every page', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 375, height: 812 });
-  for (const route of ['/', '/about/', '/work/', '/work/ecegen/']) {
+  for (const route of ['/', '/work/ecegen/']) {
     await page.goto(route);
     await loadImages(page);
     for (const image of await page.locator('main img').all()) {
@@ -230,21 +254,24 @@ test('supplied images load at their intrinsic proportions on every page', async 
 test('capture the production design for visual review', async ({ page }) => {
   const previews = [
     ['/', 'home'],
-    ['/about/', 'about'],
-    ['/research/', 'research'],
     ['/research/trail-resistance/', 'trail-resistance'],
-    ['/writing/', 'writing'],
-    ['/work/', 'work'],
+    ['/blog/', 'blog'],
     ['/work/ecegen/', 'ecegen'],
   ];
   for (const theme of ['light', 'dark'] as const) {
     await page.emulateMedia({ colorScheme: theme });
-    for (const width of [375, 1440]) {
+    for (const width of [375, 1440, 1920]) {
       await page.setViewportSize({ width, height: 960 });
       for (const [route, name] of previews) {
         await page.goto(route);
         await page.evaluate(() => document.fonts.ready);
         await loadImages(page);
+        // Let the timeline's opening animation finish before capturing.
+        await page.evaluate(() =>
+          Promise.all(
+            document.getAnimations().map((a) => a.finished.catch(() => null)),
+          ),
+        );
         await page.screenshot({
           path: `test-results/${name}-${theme}-${width}.png`,
           fullPage: true,
@@ -262,7 +289,7 @@ test('long-form Markdown and MDX remain readable and accessible in both themes',
     await page.emulateMedia({ colorScheme: theme });
     for (const width of [375, 1440]) {
       await page.setViewportSize({ width, height: 960 });
-      await page.goto('http://content.test/writing/qa-formatting/');
+      await page.goto('http://content.test/blog/qa-formatting/');
       await expect(
         page.getByRole('navigation', { name: 'Table of contents' }),
       ).toBeVisible();
@@ -296,7 +323,7 @@ test('writing filters show matching articles and recover from an empty result', 
   page,
 }) => {
   await routeFixture(page);
-  await page.goto('http://content.test/writing/');
+  await page.goto('http://content.test/blog/');
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(2);
   await page.getByLabel('Category', { exact: true }).selectOption('Software');
   await expect(page.locator('.writing-list > li:visible')).toHaveCount(1);

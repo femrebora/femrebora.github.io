@@ -5,7 +5,7 @@ import { profile } from '../data/profile';
 
 export async function GET(context: APIContext) {
   return rss({
-    title: `${profile.name} — Writing`,
+    title: `${profile.name} — Blog`,
     description:
       'Notes and essays on bioinformatics, genomics, research, and scientific computing.',
     site: context.site!,
@@ -13,7 +13,7 @@ export async function GET(context: APIContext) {
       title: post.data.title,
       description: post.data.description,
       pubDate: post.data.publishedDate,
-      link: `/writing/${post.id}/`,
+      link: `/blog/${post.id}/`,
       categories: [post.data.category, ...post.data.tags],
     })),
     customData: '<language>en-gb</language>',

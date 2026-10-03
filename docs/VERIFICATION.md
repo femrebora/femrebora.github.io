@@ -101,6 +101,27 @@ Local verification (Node.js 24.18.0, Playwright Chromium):
 
 Full-page screenshots of Home, About, Research, the thesis page, Writing, Work, and the ECEGEN page were captured at 375 and 1440px in both themes after every image had loaded and decoded, then inspected. Home at 768px, the work index at 1120px, and a keyboard focus ring on the rail were inspected separately. Lighthouse was not remeasured. No commits, pushes, or deployments were performed.
 
+## Single page and timeline — 4 October 2026
+
+At the owner's request the site was merged into one page for use in PhD and job applications, the layout was widened, and "Writing" was renamed "Blog".
+
+- **Routes:** `/research/`, `/work/`, and `/about/` index pages were removed; their content is now sections of `/`. `/writing/` became `/blog/`. Detail pages for the thesis, the ECEGEN project, and posts remain. The site had been public for minutes when these routes changed, so no redirects were added.
+- **Content:** nothing was rewritten or invented. The empty credentials placeholder is no longer shown; the section appears when credentials exist. Timeline entries gained `id`, `short`, `start`, `end`, and `track` fields that restate the existing periods.
+- **Timeline:** a genome-browser-style track of education, exchange, research, and work, described in `ARCHITECTURE.md`.
+- **Width:** the page widens to 1560px with a pinned title column per section from 1180px.
+
+Local verification (Node.js 24.18.0, Playwright Chromium):
+
+| Check                  | Result                                                                                   |
+| ---------------------- | ---------------------------------------------------------------------------------------- |
+| `npm run verify`       | Prettier, Astro check (0 errors, 0 warnings, 0 hints), 3 Node tests, build, site checker |
+| `npm run verify:site`  | 5 HTML pages; local links, assets, and anchors resolve; no template leaks                |
+| `npm run test:browser` | 12 passed, including section tracking and timeline-to-record linking                     |
+| axe accessibility      | No WCAG A/AA violations on all 5 routes in both themes, or on the article fixture        |
+| Responsive checks      | All routes fit 320, 375, 768, 1280, and 1440px without horizontal overflow               |
+
+Full-page screenshots were inspected at 375, 1440, and 1920px in both themes, with the timeline also checked in its hover state and on a phone.
+
 ## Deployment and content limits
 
 The root-domain Astro configuration and GitHub Actions workflow are ready for review. Publishing still requires the owner to select GitHub Actions in Pages settings and authorize a commit/push. Neither deployment nor settings changes were attempted.

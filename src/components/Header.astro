@@ -1,16 +1,16 @@
 ---
 import { profile } from '../data/profile';
 import Icon from './Icon.astro';
-const links: [string, string][] = [
-  ['/', 'Home'],
-  ['/research/', 'Research'],
-  ['/writing/', 'Writing'],
-  ['/work/', 'Work'],
-  ['/about/', 'About'],
+// Sections of the single page. `route` is the detail-page prefix that belongs to a section.
+const links: { id: string; label: string; route?: string }[] = [
+  { id: 'research', label: 'Research', route: '/research/' },
+  { id: 'background', label: 'Background' },
+  { id: 'work', label: 'Work', route: '/work/' },
+  { id: 'blog', label: 'Blog', route: '/blog/' },
+  { id: 'contact', label: 'Contact' },
 ];
 const path = Astro.url.pathname;
-const isCurrent = (href: string) =>
-  href === '/' ? path === '/' : path.startsWith(href);
+const onHome = path === '/';
 ---
 
 <header class="rail">
@@ -40,8 +40,12 @@ const isCurrent = (href: string) =>
     </div>
   </div>
   <nav class="rail-nav" aria-label="Main navigation">
-    {links.map(([href, label]) => (
-      <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>
+    {links.map(({ id, label, route }) => (
+      <a
+        href={`/#${id}`}
+        data-section={onHome ? id : undefined}
+        aria-current={route && path.startsWith(route) ? 'page' : undefined}
+      >
         {label}
       </a>
     ))}
@@ -97,5 +101,40 @@ const isCurrent = (href: string) =>
     preference.addEventListener('change', (event) => {
       if (!manual) apply(event.matches);
     });
+  }
+
+  // On the single page, the rail marks whichever section is being read.
+  const sectionLinks = [
+    ...document.querySelectorAll<HTMLAnchorElement>(
+      '.rail-nav a[data-section]',
+    ),
+  ];
+  if (sectionLinks.length && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          for (const link of sectionLinks) {
+            if (link.dataset.section === entry.target.id)
+              link.setAttribute('aria-current', 'location');
+            else link.removeAttribute('aria-current');
+          }
+        }
+      },
+      { rootMargin: '-30% 0px -60% 0px' },
+    );
+    for (const link of sectionLinks) {
+      const section = document.getElementById(link.dataset.section ?? '');
+      if (section) observer.observe(section);
+    }
+    // Above the first section nothing is current.
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (window.scrollY < 80)
+          for (const link of sectionLinks) link.removeAttribute('aria-current');
+      },
+      { passive: true },
+    );
   }
 </script>

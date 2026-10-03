@@ -1,0 +1,190 @@
+---
+import type { TimelineEntry, TrackId } from '../data/profile';
+
+interface Props {
+  entries: TimelineEntry[];
+}
+const { entries } = Astro.props;
+
+const TRACKS: { id: TrackId; label: string }[] = [
+  { id: 'education', label: 'Education' },
+  { id: 'exchange', label: 'Exchange' },
+  { id: 'research', label: 'Research' },
+  { id: 'work', label: 'Clinical & industry' },
+];
+
+const NARROWEST_LANE_PX_PER_PERCENT = 5.4;
+const LABEL_PX_PER_CHAR = 7.5;
+
+/** Months since year 0 for a YYYY-MM string. */
+const toMonths = (value: string) => {
+  const [year, month] = value.split('-').map(Number);
+  return year! * 12 + (month! - 1);
+};
+const now = new Date();
+const nowMonths = now.getUTCFullYear() * 12 + now.getUTCMonth();
+const firstYear = Math.min(
+  ...entries.map((entry) => Number(entry.start.slice(0, 4))),
+);
+const lastYear = now.getUTCFullYear() + 1;
+const domainStart = firstYear * 12;
+const span = lastYear * 12 - domainStart;
+const percent = (months: number) => ((months - domainStart) / span) * 100;
+
+const years = Array.from(
+  { length: lastYear - firstYear },
+  (_, index) => firstYear + index,
+);
+const tracks = TRACKS.map((track) => ({
+  ...track,
+  features: entries
+    .filter((entry) => entry.track === track.id)
+    .map((entry) => {
+      const start = toMonths(entry.start);
+      // An end month is inclusive, so the feature runs to the start of the next one.
+      const end = entry.end ? toMonths(entry.end) + 1 : nowMonths + 1;
+      const left = percent(start);
+      const width = percent(end) - left;
+      // Label placement, sized against the narrowest lane the track is drawn at.
+      const room = width * NARROWEST_LANE_PX_PER_PERCENT;
+      const fits = (text: string) =>
+        text.length * LABEL_PX_PER_CHAR + 18 < room;
+      const inside = fits(entry.title) || fits(entry.short);
+      return {
+        entry,
+        ongoing: !entry.end,
+        left,
+        width,
+        text: fits(entry.title) ? entry.title : entry.short,
+        placement: inside ? 'inside' : left > 60 ? 'before' : 'after',
+      };
+    }),
+})).filter((track) => track.features.length > 0);
+let order = 0;
+---
+
+<figure class="track" data-first-year={firstYear} data-last-year={lastYear}>
+  <figcaption class="track-caption">
+    Education, research, and work on one time axis, {firstYear} to the present.
+    Select a feature to jump to its record.
+  </figcaption>
+  <div class="track-scroll">
+    <div class="track-canvas">
+      <div class="track-row track-axis" aria-hidden="true">
+        <span class="track-name">Year</span>
+        <div class="track-lane">
+          {years.map((year) => (
+            <span
+              class="track-tick"
+              style={`left:${percent(year * 12).toFixed(3)}%`}
+            >
+              {year}
+            </span>
+          ))}
+        </div>
+      </div>
+      {tracks.map((track) => (
+        <div class="track-row">
+          <span class="track-name">{track.label}</span>
+          <div class="track-lane">
+            {track.features.map(
+              ({ entry, ongoing, left, width, text, placement }) => (
+                <a
+                  class:list={[
+                    'track-feature',
+                    `label-${placement}`,
+                    { 'is-ongoing': ongoing },
+                  ]}
+                  href={`#${entry.id}`}
+                  data-entry={entry.id}
+                  data-readout={`${entry.title} · ${entry.institution} · ${entry.period}`}
+                  style={`left:${left.toFixed(3)}%;width:${width.toFixed(3)}%;--i:${order++}`}
+                >
+                  <span class="track-feature-label">{text}</span>
+                  <span class="sr-only">
+                    : {entry.title}, {entry.institution}, {entry.period}
+                  </span>
+                </a>
+              ),
+            )}
+          </div>
+        </div>
+      ))}
+      <div class="track-cursor" aria-hidden="true" hidden>
+        <span></span>
+      </div>
+    </div>
+  </div>
+  <p class="track-readout" aria-hidden="true">
+    Hover or focus a feature to read it here.
+  </p>
+</figure>
+<script>
+  const MONTHS = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  for (const track of document.querySelectorAll<HTMLElement>('.track')) {
+    const readout = track.querySelector<HTMLElement>('.track-readout')!;
+    const idle = readout.textContent ?? '';
+    const features = track.querySelectorAll<HTMLElement>('.track-feature');
+    const record = (feature: HTMLElement) =>
+      document.getElementById(feature.dataset.entry ?? '');
+
+    // A feature and its written record light up together.
+    for (const feature of features) {
+      const activate = () => {
+        readout.textContent = feature.dataset.readout ?? idle;
+        readout.classList.add('is-live');
+        record(feature)?.classList.add('is-active');
+      };
+      const release = () => {
+        readout.textContent = idle;
+        readout.classList.remove('is-live');
+        record(feature)?.classList.remove('is-active');
+      };
+      feature.addEventListener('pointerenter', activate);
+      feature.addEventListener('focus', activate);
+      feature.addEventListener('pointerleave', release);
+      feature.addEventListener('blur', release);
+    }
+
+    // On narrow screens the lanes scroll; open at the most recent years.
+    const scroller = track.querySelector<HTMLElement>('.track-scroll')!;
+    scroller.scrollLeft = scroller.scrollWidth;
+
+    // A position cursor reads out the month under the pointer, as a genome browser would.
+    const canvas = track.querySelector<HTMLElement>('.track-canvas')!;
+    const lane = track.querySelector<HTMLElement>('.track-lane')!;
+    const cursor = track.querySelector<HTMLElement>('.track-cursor')!;
+    const label = cursor.querySelector('span')!;
+    const firstYear = Number(track.dataset.firstYear);
+    const months = (Number(track.dataset.lastYear) - firstYear) * 12;
+    canvas.addEventListener('pointermove', (event) => {
+      if (event.pointerType !== 'mouse') return;
+      const box = lane.getBoundingClientRect();
+      const ratio = (event.clientX - box.left) / box.width;
+      if (ratio < 0 || ratio > 1) {
+        cursor.hidden = true;
+        return;
+      }
+      const month = Math.min(months - 1, Math.floor(ratio * months));
+      cursor.hidden = false;
+      cursor.style.left = `${event.clientX - canvas.getBoundingClientRect().left}px`;
+      label.textContent = `${MONTHS[month % 12]} ${firstYear + Math.floor(month / 12)}`;
+    });
+    canvas.addEventListener('pointerleave', () => {
+      cursor.hidden = true;
+    });
+  }
+</script>

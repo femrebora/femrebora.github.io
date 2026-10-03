@@ -2,17 +2,20 @@
 
 Source for [femrebora.github.io](https://femrebora.github.io), the personal site of F. Emre Bora, a bioinformatician working across clinical genomics, cancer functional genomics, and computational biology.
 
-The site presents research, writing, selected software work, and a CV. It is a static site with no backend, no analytics, and no third-party requests.
+The site presents research, background, selected software work, a blog, and a CV. It is a static site with no backend, no analytics, and no third-party requests.
 
 ## What is on the site
 
-| Section  | Contents                                                                    |
-| -------- | --------------------------------------------------------------------------- |
-| Home     | Introduction, featured research, selected work, and background              |
-| Research | Research interests and the MSc thesis on TRAIL resistance in glioblastoma   |
-| Writing  | Notes and essays on bioinformatics and scientific computing, with RSS       |
-| Work     | Selected technical projects, including the ECEGEN website                   |
-| About    | Profile, experience, education, languages, areas of work, and a CV download |
+The site is a single page with a section for each part of the profile, plus detail pages for the thesis, projects, and blog posts.
+
+| Section       | Contents                                                                                    |
+| ------------- | ------------------------------------------------------------------------------------------- |
+| Introduction  | Who I am, current role and affiliation, and a CV download                                   |
+| Research      | The MSc thesis on TRAIL resistance in glioblastoma, research interests, and methods         |
+| Background    | A genome-browser-style timeline of education, research, and work, with skills and languages |
+| Selected work | Technical projects, including the ECEGEN website                                            |
+| Blog          | Notes and essays on bioinformatics and scientific computing, with RSS                       |
+| Contact       | Email, LinkedIn, GitHub, and the CV                                                         |
 
 ## Built with
 
@@ -22,11 +25,11 @@ The site presents research, writing, selected software work, and a CV. It is a s
 - Self-hosted IBM Plex Sans, Source Serif 4, and IBM Plex Mono
 - GitHub Actions for verification and deployment to GitHub Pages
 
-The only client-side JavaScript is the theme switch and the writing filters. Everything else, including navigation, works without it.
+Client-side JavaScript is limited to the theme switch, section tracking in the navigation, timeline hover details, and the blog filters. All content and navigation work without it.
 
 ## Design
 
-A sticky navigation rail on wide screens that becomes a compact top bar on phones, light and dark themes with a single warm accent, and a serif reading face for long-form text. Research and projects are shown as structured records rather than cards. Motion is limited to hover feedback and a short cross-fade between pages, and is switched off for visitors who prefer reduced motion.
+A sticky navigation rail on wide screens that becomes a compact top bar on phones, light and dark themes with a single warm accent, and a serif reading face for long-form text. The background section draws education, research, and work as features on a shared time axis, in the manner of a genome browser; each feature links to its written record. Research and projects are shown as structured records rather than cards. Motion is limited to hover feedback and a short cross-fade between pages, and is switched off for visitors who prefer reduced motion.
 
 ## Run it locally
 

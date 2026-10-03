@@ -10,7 +10,7 @@ const { entries, showLabel = true } = Astro.props;
 
 <ol class="timeline">
   {entries.map((entry) => (
-    <li>
+    <li id={entry.id}>
       <div class="timeline-when">
         {showLabel && <span class="label">{entry.label}</span>}
         {entry.period && <span class="timeline-kind">{entry.period}</span>}

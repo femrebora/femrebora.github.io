@@ -4,7 +4,7 @@ Notes for adding content, publishing, and keeping dependencies in order. The [RE
 
 ## Add an article
 
-Copy `src/content/writing/article-template.md` to a descriptive filename such as `my-analysis.md`. The filename becomes `/writing/my-analysis/`.
+Copy `src/content/writing/article-template.md` to a descriptive filename such as `my-analysis.md`. The filename becomes `/blog/my-analysis/`.
 
 1. Replace the title, description, publication date, category, tags, and entire body.
 2. Leave `draft: true` while writing. Drafts are excluded in development **and** production, including detail pages, homepage lists, RSS, sitemap, and previous/next links.
@@ -23,6 +23,7 @@ Images in frontmatter use a public path and meaningful alt text. Optimize them b
 - **Research:** add a Markdown file to `src/content/research/` using the existing entry as a model. Set `draft: false`, `kind`, `status`, `methods`, and `order`. Available kinds include thesis, publication, poster, presentation, dataset, and software. `featured: true` adds the entry to the homepage.
 - **Work:** add a Markdown file to `src/content/projects/`; include verified stack, category, description, and links. Use commit-pinned source links for factual claims.
 - **Notes:** copy the draft in `src/content/notes/`. Original observations use `kind: thought`; sourced quotations require `kind: quotation`, `author`, `source: { title, url }`, and `locator` (page/section). Only published featured notes are rendered. The site launches without an invented personal observation.
+- **Timeline:** each entry in `experience` and `education` in `src/data/profile.ts` needs `id`, `short` (the compact timeline name), `start` and `end` as `YYYY-MM` (omit `end` while ongoing), and `track`. Keep them consistent with the displayed `period`.
 - **CV and background:** edit `src/data/profile.ts`. Education, employment, tools, languages, email, and LinkedIn are populated from the owner-supplied September 2026 CV. The public copy at `public/cv/furkan-emre-bora-cv.pdf` has the telephone number and telephone links removed. Replace it with an appropriately sanitized copy when updating the CV; keep `profile.cv` in sync.
 - **Credentials:** add entries to `credentials` in `src/data/profile.ts`: title, institution, date, description, optional credentialURL, optional preview `{ src, alt }`. Use only approved, sanitized previews. Remove signatures, identification numbers, serial numbers, private QR codes, addresses, and unnecessary personal information before placing anything in `public/`.
 - **Contact:** set `profile.linkedin` and `profile.email` to confirmed public values. Empty values are never turned into fabricated links.

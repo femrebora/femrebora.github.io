@@ -44,8 +44,8 @@ const related = (await getProjects()).filter((project) =>
 >
   <div class="page detail-shell">
     <div class="page-inner">
-      <a class="back-link" href="/writing/">
-        <Icon name="arrow-left" /> All writing
+      <a class="back-link" href="/blog/">
+        <Icon name="arrow-left" /> Blog
       </a>
       <header class="page-head detail-heading article-heading">
         <p class="label">{entry.data.category}</p>
@@ -129,13 +129,13 @@ const related = (await getProjects()).filter((project) =>
           {(older || newer) && (
             <nav class="article-pagination" aria-label="More writing">
               {older && (
-                <a href={`/writing/${older.id}/`}>
+                <a href={`/blog/${older.id}/`}>
                   <span>← Previous article</span>
                   {older.data.title}
                 </a>
               )}
               {newer && (
-                <a href={`/writing/${newer.id}/`}>
+                <a href={`/blog/${newer.id}/`}>
                   <span>Next article →</span>
                   {newer.data.title}
                 </a>

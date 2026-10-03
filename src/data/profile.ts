@@ -45,29 +45,30 @@ export const interests = [
   },
 ];
 
+export type TrackId = 'education' | 'exchange' | 'research' | 'work';
 export interface TimelineEntry {
+  id: string;
+  /** Compact name used on the timeline track. */
+  short: string;
   label: string;
   title: string;
   description: string;
-  period?: string;
+  period: string;
+  /** Inclusive months as YYYY-MM, mirroring `period`; omit `end` while ongoing. */
+  start: string;
+  end?: string;
+  track: TrackId;
   institution?: string;
   href?: string;
 }
 
 // Source: owner-supplied CV, updated September 2026. Exchange study is not a separate degree.
-export const researchExperience: TimelineEntry[] = [
-  {
-    label: 'Graduate research',
-    title: 'Functional genetics in glioblastoma',
-    period: 'Sept 2024 – June 2026',
-    institution: 'Bezmialem Vakif University · Cingoz Lab',
-    description:
-      'Bioinformatic analysis of a CRISPR/Cas9-based metabolic gene screen investigating TRAIL resistance.',
-    href: '/research/trail-resistance/',
-  },
-];
 export const experience: TimelineEntry[] = [
   {
+    id: 'ecegen',
+    short: 'Ecegen',
+    start: '2026-01',
+    track: 'work',
     label: 'Clinical bioinformatics',
     title: 'Bioinformatician',
     institution: 'Ecegen Genetic Diseases Assessment Center',
@@ -76,6 +77,11 @@ export const experience: TimelineEntry[] = [
       'Genomic data analysis and variant interpretation for clinical and research-oriented genetic testing. NGS quality control, alignment, annotation, filtering, and prioritization, alongside reproducible Linux workflows and pipeline automation.',
   },
   {
+    id: 'graduate-research',
+    short: 'Cingoz Lab',
+    start: '2024-09',
+    end: '2026-06',
+    track: 'research',
     label: 'Graduate research',
     title: 'Project Assistant / Graduate Researcher',
     institution:
@@ -86,6 +92,11 @@ export const experience: TimelineEntry[] = [
     href: '/research/trail-resistance/',
   },
   {
+    id: 'istinye-internship',
+    short: 'Istinye',
+    start: '2022-06',
+    end: '2022-09',
+    track: 'work',
     label: 'Clinical genetics internship',
     title: 'Intern',
     institution: 'Istinye University Genetic Diseases Diagnostic Center',
@@ -94,6 +105,11 @@ export const experience: TimelineEntry[] = [
       'Clinical genetics and cytogenetic workflows under laboratory specialist supervision. Review of VCF, BAM, and BED datasets, genomic annotation assessment, and mutation detection and microsatellite instability analysis using SeqScape.',
   },
   {
+    id: 'biofarma-internship',
+    short: 'Biofarma',
+    start: '2020-06',
+    end: '2020-08',
+    track: 'work',
     label: 'Pharmaceutical internship',
     title: 'Intern',
     institution: 'Biofarma Pharmaceutical Company',
@@ -104,6 +120,11 @@ export const experience: TimelineEntry[] = [
 ];
 export const education: TimelineEntry[] = [
   {
+    id: 'msc',
+    short: 'MSc',
+    start: '2024-09',
+    end: '2026-07',
+    track: 'education',
     label: 'Master’s degree',
     title: 'MSc · Biotechnology',
     institution: 'Bezmialem Vakif University',
@@ -113,6 +134,11 @@ export const education: TimelineEntry[] = [
     href: '/research/trail-resistance/',
   },
   {
+    id: 'bsc',
+    short: 'BSc',
+    start: '2017-09',
+    end: '2023-06',
+    track: 'education',
     label: 'Bachelor’s degree',
     title: 'BSc · Bioinformatics and Genetics',
     institution: 'Kadir Has University',
@@ -121,34 +147,17 @@ export const education: TimelineEntry[] = [
       'English-taught program. Project: Computational and in Vitro Analysis of GAT-3 Structure and Function as a Potential Therapeutic Target. Coursework included bioinformatics, computational drug design, and molecular modeling and simulations.',
   },
   {
+    id: 'erasmus',
+    short: 'Erasmus',
+    start: '2020-09',
+    end: '2021-06',
+    track: 'exchange',
     label: 'Erasmus exchange',
     title: 'Biology · Exchange study',
     institution: 'Universidad de A Coruña',
     period: 'Sept 2020 – June 2021',
     description:
       'Erasmus coursework in molecular techniques, genomic analysis, and statistics, with instruction in Spanish. Project: Computational Analysis of Viral Mutations.',
-  },
-];
-export const backgroundPreview: TimelineEntry[] = [
-  {
-    ...experience[0]!,
-    description:
-      'Clinical genomic analysis, variant interpretation, and reproducible NGS workflows.',
-  },
-  researchExperience[0]!,
-  {
-    ...education[0]!,
-    description:
-      'Graduate study in biotechnology, with thesis research in functional cancer genomics.',
-  },
-];
-export const selectedWork: TimelineEntry[] = [
-  {
-    label: 'Selected technical work',
-    title: 'ECEGEN website',
-    description:
-      'A public-facing website for a genetic diseases evaluation center.',
-    href: '/work/ecegen/',
   },
 ];
 export const capabilities = [
