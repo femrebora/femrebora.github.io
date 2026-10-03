@@ -2,7 +2,7 @@
 
 Source for [femrebora.github.io](https://femrebora.github.io), the personal site of F. Emre Bora, a bioinformatician working across clinical genomics, cancer functional genomics, and computational biology.
 
-The site is a small research journal: a typography-led homepage with teasers, plus dedicated pages for research, writing, selected work, background, CV, and credentials. It is a static site with no backend, no analytics, and no third-party requests.
+The site is a small research journal: a typography-led homepage with teasers, plus dedicated pages for research, writing, selected work, background, and CV. It is a static site with no backend, no analytics, and no third-party requests.
 
 ## Pages
 
@@ -14,8 +14,6 @@ The site is a small research journal: a typography-led homepage with teasers, pl
 | `/work/`        | Selected work, including the ECEGEN website case study                                     |
 | `/about/`       | Narrative, education and experience, the career timeline, skills, and languages            |
 | `/cv/`          | A printable HTML CV built from shared data, with a link to the sanitized PDF               |
-| `/credentials/` | Certificates and education evidence, with an honest empty state until entries are approved |
-
 Research and project detail pages keep their existing paths (`/research/trail-resistance/`, `/work/ecegen/`), and the homepage keeps the legacy anchors `#research`, `#background`, `#work`, `#blog`, and `#contact`.
 
 ## Built with
@@ -65,7 +63,7 @@ npm run test:browser
 src/
   components/    Masthead, records, post list, career timeline, icons
   content/       Writing, research, projects, and notes in Markdown/MDX
-  data/          Profile, experience, education, skills, and credentials
+  data/          Profile, experience, education, skills, and languages
   layouts/       Shared document shell, metadata, and themes
   pages/         Routes, RSS feed, and 404
   styles/        Design tokens and all styling

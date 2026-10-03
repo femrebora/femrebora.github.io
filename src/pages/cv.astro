@@ -7,7 +7,6 @@ import {
   education,
   capabilities,
   languages,
-  credentials,
 } from '../data/profile';
 ---
 
@@ -101,15 +100,6 @@ import {
       </dl>
     </section>
 
-    <section class="cv-section">
-      <h2>Credentials</h2>
-      <p>
-        {credentials.length > 0
-          ? `${credentials.length} published credential${credentials.length === 1 ? '' : 's'}. `
-          : 'No credentials have been approved for publication yet. '}
-        <a href="/credentials/">See the credentials page</a>.
-      </p>
-    </section>
   </div>
   <script>
     document

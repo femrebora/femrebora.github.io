@@ -2,7 +2,7 @@
 
 ## Rendering and routing
 
-Astro builds static HTML for a set of pages: the homepage at `/`; indexes at `/research/`, `/work/`, `/blog/`, `/about/`, `/cv/`, and `/credentials/`; and detail pages under `/research/` and `/work/` plus `/blog/[slug]/`. A standalone `404.html` supports GitHub Pages. There are no server endpoints at runtime: `rss.xml.ts` executes at build time. Trailing slashes match directory-based static hosting.
+Astro builds static HTML for a set of pages: the homepage at `/`; indexes at `/research/`, `/work/`, `/blog/`, `/about/`, and `/cv/`; and detail pages under `/research/` and `/work/` plus `/blog/[slug]/`. A standalone `404.html` supports GitHub Pages. There are no server endpoints at runtime: `rss.xml.ts` executes at build time. Trailing slashes match directory-based static hosting.
 
 The homepage is an overview, not the whole site: it introduces the work and links to the dedicated pages. It keeps the legacy anchors `#research`, `#background`, `#work`, `#blog`, and `#contact` so older links still resolve. `/blog/` is the canonical writing index; the navigation label is "Writing". Research and project detail routes keep their existing paths.
 
@@ -19,7 +19,7 @@ The official sitemap integration receives only generated routes. All detail rout
 
 Every collection has title, description, draft (defaults to true), featured, and tags. Schemas run at build time. Dates use UTC when rendered. Updated dates cannot precede publication dates. Hero images require nonempty alt text. Writing entries carry a `language` field (`en` or `tr`) used for the document `lang`; it defaults to `en` and no empty language switcher is rendered.
 
-`src/data/profile.ts` keeps personal data separate from presentation. Typed arrays hold experience, education, credentials, capabilities, and languages. Biography, education, employment, tools, and contact links come from the owner-supplied September 2026 CV. The Erasmus period is identified as exchange study. The public PDF is a sanitized copy with phone details removed; the original is not stored in the repository. Credentials remain pending because issuer/date details were not supplied. There are no fabricated employers, degrees, dates, credentials, quotes, research findings, or published writing.
+`src/data/profile.ts` keeps personal data separate from presentation. Typed arrays hold experience, education, capabilities, and languages. Biography, education, employment, tools, and contact links come from the owner-supplied September 2026 CV. The Erasmus period is identified as exchange study. The public PDF is a sanitized copy with phone details removed; the original is not stored in the repository. There are no fabricated employers, degrees, dates, quotes, research findings, or published writing.
 
 The research entry reflects the context supplied by the owner; its question and contribution fields restate the thesis aim and the documented analysis work, with the cautious "candidates require validation" wording preserved. The ECEGEN entry is limited to the site's public-facing features and avoids claiming sole authorship.
 

@@ -1447,46 +1447,6 @@
   gap: 0 56px;
 }
 
-/* ---------- Credentials ---------- */
-
-.credential-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.credential {
-  border-top: 1px solid var(--rule);
-  padding-block: 26px;
-}
-.credential-list li:first-child {
-  border-top: 0;
-  padding-top: 0;
-}
-.credential h3 {
-  font-family: var(--font-display);
-  font-size: 22px;
-  font-weight: 500;
-}
-.credential-meta {
-  font-size: 13.5px;
-  color: var(--muted);
-  margin-block: 6px 10px;
-}
-.credential p {
-  font-size: 15px;
-  color: var(--ink-soft);
-  max-width: 66ch;
-}
-.credential img {
-  display: block;
-  margin-top: 16px;
-  border: 1px solid var(--rule);
-  border-radius: var(--radius);
-}
-.credential .link-arrow {
-  margin-top: 8px;
-}
-
 /* ---------- CV page ---------- */
 
 .cv {

@@ -206,14 +206,3 @@ export const languages = [
   { name: 'English', description: 'IELTS Academic: 6.0/9.0' },
   { name: 'Spanish', description: 'Limited working proficiency' },
 ];
-
-export interface Credential {
-  title: string;
-  institution: string;
-  date: string;
-  description: string;
-  credentialURL?: string;
-  preview?: { src: string; alt: string };
-}
-// TODO: Add verified credentials and only sanitized, approved previews.
-export const credentials: Credential[] = [];

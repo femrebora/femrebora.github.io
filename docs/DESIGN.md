@@ -26,4 +26,4 @@ To add an article:
 
 Longer articles (four or more second-/third-level headings) get a table of contents; section headings get small link anchors. Tables, footnotes, blockquotes, highlighted code, references, related reading, and previous/next links are supported.
 
-To add a credential, add an entry to `credentials` in `src/data/profile.ts` (title, institution, date, description, optional `credentialURL`, optional sanitized `preview`). The credentials page shows an honest empty state until an entry exists. Only sanitized documents belong in `public/`. See [Maintaining the site](MAINTAINING.md) for research, work, and timeline entries, and [the content backlog](CONTENT-TODO.md) for missing owner-supplied material.
+See [Maintaining the site](MAINTAINING.md) for adding research, work, and timeline entries, and [the content backlog](CONTENT-TODO.md) for missing owner-supplied material.

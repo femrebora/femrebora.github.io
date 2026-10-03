@@ -64,7 +64,6 @@ const routes = [
   '/work/ecegen/',
   '/about/',
   '/cv/',
-  '/credentials/',
   '/blog/',
   '/404.html',
 ];
@@ -281,7 +280,6 @@ test('capture the production design for visual review', async ({ page }) => {
     ['/work/ecegen/', 'ecegen'],
     ['/about/', 'about'],
     ['/cv/', 'cv'],
-    ['/credentials/', 'credentials'],
     ['/blog/', 'blog'],
   ];
   for (const theme of ['light', 'dark'] as const) {

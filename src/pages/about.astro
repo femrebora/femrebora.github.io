@@ -10,7 +10,6 @@ import {
   education,
   capabilities,
   languages,
-  credentials,
 } from '../data/profile';
 ---
 
@@ -74,14 +73,6 @@ import {
       </div>
     ))}
   </dl>
-
-  <h2 class="subsection-title">Credentials</h2>
-  <p class="meta">
-    {credentials.length > 0
-      ? `${credentials.length} published credential${credentials.length === 1 ? '' : 's'}. `
-      : 'No credentials have been approved for publication yet. '}
-    <a href="/credentials/">See the credentials page</a>.
-  </p>
 
   <h2 class="subsection-title" id="contact">
     Contact

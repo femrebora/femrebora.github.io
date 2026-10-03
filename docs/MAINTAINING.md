@@ -18,13 +18,12 @@ Longer articles (four or more second-/third-level headings) receive a table of c
 
 Images in frontmatter use a public path and meaningful alt text. Optimize them before adding them to `public/` (prefer WebP/AVIF). Do not publish confidential data in figures, frontmatter, references, or filenames.
 
-## Add research, notes, work, and credentials
+## Add research, notes, and work
 
 - **Research:** add a Markdown file to `src/content/research/` using the existing entry as a model. Set `draft: false`, `kind`, `status`, `methods`, `order`, and the optional `role`, `question`, `contribution`, and `outputs` fields. `featured: true` promotes the entry to the homepage spotlight. Keep screen-derived candidates framed as unvalidated.
 - **Work:** add a Markdown file to `src/content/projects/`; include verified stack, category, description, links, and a cautious `contribution`. Use commit-pinned source links for factual claims. `featured: true` promotes the entry to the homepage.
 - **Notes:** copy the draft in `src/content/notes/`. Original observations use `kind: thought`; sourced quotations require `kind: quotation`, `author`, `source: { title, url }`, and `locator` (page/section). Only published featured notes are rendered. The site launches without an invented personal observation.
 - **Timeline:** each entry in `experience` and `education` in `src/data/profile.ts` needs `id`, `short` (the compact timeline name), `start` and `end` as `YYYY-MM` (omit `end` while ongoing), and `track`. Keep them consistent with the displayed `period`.
-- **Credentials:** add entries to `credentials` in `src/data/profile.ts`: title, institution, date, description, optional `credentialURL`, optional preview `{ src, alt }`. The `/credentials/` page shows an honest empty state until an entry exists, and only supplied information is rendered. Use only approved, sanitized previews.
 - **CV and background:** edit `src/data/profile.ts`; `/cv/` is generated from it, so a single edit updates both the page and the printable HTML CV. Education, employment, tools, languages, email, and LinkedIn are populated from the owner-supplied September 2026 CV. The public copy at `public/cv/furkan-emre-bora-cv.pdf` has the telephone number and telephone links removed. Replace it with an appropriately sanitized copy when updating the CV; keep `profile.cv` in sync. Report any website/PDF discrepancy rather than changing the PDF silently.
 - **Contact:** set `profile.linkedin` and `profile.email` to confirmed public values. Empty values are never turned into fabricated links.
 
