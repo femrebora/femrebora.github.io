@@ -1,0 +1,101 @@
+---
+import { profile } from '../data/profile';
+import Icon from './Icon.astro';
+const links: [string, string][] = [
+  ['/', 'Home'],
+  ['/research/', 'Research'],
+  ['/writing/', 'Writing'],
+  ['/work/', 'Work'],
+  ['/about/', 'About'],
+];
+const path = Astro.url.pathname;
+const isCurrent = (href: string) =>
+  href === '/' ? path === '/' : path.startsWith(href);
+---
+
+<header class="rail">
+  <div class="rail-top">
+    <a class="rail-brand" href="/">
+      <span class="rail-name">{profile.name}</span>
+      <span class="rail-role">Bioinformatics / Computational biology</span>
+    </a>
+    <div class="rail-quick">
+      <a class="icon-btn" href={profile.cv || '/about/#cv'} download>
+        <Icon name="download" /> CV
+      </a>
+      <button
+        class="theme-toggle"
+        type="button"
+        aria-label="Use dark theme"
+        aria-pressed="false"
+        hidden
+      >
+        <span class="theme-sun">
+          <Icon name="sun" />
+        </span>
+        <span class="theme-moon">
+          <Icon name="moon" />
+        </span>
+      </button>
+    </div>
+  </div>
+  <nav class="rail-nav" aria-label="Main navigation">
+    {links.map(([href, label]) => (
+      <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>
+        {label}
+      </a>
+    ))}
+  </nav>
+  <div class="rail-actions">
+    <span class="label">Elsewhere</span>
+    <a href={profile.github}>
+      <Icon name="github" /> GitHub
+    </a>
+    {profile.linkedin && (
+      <a href={profile.linkedin}>
+        <Icon name="linkedin" /> LinkedIn
+      </a>
+    )}
+    <a href={profile.email ? `mailto:${profile.email}` : '/about/#contact'}>
+      <Icon name="mail" /> Contact
+    </a>
+    <a href="/rss.xml">
+      <Icon name="rss" /> RSS
+    </a>
+  </div>
+</header>
+<script>
+  const control = document.querySelector<HTMLButtonElement>('.theme-toggle');
+  const preference = window.matchMedia('(prefers-color-scheme: dark)');
+  let manual = false;
+  try {
+    manual = ['light', 'dark'].includes(localStorage.getItem('theme') || '');
+  } catch {
+    /* Storage is optional. */
+  }
+  const apply = (dark: boolean) => {
+    document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    control?.setAttribute('aria-pressed', String(dark));
+    control?.setAttribute(
+      'aria-label',
+      dark ? 'Use light theme' : 'Use dark theme',
+    );
+  };
+  if (control) {
+    control.hidden = false;
+    apply(document.documentElement.dataset.theme === 'dark');
+    control.addEventListener('click', () => {
+      const dark = document.documentElement.dataset.theme !== 'dark';
+      manual = true;
+      apply(dark);
+      try {
+        localStorage.setItem('theme', dark ? 'dark' : 'light');
+      } catch {
+        /* Keep working without storage. */
+      }
+    });
+    preference.addEventListener('change', (event) => {
+      if (!manual) apply(event.matches);
+    });
+  }
+</script>

@@ -1,0 +1,49 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Icon from './Icon.astro';
+import ProjectPreview from './ProjectPreview.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  heading: 'h2' | 'h3';
+  eager?: boolean;
+}
+
+const { project, heading: Heading, eager = false } = Astro.props;
+const href = `/work/${project.id}/`;
+---
+
+<article class="record project-record">
+  <div class="project-record-head">
+    <div class="record-head">
+      <span class="label">{project.data.category}</span>
+    </div>
+    <Heading class="record-title">
+      <a href={href}>
+        {project.data.title} <Icon name="arrow-right" />
+      </a>
+    </Heading>
+    <p class="record-desc">{project.data.description}</p>
+  </div>
+  {project.data.image && (
+    <ProjectPreview image={project.data.image} href={href} eager={eager} />
+  )}
+  <div class="project-record-foot">
+    <dl class="meta-grid">
+      <div>
+        <dt>Stack</dt>
+        <dd>{project.data.stack.join(' · ')}</dd>
+      </div>
+    </dl>
+    <div class="record-actions">
+      <a class="link-arrow" href={href}>
+        Project overview <Icon name="arrow-right" />
+      </a>
+      {project.data.website && (
+        <a class="link-arrow" href={project.data.website}>
+          Live website <Icon name="external" />
+        </a>
+      )}
+    </div>
+  </div>
+</article>

@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.astro/
+package-lock.json
+.kilo/
+.remember/
+.agents/
+.codex/
+test-results/

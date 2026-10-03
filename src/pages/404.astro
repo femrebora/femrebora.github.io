@@ -1,0 +1,30 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
+---
+
+<BaseLayout
+  title="Page not found"
+  canonicalURL={new URL('/404.html', Astro.site).href}
+  noindex
+>
+  <div class="page">
+    <div class="page-narrow">
+      <header class="page-head error-page">
+        <p class="label">404 / Missing record</p>
+        <h1>This page is not in the record.</h1>
+        <p class="lede">
+          The page may have moved, or the address may be incomplete.
+        </p>
+        <div class="hero-actions">
+          <a class="button" href="/">
+            Return home <Icon name="arrow-right" />
+          </a>
+          <a class="link-arrow" href="/research/">
+            Browse research <Icon name="arrow-right" />
+          </a>
+        </div>
+      </header>
+    </div>
+  </div>
+</BaseLayout>

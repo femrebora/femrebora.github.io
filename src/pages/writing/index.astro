@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import WritingList from '../../components/WritingList.astro';
+import Icon from '../../components/Icon.astro';
+import { getWriting } from '../../lib/content';
+const articles = await getWriting();
+const categories = [...new Set(articles.map((post) => post.data.category))];
+const tags = [...new Set(articles.flatMap((post) => post.data.tags))].sort();
+---
+
+<BaseLayout
+  title="Writing"
+  description="Notes and essays on bioinformatics, genomics, research, scientific computing, and software."
+>
+  <div class="page">
+    <div class="page-inner">
+      <header class="page-head">
+        <p class="label">Writing / Notes & essays</p>
+        <h1>
+          Working through ideas. <em>Writing them down.</em>
+        </h1>
+        <p class="lede">
+          A home for notes and essays on bioinformatics, genomics, research, and
+          the tools that support it.
+        </p>
+        <div class="hero-actions">
+          <a class="link-arrow" href="/rss.xml">
+            Subscribe via RSS <Icon name="rss" />
+          </a>
+        </div>
+      </header>
+      {articles.length > 0 && (
+        <form class="writing-filters" hidden>
+          <div>
+            <label for="category">Category</label>
+            <select id="category">
+              <option value="">All categories</option>
+              {categories.map((category) => (
+                <option value={category}>{category}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label for="tag">Topic</label>
+            <select id="tag">
+              <option value="">All topics</option>
+              {tags.map((tag) => (
+                <option value={tag}>{tag}</option>
+              ))}
+            </select>
+          </div>
+          <p id="filter-status" role="status" aria-live="polite">
+            {articles.length} {articles.length === 1 ? 'article' : 'articles'}
+          </p>
+        </form>
+      )}
+      <section class="section writing-index" aria-label="Articles">
+        <WritingList articles={articles} />
+        <p class="filter-empty meta" hidden>
+          No articles match these filters. Try another category or topic.
+        </p>
+      </section>
+    </div>
+  </div>
+  <script
+    define:vars={{
+      entries: articles.map((entry) => ({
+        category: entry.data.category,
+        tags: entry.data.tags,
+      })),
+    }}
+  >
+    const form = document.querySelector('.writing-filters');
+    if (form) {
+      form.hidden = false;
+      const category = document.querySelector('#category');
+      const tag = document.querySelector('#tag');
+      const rows = [...document.querySelectorAll('.writing-list > li')];
+      const update = () => {
+        let count = 0;
+        rows.forEach((row, i) => {
+          const matches =
+            (!category.value || entries[i].category === category.value) &&
+            (!tag.value || entries[i].tags.includes(tag.value));
+          row.hidden = !matches;
+          if (matches) count++;
+        });
+        document.querySelector('#filter-status').textContent =
+          `${count} ${count === 1 ? 'article' : 'articles'}`;
+        document.querySelector('.filter-empty').hidden = count !== 0;
+      };
+      form.addEventListener('change', update);
+      form.addEventListener('submit', (event) => event.preventDefault());
+    }
+  </script>
+</BaseLayout>

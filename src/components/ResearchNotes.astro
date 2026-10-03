@@ -1,0 +1,26 @@
+---
+import { render } from 'astro:content';
+import { getNotes } from '../lib/content';
+const notes = await Promise.all(
+  (await getNotes())
+    .filter((note) => note.data.featured)
+    .map(async (note) => ({ ...note, rendered: await render(note) })),
+);
+---
+
+{notes.map(({ data, rendered: { Content } }) => (
+  <aside class="note">
+    <p class="label">
+      {data.kind === 'thought' ? data.label : 'From the reading desk'}
+    </p>
+    <div class="prose">
+      <Content />
+    </div>
+    {data.kind === 'quotation' && (
+      <p class="note-source">
+        — {data.author} · <a href={data.source.url}>{data.source.title}</a>,{' '}
+        {data.locator}
+      </p>
+    )}
+  </aside>
+))}

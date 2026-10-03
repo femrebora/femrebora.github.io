@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionHeading from '../components/SectionHeading.astro';
+import WritingList from '../components/WritingList.astro';
+import Timeline from '../components/Timeline.astro';
+import ResearchNotes from '../components/ResearchNotes.astro';
+import Icon from '../components/Icon.astro';
+import ProfilePhoto from '../components/ProfilePhoto.astro';
+import ProjectRecord from '../components/ProjectRecord.astro';
+import { profile, interests, backgroundPreview } from '../data/profile';
+import { getWriting, getResearch, getProjects } from '../lib/content';
+const articles = (await getWriting()).slice(0, 4);
+const research = (await getResearch()).filter((entry) => entry.data.featured);
+const projects = (await getProjects()).filter((entry) => entry.data.featured);
+---
+
+<BaseLayout>
+  <div class="page">
+    <div class="page-inner">
+      <header class="hero">
+        <div class="intro">
+          <div class="intro-head">
+            <p class="label">Bioinformatics · Computational biology</p>
+            <h1 class="hero-name">{profile.name}</h1>
+          </div>
+          <ProfilePhoto />
+          <div class="intro-body">
+            <p class="lede">{profile.introduction}</p>
+            <div class="hero-actions">
+              <a class="button" href="/research/">
+                Explore research <Icon name="arrow-right" />
+              </a>
+              <a class="link-arrow" href="/writing/">
+                Writing <Icon name="arrow-right" />
+              </a>
+              <a class="link-arrow" href={profile.cv || '/about/#cv'}>
+                Curriculum vitae <Icon name="download" />
+              </a>
+            </div>
+          </div>
+        </div>
+        <dl class="meta-grid hero-meta">
+          <div>
+            <dt>Role</dt>
+            <dd>Bioinformatician</dd>
+          </div>
+          <div>
+            <dt>Affiliation</dt>
+            <dd>Ecegen Genetic Diseases Assessment Center</dd>
+          </div>
+          <div>
+            <dt>Education</dt>
+            <dd>MSc Biotechnology · Bezmialem Vakif University, 2026</dd>
+          </div>
+          <div>
+            <dt>Focus</dt>
+            <dd>{profile.fields}</dd>
+          </div>
+        </dl>
+      </header>
+
+      <section class="section" aria-labelledby="research-title">
+        <SectionHeading
+          id="research-title"
+          title="Research"
+          href="/research/"
+          link="All research"
+        />
+        {research.map((entry) => (
+          <article class="record">
+            <div class="record-head">
+              <span class="label">{entry.data.kind}</span>
+              <span class="record-status">{entry.data.status}</span>
+            </div>
+            <h3 class="record-title">
+              <a href={`/research/${entry.id}/`}>
+                {entry.data.title} <Icon name="arrow-right" />
+              </a>
+            </h3>
+            <p class="record-desc">{entry.data.description}</p>
+            <dl class="meta-grid">
+              <div>
+                <dt>Methods</dt>
+                <dd>{entry.data.methods.join(' · ')}</dd>
+              </div>
+              <div>
+                <dt>Topics</dt>
+                <dd>{entry.data.tags.join(' · ')}</dd>
+              </div>
+            </dl>
+            <div class="record-actions">
+              <a class="link-arrow" href={`/research/${entry.id}/`}>
+                Read the research overview <Icon name="arrow-right" />
+              </a>
+            </div>
+          </article>
+        ))}
+        <p class="label label-muted interest-heading">Areas of inquiry</p>
+        <ul class="interest-lines">
+          {interests.map((interest) => (
+            <li>
+              <h3>{interest.title}</h3>
+              <p>{interest.topics.join(' · ')}</p>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="writing-title">
+        <SectionHeading
+          id="writing-title"
+          title="Writing"
+          href="/writing/"
+          link="All writing"
+          note={
+            articles.length ? `${articles.length} published` : 'No issues yet'
+          }
+        />
+        <WritingList articles={articles} />
+      </section>
+
+      <section class="section" aria-labelledby="work-title">
+        <SectionHeading
+          id="work-title"
+          title="Selected work"
+          href="/work/"
+          link="View work"
+        />
+        {projects.map((project) => (
+          <ProjectRecord project={project} heading="h3" />
+        ))}
+      </section>
+
+      <section class="section" aria-labelledby="background-title">
+        <SectionHeading
+          id="background-title"
+          title="Background"
+          href="/about/"
+          link="About & CV"
+        />
+        <Timeline entries={backgroundPreview} />
+      </section>
+
+      <ResearchNotes />
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,35 @@
+---
+import type { TimelineEntry } from '../data/profile';
+import Icon from './Icon.astro';
+interface Props {
+  entries: TimelineEntry[];
+  showLabel?: boolean;
+}
+const { entries, showLabel = true } = Astro.props;
+---
+
+<ol class="timeline">
+  {entries.map((entry) => (
+    <li>
+      <div class="timeline-when">
+        {showLabel && <span class="label">{entry.label}</span>}
+        {entry.period && <span class="timeline-kind">{entry.period}</span>}
+      </div>
+      <div class="timeline-body">
+        <h3>
+          {entry.href ? (
+            <a href={entry.href}>
+              {entry.title} <Icon name="arrow-right" />
+            </a>
+          ) : (
+            entry.title
+          )}
+        </h3>
+        {entry.institution && (
+          <p class="timeline-institution">{entry.institution}</p>
+        )}
+        <p>{entry.description}</p>
+      </div>
+    </li>
+  ))}
+</ol>

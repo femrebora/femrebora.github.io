@@ -1,0 +1,45 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { formatDate, readingTime } from '../lib/content';
+import Icon from './Icon.astro';
+interface Props {
+  articles: CollectionEntry<'writing'>[];
+}
+const { articles } = Astro.props;
+---
+
+{articles.length ? (
+  <ol class="writing-list">
+    {articles.map((post) => (
+      <li>
+        <div class="article-date">
+          <time datetime={post.data.publishedDate.toISOString()}>
+            {formatDate(post.data.publishedDate)}
+          </time>
+          <span>{readingTime(post.body)} min read</span>
+        </div>
+        <div>
+          <span class="label label-muted">{post.data.category}</span>
+          <h3>
+            <a href={`/writing/${post.id}/`}>{post.data.title}</a>
+          </h3>
+          <p>{post.data.description}</p>
+        </div>
+        <span class="list-arrow" aria-hidden="true">
+          <Icon name="arrow-right" />
+        </span>
+      </li>
+    ))}
+  </ol>
+) : (
+  <div class="writing-empty">
+    <h3>A place for the work behind the results.</h3>
+    <p>
+      Notes and essays on bioinformatics, genomics, and scientific computing
+      will be published here. No articles have been published yet.
+    </p>
+    <a class="link-arrow" href="/rss.xml">
+      Follow future writing via RSS <Icon name="rss" />
+    </a>
+  </div>
+)}

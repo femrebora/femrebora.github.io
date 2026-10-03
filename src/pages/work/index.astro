@@ -1,0 +1,31 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ProjectRecord from '../../components/ProjectRecord.astro';
+import { getProjects } from '../../lib/content';
+const projects = await getProjects();
+---
+
+<BaseLayout
+  title="Selected work"
+  description="Selected technical work in healthcare, laboratory technology, and software, including the ECEGEN website."
+>
+  <div class="page">
+    <div class="page-inner">
+      <header class="page-head">
+        <p class="label">Selected work / Software & systems</p>
+        <h1>
+          Useful systems, <em>grounded in context.</em>
+        </h1>
+        <p class="lede">
+          Alongside research, I build software and technical systems. This is a
+          small selection of that work.
+        </p>
+      </header>
+      <section class="section" aria-label="Selected projects">
+        {projects.map((project) => (
+          <ProjectRecord project={project} heading="h2" eager />
+        ))}
+      </section>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,25 @@
+---
+import type { CollectionEntry } from 'astro:content';
+
+interface Props {
+  image: NonNullable<CollectionEntry<'projects'>['data']['image']>;
+  href?: string;
+  eager?: boolean;
+}
+
+const { image, href = image.src, eager = false } = Astro.props;
+---
+
+<figure class="project-preview">
+  <a class="project-preview-link" href={href}>
+    <img
+      src={image.src}
+      alt={image.alt}
+      width={image.width}
+      height={image.height}
+      loading={eager ? 'eager' : 'lazy'}
+      decoding="async"
+    />
+  </a>
+  {image.caption && <figcaption>{image.caption}</figcaption>}
+</figure>

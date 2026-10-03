@@ -1,0 +1,33 @@
+---
+import { profile } from '../data/profile';
+---
+
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div>
+      <a class="footer-name" href="/">
+        {profile.name}
+      </a>
+      <p>
+        Research in genetics and computational biology, with the software that
+        supports it.
+      </p>
+    </div>
+    <nav aria-label="Elsewhere">
+      <a href={profile.github}>GitHub</a>
+      {profile.linkedin && <a href={profile.linkedin}>LinkedIn</a>}
+      <a href={profile.email ? `mailto:${profile.email}` : '/about/#contact'}>
+        Contact
+      </a>
+      <a href="/rss.xml">RSS</a>
+    </nav>
+    <div class="footer-meta">
+      <span>
+        © {new Date().getUTCFullYear()} {profile.name}
+      </span>
+      <a class="back-top" href="#top">
+        Back to top ↑
+      </a>
+    </div>
+  </div>
+</footer>
