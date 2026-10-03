@@ -153,4 +153,4 @@ Screenshots were captured by the browser suite for `/`, `/research/`, `/research
 
 The root-domain Astro configuration and GitHub Actions workflow are ready for review. Publishing still requires the owner to select GitHub Actions in Pages settings and authorize a commit/push. Neither deployment nor settings changes were attempted.
 
-The site has an empty writing feed and no published research thoughts. Following the owner-supplied CV, education, employment, research methods, tools, languages, contact links, and a sanitized downloadable CV are populated. Credentials still require issuer/date details. See `CONTENT-TODO.md`. Research findings and website-specific responsibilities were not invented to fill the layout.
+The site has an empty writing feed and no published research thoughts. Following the owner-supplied CV, education, employment, research methods, tools, languages, contact links, and a sanitized downloadable CV are populated. See `CONTENT-TODO.md` for remaining owner-supplied material. Research findings and website-specific responsibilities were not invented to fill the layout.
