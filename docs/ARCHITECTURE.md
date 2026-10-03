@@ -21,7 +21,7 @@ Every collection has title, description, draft (defaults to true), featured, and
 
 `src/data/profile.ts` keeps personal data separate from presentation. Typed arrays hold experience, education, credentials, capabilities, and languages. Biography, education, employment, tools, and contact links come from the owner-supplied September 2026 CV. The Erasmus period is identified as exchange study. The public PDF is a sanitized copy with phone details removed; the original is not stored in the repository. Credentials remain pending because issuer/date details were not supplied. There are no fabricated employers, degrees, dates, credentials, quotes, research findings, or published writing.
 
-The research entry reflects the context supplied by the owner; its question and contribution fields restate the thesis aim and the documented analysis work, with the cautious "candidates require validation" wording preserved. The ECEGEN entry uses repository evidence pinned to commit `49793deada55e7bef3668042cbd0f4c8ea559cd1`; it distinguishes checked-in deployment configuration from verified live infrastructure, and its contribution text explicitly avoids a job-title or sole-authorship claim.
+The research entry reflects the context supplied by the owner; its question and contribution fields restate the thesis aim and the documented analysis work, with the cautious "candidates require validation" wording preserved. The ECEGEN entry is limited to the site's public-facing features and avoids claiming sole authorship.
 
 ## Presentation
 
