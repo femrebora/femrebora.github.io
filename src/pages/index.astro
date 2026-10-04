@@ -1,17 +1,23 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import WritingList from '../components/WritingList.astro';
-import ProjectRecord from '../components/ProjectRecord.astro';
+import MethodSchematic from '../components/MethodSchematic.astro';
 import Icon from '../components/Icon.astro';
-import { profile, interests } from '../data/profile';
-import { getWriting, getResearch, getProjects } from '../lib/content';
+import { profile } from '../data/profile';
+import {
+  getWriting,
+  getResearch,
+  getProjects,
+  selectHomepageWriting,
+} from '../lib/content';
 const articles = await getWriting();
+const homePosts = selectHomepageWriting(articles);
+const hasWriting = homePosts.length > 0;
 const researchEntries = await getResearch();
 const research =
   researchEntries.find((entry) => entry.data.featured) ?? researchEntries[0];
 const projects = await getProjects();
-const featuredProject =
-  projects.find((project) => project.data.featured) ?? projects[0];
+const project = projects.find((entry) => entry.data.featured) ?? projects[0];
 ---
 
 <BaseLayout>
@@ -20,161 +26,138 @@ const featuredProject =
     <h1>{profile.name}</h1>
     <p class="lede">{profile.introduction}</p>
     <div class="hero-actions">
-      <a class="button" href="/research/">
-        Research <Icon name="arrow-right" />
+      <a class="button" href="#research">
+        Explore research <Icon name="arrow-right" />
       </a>
       <a class="button button-secondary" href="/cv/">
-        Curriculum vitae <Icon name="download" />
-      </a>
-      <a class="link-arrow" href="/blog/">
-        Writing <Icon name="arrow-right" />
+        View CV <Icon name="arrow-right" />
       </a>
     </div>
   </header>
 
-  <section class="feature" id="blog" aria-labelledby="blog-title">
-    <div class="feature-grid">
-      <div class="feature-label">
+  {hasWriting && (
+    <section class="home-writing" id="blog" aria-labelledby="blog-title">
+      <div class="home-writing-head">
         <h2 id="blog-title">Writing</h2>
-        <p class="meta">Notes &amp; essays</p>
         <a class="link-arrow" href="/blog/">
           All writing <Icon name="arrow-right" />
         </a>
       </div>
-      <div>
-        <WritingList articles={articles} featured />
-      </div>
-    </div>
-  </section>
+      <WritingList articles={homePosts} featured context="home" />
+    </section>
+  )}
 
-  <section class="feature" id="research" aria-labelledby="research-title">
-    <div class="feature-grid">
-      <div class="feature-label">
-        <h2 id="research-title">Research</h2>
-        <p class="meta">Genomics &amp; functional genetics</p>
-        <a class="link-arrow" href="/research/">
-          All research <Icon name="arrow-right" />
-        </a>
-      </div>
-      <div>
-        {research && (
-          <article class="record">
-            <div class="record-head">
-              <span class="label">MSc thesis</span>
-              <span class="record-status">{research.data.status}</span>
-            </div>
-            <h3 class="record-title">
-              <a href={`/research/${research.id}/`}>
-                {research.data.title} <Icon name="arrow-right" />
-              </a>
-            </h3>
-            <p class="record-desc">{research.data.description}</p>
-            <dl class="meta-grid">
-              {research.data.question && (
-                <div>
-                  <dt>Question</dt>
-                  <dd>{research.data.question}</dd>
-                </div>
-              )}
-              {research.data.contribution && (
-                <div>
-                  <dt>My contribution</dt>
-                  <dd>{research.data.contribution}</dd>
-                </div>
-              )}
-              {research.data.methods.length > 0 && (
-                <div>
-                  <dt>Methods</dt>
-                  <dd>{research.data.methods.join(' · ')}</dd>
-                </div>
-              )}
-            </dl>
-            <div class="record-actions">
-              <a class="link-arrow" href={`/research/${research.id}/`}>
-                Research overview <Icon name="arrow-right" />
-              </a>
-            </div>
-          </article>
-        )}
-        <h3 class="subsection-title">Research interests</h3>
-        <ul class="interest-grid">
-          {interests.map((interest) => (
-            <li>
-              <h3>{interest.title}</h3>
-              <p>{interest.description}</p>
-              <p class="interest-topics">{interest.topics.join(' · ')}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
-  </section>
-
-  <section class="feature" id="work" aria-labelledby="work-title">
-    <div class="feature-grid">
-      <div class="feature-label">
-        <h2 id="work-title">Selected work</h2>
-        <p class="meta">Software &amp; systems</p>
-        <a class="link-arrow" href="/work/">
-          All work <Icon name="arrow-right" />
-        </a>
-      </div>
-      <div>
-        <p class="section-intro">
-          Alongside research, I build software and technical systems. This is a
-          small selection of that work.
-        </p>
-        {featuredProject && (
-          <ProjectRecord project={featuredProject} heading="h3" eager />
+  {research && (
+    <section
+      class="home-research"
+      id="research"
+      aria-labelledby="research-title"
+    >
+      <div class="home-research-copy">
+        <p class="label">{research.data.status}</p>
+        <h2 id="research-title">
+          <a href={`/research/${research.id}/`}>{research.data.title}</a>
+        </h2>
+        {research.data.question && (
+          <p class="home-question">{research.data.question}</p>
         )}
       </div>
-    </div>
-  </section>
-
-  <section class="feature" id="background" aria-labelledby="background-title">
-    <div class="feature-grid">
-      <div class="feature-label">
-        <h2 id="background-title">Background</h2>
-        <p class="meta">Education &amp; experience</p>
+      <p class="home-research-summary">{research.data.description}</p>
+      <MethodSchematic />
+      <div class="record-actions">
+        <a class="link-arrow" href={`/research/${research.id}/`}>
+          Read the research <Icon name="arrow-right" />
+        </a>
       </div>
-      <div>
-        <div class="prose profile-bio">
-          {profile.biography.slice(0, 2).map((paragraph) => (
-            <p>{paragraph}</p>
-          ))}
-        </div>
-        <div class="record-actions background-links">
-          <a class="link-arrow" href="/about/">
-            About <Icon name="arrow-right" />
+    </section>
+  )}
+
+  {project && (
+    <section class="home-work" id="work" aria-labelledby="work-title">
+      {project.data.image && (
+        <figure class="home-shot-figure">
+          <a class="home-shot" href={`/work/${project.id}/`}>
+            <img
+              class="is-cropped"
+              src={project.data.image.src}
+              alt={project.data.image.alt}
+              width={project.data.image.width}
+              height={project.data.image.height}
+              loading="eager"
+              decoding="async"
+            />
           </a>
-          <a class="link-arrow" href="/cv/">
-            Curriculum vitae <Icon name="arrow-right" />
+          {project.data.image.caption && (
+            <figcaption>{project.data.image.caption}</figcaption>
+          )}
+        </figure>
+      )}
+      <div class="home-work-copy">
+        <p class="label">{project.data.category}</p>
+        <h2 id="work-title">
+          <a href={`/work/${project.id}/`}>{project.data.title}</a>
+        </h2>
+        <p>{project.data.description}</p>
+        {project.data.stack.length > 0 && (
+          <p class="meta">{project.data.stack.join(' · ')}</p>
+        )}
+        <div class="record-actions">
+          <a class="link-arrow" href={`/work/${project.id}/`}>
+            Case study <Icon name="arrow-right" />
           </a>
-          <a class="link-arrow" href="/credentials/">
-            Credentials <Icon name="arrow-right" />
-          </a>
-        </div>
-        <div id="contact" class="contact-block">
-          <h3 class="subsection-title">Contact</h3>
-          <div class="contact-list">
-            {profile.email && (
-              <a class="link-arrow" href={`mailto:${profile.email}`}>
-                {profile.email} <Icon name="mail" />
-              </a>
-            )}
-            {profile.linkedin && (
-              <a class="link-arrow" href={profile.linkedin}>
-                LinkedIn <Icon name="external" />
-              </a>
-            )}
-            <a class="link-arrow" href={profile.github}>
-              GitHub <Icon name="external" />
+          {project.data.website && (
+            <a class="link-arrow" href={project.data.website}>
+              Visit website <Icon name="external" />
             </a>
-            <a class="link-arrow" href={profile.cv}>
-              Download CV (PDF) <Icon name="download" />
-            </a>
-          </div>
+          )}
         </div>
+      </div>
+    </section>
+  )}
+
+  {!hasWriting && (
+    <section
+      class="home-writing home-writing-quiet"
+      id="blog"
+      aria-labelledby="blog-title"
+    >
+      <h2 id="blog-title">Writing</h2>
+      <p>
+        Notes and essays on bioinformatics, genomics, and scientific computing.
+      </p>
+    </section>
+  )}
+
+  <section class="home-close" id="background">
+    <div>
+      <h2>About</h2>
+      <p>
+        Bioinformatician at Ecegen Genetic Diseases Assessment Center. MSc in
+        Biotechnology, Bezmialem Vakif University, completed July 2026.
+      </p>
+      <a class="link-arrow" href="/about/">
+        About <Icon name="arrow-right" />
+      </a>
+    </div>
+    <div id="contact">
+      <h2>Contact</h2>
+      <div class="contact-list">
+        {profile.email && (
+          <a class="link-arrow" href={`mailto:${profile.email}`}>
+            {profile.email} <Icon name="mail" />
+          </a>
+        )}
+        {profile.linkedin && (
+          <a class="link-arrow" href={profile.linkedin}>
+            LinkedIn <Icon name="external" />
+          </a>
+        )}
+        <a class="link-arrow" href={profile.github}>
+          GitHub <Icon name="external" />
+        </a>
+        <a class="link-arrow" href={profile.cv} download>
+          Download CV (PDF) <Icon name="download" />
+        </a>
       </div>
     </div>
   </section>

@@ -30,6 +30,7 @@ const lastYear = now.getUTCFullYear() + 1;
 const domainStart = firstYear * 12;
 const span = lastYear * 12 - domainStart;
 const percent = (months: number) => ((months - domainStart) / span) * 100;
+const latest = [...entries].sort((a, b) => b.start.localeCompare(a.start))[0];
 
 const years = Array.from(
   { length: lastYear - firstYear },
@@ -66,7 +67,7 @@ let order = 0;
 <figure class="track" data-first-year={firstYear} data-last-year={lastYear}>
   <figcaption class="track-caption">
     Education, research, and work on one time axis, {firstYear} to the present.
-    Select a feature to jump to its record.
+    Select a feature to jump to its entry.
   </figcaption>
   <div class="track-scroll">
     <div class="track-canvas">
@@ -116,7 +117,7 @@ let order = 0;
     </div>
   </div>
   <p class="track-readout" aria-hidden="true">
-    Hover or focus a feature to read it here.
+    {latest ? `${latest.title} · ${latest.institution} · ${latest.period}` : ''}
   </p>
 </figure>
 <script>

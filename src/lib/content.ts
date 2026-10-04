@@ -1,6 +1,6 @@
 import { getCollection } from 'astro:content';
 import { isPublished } from './publication.mjs';
-export { readingTime } from './publication.mjs';
+export { readingTime, selectHomepageWriting } from './publication.mjs';
 export const getWriting = async () =>
   (await getCollection('writing', isPublished)).sort(
     (a, b) => b.data.publishedDate.getTime() - a.data.publishedDate.getTime(),

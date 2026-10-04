@@ -1,0 +1,28 @@
+---
+/**
+ * Explanatory sequence for the thesis analysis.
+ * Labels restate the approved order of work. They are not results.
+ */
+const steps = [
+  'CRISPR screen analysis',
+  'Candidate-gene prioritization',
+  'Pathway interpretation',
+];
+---
+
+<figure class="method-schematic">
+  <ol class="method-flow">
+    {steps.map((step, index) => (
+      <li>
+        <span class="method-index" aria-hidden="true">
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <span>{step}</span>
+      </li>
+    ))}
+  </ol>
+  <figcaption>
+    Analysis sequence for the thesis. Prioritized candidates are not validated
+    mechanisms.
+  </figcaption>
+</figure>

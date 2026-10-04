@@ -197,7 +197,7 @@ test('keyboard skip link reaches main content and CV links serve a downloadable 
   expect((await response.body()).subarray(0, 5).toString()).toBe('%PDF-');
   await page.goto('/cv/');
   const downloadPromise = page.waitForEvent('download');
-  await page.getByRole('link', { name: 'Download PDF' }).click();
+  await page.getByRole('link', { name: 'Download CV (PDF)' }).click();
   expect((await downloadPromise).suggestedFilename()).toBe(
     'furkan-emre-bora-cv.pdf',
   );
@@ -263,11 +263,20 @@ test('supplied images load at their intrinsic proportions on every page', async 
       const ratios = await image.evaluate((element: HTMLImageElement) => ({
         intrinsic: element.naturalWidth / element.naturalHeight,
         rendered: element.clientWidth / element.clientHeight,
+        cropped: element.classList.contains('is-cropped'),
+        fit: getComputedStyle(element).objectFit,
       }));
-      expect(
-        Math.abs(ratios.intrinsic - ratios.rendered),
-        `${route}: image is cropped or stretched`,
-      ).toBeLessThan(0.02);
+      if (ratios.cropped) {
+        expect(ratios.fit, `${route}: homepage preview should crop`).toBe(
+          'cover',
+        );
+        expect(ratios.intrinsic).toBeGreaterThan(0);
+      } else {
+        expect(
+          Math.abs(ratios.intrinsic - ratios.rendered),
+          `${route}: image is cropped or stretched`,
+        ).toBeLessThan(0.02);
+      }
     }
   }
 });
@@ -351,7 +360,7 @@ test('writing filters show matching articles and recover from an empty result', 
 }) => {
   await routeFixture(page);
   await page.goto('http://content.test/blog/');
-  await expect(page.locator('.post-list > li:visible')).toHaveCount(2);
+  await expect(page.locator('.post-list > li:visible')).toHaveCount(6);
   await page.getByLabel('Category', { exact: true }).selectOption('Software');
   await expect(page.locator('.post-list > li:visible')).toHaveCount(1);
   await page.getByLabel('Topic', { exact: true }).selectOption('Notes');
@@ -359,5 +368,96 @@ test('writing filters show matching articles and recover from an empty result', 
   await expect(page.locator('.filter-empty')).toBeVisible();
   await page.getByLabel('Category', { exact: true }).selectOption('');
   await page.getByLabel('Topic', { exact: true }).selectOption('');
-  await expect(page.locator('.post-list > li:visible')).toHaveCount(2);
+  await expect(page.locator('.post-list > li:visible')).toHaveCount(6);
+});
+
+test('empty writing, credentials, and the ECEGEN case study stay free of audit clutter', async ({
+  page,
+}) => {
+  await page.goto('/');
+  const order = await page
+    .locator('#research, #work, #blog, #background, #contact')
+    .evaluateAll((elements) => elements.map((element) => element.id));
+  expect(order).toEqual(['research', 'work', 'blog', 'background', 'contact']);
+  await expect(
+    page.getByRole('link', { name: 'Explore research' }),
+  ).toHaveAttribute('href', '#research');
+  await expect(page.getByRole('link', { name: 'View CV' })).toHaveAttribute(
+    'href',
+    '/cv/',
+  );
+  const pdf = page.getByRole('link', { name: 'Download CV (PDF)' });
+  await expect(pdf).toHaveAttribute('href', '/cv/furkan-emre-bora-cv.pdf');
+  await expect(page.locator('main')).not.toContainText(/in preparation/i);
+  await expect(page.locator('main')).not.toContainText(/credentials/i);
+
+  await page.goto('/blog/');
+  await expect(page.locator('main')).toContainText(
+    'No articles published yet.',
+  );
+  await expect(page.locator('main').getByRole('link')).toHaveCount(0);
+  await expect(page.locator('.writing-filters')).toHaveCount(0);
+
+  await page.goto('/cv/');
+  await expect(
+    page.getByRole('heading', { name: 'Certificates & training' }),
+  ).toHaveCount(0);
+  await expect(page.getByRole('heading', { name: 'Education' })).toBeVisible();
+  await page.emulateMedia({ media: 'print' });
+  await expect(page.locator('.masthead')).toBeHidden();
+  await expect(page.getByRole('heading', { name: 'Education' })).toBeVisible();
+  await page.emulateMedia({ media: 'screen' });
+
+  await page.goto('/about/');
+  await expect(
+    page.getByRole('heading', { name: 'Certificates & training' }),
+  ).toHaveCount(0);
+
+  await page.goto('/credentials/');
+  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
+    'Certificates & training',
+  );
+  await expect(page.getByRole('link', { name: 'View the CV' })).toHaveAttribute(
+    'href',
+    '/cv/',
+  );
+  await expect(page.locator('main')).not.toContainText(
+    /approved|sanitized|verified/i,
+  );
+
+  await page.goto('/work/ecegen/');
+  await expect(page.locator('main')).not.toContainText('Source record');
+  await expect(page.locator('main')).not.toContainText('49793de');
+  await expect(
+    page.getByRole('link', { name: 'Visit website' }),
+  ).toHaveAttribute('href', 'https://www.ecegen.com/');
+  await expect(page.getByRole('link', { name: 'Source code' })).toHaveAttribute(
+    'href',
+    'https://github.com/ECEGEN/website',
+  );
+});
+
+test('the homepage shows at most four posts and does not repeat the featured one', async ({
+  page,
+}) => {
+  await routeFixture(page);
+  await page.goto('http://content.test/');
+  const order = await page
+    .locator('#blog, #research, #work')
+    .evaluateAll((elements) => elements.map((element) => element.id));
+  expect(order).toEqual(['blog', 'research', 'work']);
+  const hrefs = await page
+    .locator('main a[href*="/blog/"]')
+    .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+  const posts = [
+    ...new Set(hrefs.filter((href) => href && /\/blog\/qa-/.test(href))),
+  ];
+  expect(posts.length).toBeLessThanOrEqual(4);
+  expect(posts).toContain('/blog/qa-featured/');
+  expect(posts).not.toContain('/blog/qa-formatting/');
+  expect(posts).not.toContain('/blog/qa-newer/');
+  const listed = await page
+    .locator('.post-list a')
+    .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
+  expect(listed.some((href) => href?.includes('qa-featured'))).toBe(false);
 });

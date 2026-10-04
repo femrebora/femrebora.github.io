@@ -59,6 +59,18 @@ test(
           .replace('QA formatting fixture', 'QA future hidden')
           .replace('2020-01-01', '2999-01-01'),
       );
+      const extras = [
+        ['qa-c', '2021-03-01', false, 'QA c fixture'],
+        ['qa-d', '2021-04-01', false, 'QA d fixture'],
+        ['qa-e', '2021-05-01', false, 'QA e fixture'],
+        ['qa-featured', '2019-06-01', true, 'QA featured fixture'],
+      ];
+      for (const [id, date, featured, title] of extras) {
+        await writeFile(
+          join(fixture, `src/content/writing/${id}.md`),
+          `---\ntitle: ${title}\ndescription: Test-only fixture, not an owner article.\npublishedDate: ${date}\ndraft: false\nfeatured: ${featured}\ncategory: Notes\ntags: [QA]\n---\n\nFixture body for ${id}.\n`,
+        );
+      }
       execFileSync(
         process.execPath,
         [join(root, 'node_modules/astro/bin/astro.mjs'), 'build'],
@@ -94,16 +106,15 @@ test(
         '/blog/qa-formatting/',
       ])
         assert.ok(mdx.includes(expected), `MDX missing ${expected}`);
-      for (const path of [
-        'index.html',
-        'blog/index.html',
-        'rss.xml',
-        'sitemap-0.xml',
-      ]) {
+      for (const path of ['blog/index.html', 'rss.xml', 'sitemap-0.xml']) {
         const html = await readFile(join(fixture, 'dist', path), 'utf8');
         assert.ok(
           html.includes('qa-formatting'),
           `${path} missing published article`,
+        );
+        assert.ok(
+          html.includes('qa-featured'),
+          `${path} missing featured article`,
         );
         assert.ok(
           !html.includes('qa-future'),
@@ -111,6 +122,53 @@ test(
         );
         assert.ok(!html.includes('article-template'), `${path} exposed draft`);
       }
+      const home = await readFile(join(fixture, 'dist/index.html'), 'utf8');
+      for (const included of ['qa-featured', 'qa-e', 'qa-d', 'qa-c']) {
+        assert.ok(home.includes(included), `homepage missing ${included}`);
+      }
+      for (const excluded of [
+        'qa-formatting',
+        'qa-newer',
+        'qa-future',
+        'article-template',
+      ]) {
+        assert.ok(!home.includes(excluded), `homepage exposed ${excluded}`);
+      }
+      assert.ok(
+        home.indexOf('id="blog"') < home.indexOf('id="research"'),
+        'published homepage should lead with writing',
+      );
+      const ecegen = await readFile(
+        join(fixture, 'dist/work/ecegen/index.html'),
+        'utf8',
+      );
+      for (const phrase of [
+        'Source record',
+        '49793de',
+        'does not imply',
+        'Reviewed at commit',
+      ]) {
+        assert.ok(
+          !ecegen.includes(phrase),
+          `case study still contains ${phrase}`,
+        );
+      }
+      assert.ok(ecegen.includes('Visit website'));
+      assert.ok(ecegen.includes('Source code'));
+      const cv = await readFile(join(fixture, 'dist/cv/index.html'), 'utf8');
+      assert.ok(
+        !/certificate/i.test(cv),
+        'empty CV rendered a certificate section',
+      );
+      assert.ok(!cv.includes('approved for publication'));
+      const credentials = await readFile(
+        join(fixture, 'dist/credentials/index.html'),
+        'utf8',
+      );
+      assert.ok(credentials.includes('Certificates &amp; training'));
+      assert.ok(credentials.includes('href="/cv/"'));
+      assert.ok(!credentials.includes('approved and sanitized'));
+      assert.ok(!credentials.includes('Verified credentials'));
       await assert.rejects(
         access(join(fixture, 'dist/blog/article-template/index.html')),
       );

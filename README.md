@@ -6,15 +6,15 @@ The site is a small research journal: a typography-led homepage with teasers, pl
 
 ## Pages
 
-| Route           | Contents                                                                                   |
-| --------------- | ------------------------------------------------------------------------------------------ |
-| `/`             | Introduction, and teasers for writing, the research spotlight, selected work, and contact  |
-| `/research/`    | Research interests, completed work, methods, and the thesis case study                     |
-| `/blog/`        | Writing index with filters, categories, tags, and RSS (canonical writing path)             |
-| `/work/`        | Selected work, including the ECEGEN website case study                                     |
-| `/about/`       | Narrative, education and experience, the career timeline, skills, and languages            |
-| `/cv/`          | A printable HTML CV built from shared data, with a link to the sanitized PDF               |
-| `/credentials/` | Certificates and education evidence, with an honest empty state until entries are approved |
+| Route           | Contents                                                                                                                                |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`             | Introduction, research spotlight, selected work, a short writing note, and contact. Writing leads once articles are published           |
+| `/research/`    | Research interests, completed work, methods, and the thesis case study                                                                  |
+| `/blog/`        | Writing index with filters, categories, tags, and RSS (canonical writing path)                                                          |
+| `/work/`        | Selected work, including the ECEGEN website case study                                                                                  |
+| `/about/`       | Narrative, education and experience, the career timeline, skills, and languages                                                         |
+| `/cv/`          | A printable HTML CV built from shared data, with a link to the sanitized PDF                                                            |
+| `/credentials/` | Certificates and training. A short note and a link to the CV until an entry exists; the empty section is left off the CV and About page |
 
 Research and project detail pages keep their existing paths (`/research/trail-resistance/`, `/work/ecegen/`), and the homepage keeps the legacy anchors `#research`, `#background`, `#work`, `#blog`, and `#contact`.
 
@@ -32,7 +32,7 @@ Client-side JavaScript is limited to the theme switch, the blog filters, the Abo
 
 A warm editorial "contemporary research journal": warm paper (`#F7F5F0`) and deep ink, a restrained forest-green accent (`#185C50`), Newsreader for expressive headings and long-form reading, and DM Sans for navigation and interface text. The masthead is a compact horizontal bar — name, Writing, Research, Work, About, CV, and a theme control — with a no-JavaScript disclosure menu on small screens. Pages share one system but play different roles: an expressive introduction, a concise writing index, a larger research feature, and an image-led ECEGEN work preview. See [the design note](docs/DESIGN.md).
 
-The About page draws education, exchange, research, and work as features on a shared time axis in the manner of a genome browser; each feature links to its written record, and the written lists carry the full detail. Motion is limited to short hover feedback and a subtle entrance for timeline features, and is switched off for visitors who prefer reduced motion.
+The About page draws education, exchange, research, and work on a shared time axis, with a short text entry for each period. The CV carries the full descriptions, skills, and languages. Motion is limited to short hover feedback and a subtle entrance for timeline features, and is switched off for visitors who prefer reduced motion.
 
 ## Run it locally
 

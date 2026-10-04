@@ -31,7 +31,7 @@ const { Content } = await render(entry);
       <h1>{entry.data.title}</h1>
       <p class="lede">{entry.data.description}</p>
     </header>
-    {entry.data.image && <ProjectPreview image={entry.data.image} eager />}
+    {entry.data.image && <ProjectPreview image={entry.data.image} eager lead />}
     <div class="record-bar">
       <div>
         <span class="label">Stack</span>
@@ -52,12 +52,12 @@ const { Content } = await render(entry);
           <span class="label">Links</span>
           {entry.data.website && (
             <a class="link-arrow" href={entry.data.website}>
-              Live website <Icon name="external" />
+              Visit website <Icon name="external" />
             </a>
           )}
           {entry.data.repository && (
             <a class="link-arrow" href={entry.data.repository}>
-              Source repository <Icon name="external" />
+              Source code <Icon name="external" />
             </a>
           )}
         </div>

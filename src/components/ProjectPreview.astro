@@ -5,12 +5,14 @@ interface Props {
   image: NonNullable<CollectionEntry<'projects'>['data']['image']>;
   href?: string;
   eager?: boolean;
+  /** Case-study lead: the screenshot carries the page, wider than the prose. */
+  lead?: boolean;
 }
 
-const { image, href = image.src, eager = false } = Astro.props;
+const { image, href = image.src, eager = false, lead = false } = Astro.props;
 ---
 
-<figure class="project-preview">
+<figure class:list={['project-preview', { 'project-preview-lead': lead }]}>
   <a class="project-preview-link" href={href}>
     <img
       src={image.src}

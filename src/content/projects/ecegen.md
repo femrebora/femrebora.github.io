@@ -9,42 +9,27 @@ tags: [Healthcare, Web development]
 website: https://www.ecegen.com/
 repository: https://github.com/ECEGEN/website
 order: 1
-contribution: 'Described from the public repository as a selected-work example. It does not imply a specific job title, an employment relationship, or sole authorship.'
+contribution: 'Supported the public website while working as a bioinformatician at ECEGEN.'
 image:
   src: /images/ecegen-homepage.webp
   alt: 'ECEGEN website homepage with Turkish navigation, test catalogue search, online appointments, and a genomic analysis feature.'
   width: 1600
   height: 816
-  caption: 'ECEGEN homepage · Turkish interface · October 2026'
+  caption: 'ECEGEN homepage · Turkish interface'
 ---
 
-## A digital front door for a genetics center
+## Purpose
 
-ECEGEN is a genetic diseases evaluation center. Its public website brings together information about genetic services, a test catalogue, patient and clinician forms, news, and contact information.
+ECEGEN is a genetic diseases evaluation center. The website is where patients and clinicians find genetic services, search the test catalogue, open forms, read news, and get in touch. Turkish is the default language, with separate paths for other languages.
 
-This selected-work entry describes the implementation visible in the repository. It does not imply a particular job title, employment relationship, or sole authorship.
+## What I supported
 
-## Implementation
+I work at ECEGEN as a bioinformatician. I also supported this public website: how clinical services, the test catalogue, and patient information are presented.
 
-The application uses **Next.js 16, React 19, TypeScript, and Tailwind CSS v4**. Locale routing is implemented with **next-intl**, with Turkish as the default language and explicit paths for other locales.
+## Catalogue and navigation
 
-The test catalogue supports text search and filters, with initial query and category state read from URL parameters. Content and test data live in dedicated source modules.
+The test catalogue can be searched and filtered. A filtered view keeps its query and category in the address, so the same results can be opened again later. Wide and narrow screens use different navigation, and the menu control states whether it is open.
 
-The header implements separate desktop and mobile navigation, with a menu control that exposes its expanded state. The frontend uses responsive breakpoints and shared visual tokens.
+## Technology
 
-## Deployment configuration
-
-The repository configures Next.js standalone output. A packaging script combines that output with public assets and compiled static assets, then creates a cPanel/Passenger-compatible entry point for Turhost. This describes the checked-in deployment configuration; it is not independent verification of the live server's infrastructure.
-
-A GitHub Actions workflow runs linting, type checking, tests, and a production build.
-
-## Source record
-
-Reviewed at commit [`49793de`](https://github.com/ECEGEN/website/tree/49793deada55e7bef3668042cbd0f4c8ea559cd1). The following source files support this overview:
-
-- [Package manifest](https://github.com/ECEGEN/website/blob/49793deada55e7bef3668042cbd0f4c8ea559cd1/package.json) — framework and dependencies.
-- [Locale routing](https://github.com/ECEGEN/website/blob/49793deada55e7bef3668042cbd0f4c8ea559cd1/src/i18n/routing.ts) — language paths and defaults.
-- [Test catalogue](https://github.com/ECEGEN/website/blob/49793deada55e7bef3668042cbd0f4c8ea559cd1/src/components/TestCatalogContent.tsx) — search and filters.
-- [Site header](https://github.com/ECEGEN/website/blob/49793deada55e7bef3668042cbd0f4c8ea559cd1/src/components/SiteHeader.tsx) — responsive navigation.
-- [Next.js configuration](https://github.com/ECEGEN/website/blob/49793deada55e7bef3668042cbd0f4c8ea559cd1/next.config.ts) and [packaging script](https://github.com/ECEGEN/website/blob/49793deada55e7bef3668042cbd0f4c8ea559cd1/scripts/package-turhost.mjs) — standalone runtime packaging.
-- [CI workflow](https://github.com/ECEGEN/website/blob/49793deada55e7bef3668042cbd0f4c8ea559cd1/.github/workflows/ci.yml) — automated checks.
+The interface is a Next.js application written in React and TypeScript, styled with Tailwind CSS. Language routing uses next-intl. The copy and the test data live in their own source modules.

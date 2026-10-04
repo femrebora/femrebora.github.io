@@ -32,7 +32,7 @@ import {
       </div>
       <div class="cv-actions">
         <a class="button" href={profile.cv} download>
-          Download PDF <Icon name="download" />
+          Download CV (PDF) <Icon name="download" />
         </a>
         <button class="button button-secondary" type="button" id="print-cv">
           Print this page
@@ -101,15 +101,23 @@ import {
       </dl>
     </section>
 
-    <section class="cv-section">
-      <h2>Credentials</h2>
-      <p>
-        {credentials.length > 0
-          ? `${credentials.length} published credential${credentials.length === 1 ? '' : 's'}. `
-          : 'No credentials have been approved for publication yet. '}
-        <a href="/credentials/">See the credentials page</a>.
-      </p>
-    </section>
+    {credentials.length > 0 && (
+      <section class="cv-section">
+        <h2>Certificates &amp; training</h2>
+        <ol class="cv-entries">
+          {credentials.map((credential) => (
+            <li class="cv-entry">
+              <header>
+                <h3>{credential.title}</h3>
+                <span class="cv-when">{credential.date}</span>
+              </header>
+              <p class="cv-where">{credential.institution}</p>
+              <p>{credential.description}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+    )}
   </div>
   <script>
     document

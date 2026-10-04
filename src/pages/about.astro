@@ -1,6 +1,5 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Timeline from '../components/Timeline.astro';
 import GenomeTrack from '../components/GenomeTrack.astro';
 import ProfilePhoto from '../components/ProfilePhoto.astro';
 import Icon from '../components/Icon.astro';
@@ -8,10 +7,13 @@ import {
   profile,
   experience,
   education,
-  capabilities,
-  languages,
+  interests,
   credentials,
 } from '../data/profile';
+
+const milestones = [...education, ...experience].sort(
+  (a, b) => b.start.localeCompare(a.start) || a.title.localeCompare(b.title),
+);
 ---
 
 <BaseLayout
@@ -19,14 +21,13 @@ import {
   description="About F. Emre Bora: genetics, bioinformatics, computational research, education, and selected technical work."
 >
   <header class="page-head">
-    <p class="label">About / Background &amp; practice</p>
+    <p class="label">About</p>
     <h1>{profile.fullName}</h1>
     <p class="lede">{profile.fields}</p>
   </header>
 
   <section class="about-intro" aria-label="Profile">
     <div class="prose profile-bio">
-      <p>{profile.introduction}</p>
       {profile.biography.map((paragraph) => (
         <p>{paragraph}</p>
       ))}
@@ -34,54 +35,56 @@ import {
     <ProfilePhoto />
   </section>
 
-  <h2 class="subsection-title" id="experience">
-    Professional &amp; research experience
+  <h2 class="subsection-title" id="milestones">
+    Milestones
   </h2>
-  <Timeline entries={experience} />
-
-  <h2 class="subsection-title" id="education">
-    Education
-  </h2>
-  <Timeline entries={education} />
-
-  <h2 class="subsection-title">Career timeline</h2>
-  <p class="meta">
-    A genome-browser-style view of the same periods. The lists above carry the
-    full detail.
-  </p>
   <GenomeTrack entries={[...education, ...experience]} />
-
-  <h2 class="subsection-title">Areas of work</h2>
-  <div class="capabilities">
-    {capabilities.map((group) => (
-      <div>
-        <h3>{group.domain}</h3>
-        <ul>
-          {group.items.map((item) => (
-            <li>{item}</li>
-          ))}
-        </ul>
-      </div>
+  <ol class="milestones">
+    {milestones.map((entry) => (
+      <li id={entry.id}>
+        <span class="milestone-when">{entry.period}</span>
+        <span class="milestone-what">
+          <strong>
+            {entry.href ? <a href={entry.href}>{entry.title}</a> : entry.title}
+          </strong>
+          {entry.institution && <span>{entry.institution}</span>}
+        </span>
+      </li>
     ))}
-  </div>
-
-  <h2 class="subsection-title">Languages</h2>
-  <dl class="language-list">
-    {languages.map((language) => (
-      <div>
-        <dt>{language.name}</dt>
-        <dd>{language.description}</dd>
-      </div>
-    ))}
-  </dl>
-
-  <h2 class="subsection-title">Credentials</h2>
+  </ol>
   <p class="meta">
-    {credentials.length > 0
-      ? `${credentials.length} published credential${credentials.length === 1 ? '' : 's'}. `
-      : 'No credentials have been approved for publication yet. '}
-    <a href="/credentials/">See the credentials page</a>.
+    The full record of education, experience, skills, and languages is on the{' '}
+    <a href="/cv/">CV</a>.
   </p>
+
+  <h2 class="subsection-title">Interests</h2>
+  <ul class="interest-lines">
+    {interests.map((interest) => (
+      <li>
+        <strong>{interest.title}</strong>
+        <span>{interest.description}</span>
+      </li>
+    ))}
+  </ul>
+
+  {credentials.length > 0 && (
+    <>
+      <h2 class="subsection-title">Certificates &amp; training</h2>
+      <ul class="interest-lines">
+        {credentials.map((credential) => (
+          <li>
+            <strong>{credential.title}</strong>
+            <span>
+              {credential.institution} · {credential.date}
+            </span>
+          </li>
+        ))}
+      </ul>
+      <p class="meta">
+        <a href="/credentials/">Certificates &amp; training</a>
+      </p>
+    </>
+  )}
 
   <h2 class="subsection-title" id="contact">
     Contact
@@ -101,7 +104,7 @@ import {
       GitHub <Icon name="external" />
     </a>
     <a class="link-arrow" href="/cv/">
-      Curriculum vitae <Icon name="arrow-right" />
+      View CV <Icon name="arrow-right" />
     </a>
   </div>
 </BaseLayout>
