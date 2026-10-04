@@ -5,7 +5,7 @@ export const profile = {
   description:
     'Research, writing, and selected work at the intersection of genetics, bioinformatics, computational biology, and software.',
   introduction:
-    'I am a bioinformatician working across clinical genomics, cancer functional genomics, and computational biology. My work connects genomic data analysis, reproducible workflows, and the software that supports them.',
+    'I work with genomic data and build tools for research and clinical genomics.',
   biography: [
     'I work as a Bioinformatician at Ecegen Genetic Diseases Assessment Center, supporting NGS analysis, variant interpretation, and reproducible Linux-based genomic workflows.',
     'I completed my MSc in Biotechnology at Bezmialem Vakif University in July 2026. In Cingoz Lab, my graduate research investigated TRAIL resistance in glioblastoma through pooled CRISPR/Cas9 screening, candidate gene prioritization, and integration of transcriptomic and metabolomic data.',
@@ -215,5 +215,6 @@ export interface Credential {
   credentialURL?: string;
   preview?: { src: string; alt: string };
 }
-// TODO: Add verified credentials and only sanitized, approved previews.
+// Add a certificate only with an owner-supplied title, issuer, date, and a
+// sanitized preview. Empty arrays omit the section on the CV and About page.
 export const credentials: Credential[] = [];

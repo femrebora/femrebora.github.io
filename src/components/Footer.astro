@@ -5,37 +5,19 @@ const year = new Date().getUTCFullYear();
 
 <footer class="site-footer">
   <div class="wrap site-footer-inner">
-    <div>
+    <div class="footer-id">
       <a class="footer-name" href="/">
         {profile.name}
       </a>
       <p>
-        Genetics, bioinformatics, and computational biology — research, writing,
-        and selected work.
+        © {year} {profile.fullName}
       </p>
     </div>
-    <nav aria-label="Footer">
-      <a href="/research/">Research</a>
-      <a href="/work/">Work</a>
-      <a href="/blog/">Writing</a>
-      <a href="/about/">About</a>
-      <a href="/cv/">CV</a>
-      <a href="/credentials/">Credentials</a>
+    <nav aria-label="Contact">
+      {profile.email && <a href={`mailto:${profile.email}`}>Email</a>}
+      {profile.linkedin && <a href={profile.linkedin}>LinkedIn</a>}
+      <a href={profile.github}>GitHub</a>
+      <a href="/rss.xml">RSS</a>
     </nav>
-    <div class="footer-meta">
-      <span>
-        © {year} {profile.fullName}
-      </span>
-      <span>
-        <a href={profile.github}>GitHub</a> ·
-        {profile.linkedin && <a href={profile.linkedin}>LinkedIn</a>}
-        {profile.linkedin && ' · '}
-        <a href={profile.email ? `mailto:${profile.email}` : '/about/#contact'}>
-          Email
-        </a>
-        · <a href="/rss.xml">RSS</a>
-      </span>
-      <a href="#top">Back to top ↑</a>
-    </div>
   </div>
 </footer>

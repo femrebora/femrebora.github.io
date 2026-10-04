@@ -1,11 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import WritingList from '../../components/WritingList.astro';
-import Icon from '../../components/Icon.astro';
 import { getWriting } from '../../lib/content';
 const articles = await getWriting();
 const categories = [...new Set(articles.map((post) => post.data.category))];
 const tags = [...new Set(articles.flatMap((post) => post.data.tags))].sort();
+const showCategories = articles.length > 1 && categories.length > 1;
+const showTags = articles.length > 1 && tags.length > 1;
+const showFilters = showCategories || showTags;
 ---
 
 <BaseLayout
@@ -21,44 +23,43 @@ const tags = [...new Set(articles.flatMap((post) => post.data.tags))].sort();
       Notes and essays on bioinformatics, genomics, research, and the tools that
       support it.
     </p>
-    <div class="hero-actions">
-      <a class="link-arrow" href="/rss.xml">
-        Subscribe via RSS <Icon name="rss" />
-      </a>
-    </div>
   </header>
-  {articles.length > 0 && (
+  {showFilters && (
     <form class="writing-filters" hidden>
-      <div>
-        <label for="category">Category</label>
-        <select id="category">
-          <option value="">All categories</option>
-          {categories.map((category) => (
-            <option value={category}>{category}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label for="tag">Topic</label>
-        <select id="tag">
-          <option value="">All topics</option>
-          {tags.map((tag) => (
-            <option value={tag}>{tag}</option>
-          ))}
-        </select>
-      </div>
+      {showCategories && (
+        <div>
+          <label for="category">Category</label>
+          <select id="category">
+            <option value="">All categories</option>
+            {categories.map((category) => (
+              <option value={category}>{category}</option>
+            ))}
+          </select>
+        </div>
+      )}
+      {showTags && (
+        <div>
+          <label for="tag">Topic</label>
+          <select id="tag">
+            <option value="">All topics</option>
+            {tags.map((tag) => (
+              <option value={tag}>{tag}</option>
+            ))}
+          </select>
+        </div>
+      )}
       <p id="filter-status" role="status" aria-live="polite">
         {articles.length} {articles.length === 1 ? 'article' : 'articles'}
       </p>
     </form>
   )}
   <section class="writing-index" aria-label="Articles">
-    <WritingList articles={articles} />
+    <WritingList articles={articles} context="archive" />
     <p class="filter-empty meta" hidden>
       No articles match these filters. Try another category or topic.
     </p>
   </section>
-  <script
+  {showFilters && <script
     define:vars={{
       entries: articles.map((entry) => ({
         category: entry.data.category,
@@ -76,17 +77,22 @@ const tags = [...new Set(articles.flatMap((post) => post.data.tags))].sort();
         let count = 0;
         rows.forEach((row, i) => {
           const matches =
-            (!category.value || entries[i].category === category.value) &&
-            (!tag.value || entries[i].tags.includes(tag.value));
+            (!category ||
+              !category.value ||
+              entries[i].category === category.value) &&
+            (!tag || !tag.value || entries[i].tags.includes(tag.value));
           row.hidden = !matches;
           if (matches) count++;
         });
-        document.querySelector('#filter-status').textContent =
-          `${count} ${count === 1 ? 'article' : 'articles'}`;
-        document.querySelector('.filter-empty').hidden = count !== 0;
+        const status = document.querySelector('#filter-status');
+        if (status) {
+          status.textContent = `${count} ${count === 1 ? 'article' : 'articles'}`;
+        }
+        const empty = document.querySelector('.filter-empty');
+        if (empty) empty.hidden = count !== 0;
       };
       form.addEventListener('change', update);
       form.addEventListener('submit', (event) => event.preventDefault());
     }
-  </script>
+  </script>}
 </BaseLayout>

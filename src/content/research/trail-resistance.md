@@ -37,8 +37,6 @@ The work brought together functional genetic screening, cancer metabolism, and c
 
 My laboratory work included mammalian cell culture, MTT-based viability assays, nucleic-acid handling, agarose gel electrophoresis, and metabolomics sample preparation.
 
-## Scope of this overview
+## Limits
 
-This overview summarizes the research context and methods recorded in my [CV](/cv/furkan-emre-bora-cv.pdf). Detailed analyses and candidate-level results will be added with supporting material.
-
-Screen-derived candidates require validation before they can support conclusions about biological mechanisms.
+The screen prioritizes candidate genes. That is not the same as showing how those genes cause resistance. Candidates need experimental validation before they can support conclusions about biological mechanisms.

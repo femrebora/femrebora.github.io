@@ -4,32 +4,38 @@ import { formatDate, readingTime } from '../lib/content';
 import Icon from './Icon.astro';
 interface Props {
   articles: CollectionEntry<'writing'>[];
-  /** On the homepage, promote the newest article and list the rest. */
+  /** Homepage: one lead article and at most three others. */
   featured?: boolean;
+  /** Archive empty state must not link to itself or repeat the RSS link. */
+  context?: 'home' | 'archive';
 }
-const { articles, featured = false } = Astro.props;
-const [top, ...rest] = articles;
-const listed = featured ? rest : articles;
+const { articles, featured = false, context = 'archive' } = Astro.props;
+const lead = featured
+  ? (articles.find((article) => article.data.featured) ?? articles[0])
+  : undefined;
+const listed = featured
+  ? articles.filter((article) => article !== lead).slice(0, 3)
+  : articles;
 ---
 
 {articles.length ? (
   <>
-    {featured && top && (
+    {featured && lead && (
       <article class="post-featured">
         <div class="post-date">
-          <time datetime={top.data.publishedDate.toISOString()}>
-            {formatDate(top.data.publishedDate)}
+          <time datetime={lead.data.publishedDate.toISOString()}>
+            {formatDate(lead.data.publishedDate)}
           </time>
-          <span>{readingTime(top.body)} min read</span>
+          <span>{readingTime(lead.body)} min read</span>
         </div>
         <div>
-          <span class="label label-muted">{top.data.category}</span>
+          <span class="label label-muted">{lead.data.category}</span>
           <h3>
-            <a href={`/blog/${top.id}/`}>{top.data.title}</a>
+            <a href={`/blog/${lead.id}/`}>{lead.data.title}</a>
           </h3>
-          <p class="lede">{top.data.description}</p>
+          <p class="lede">{lead.data.description}</p>
           <div class="record-actions">
-            <a class="link-arrow" href={`/blog/${top.id}/`}>
+            <a class="link-arrow" href={`/blog/${lead.id}/`}>
               Read the article <Icon name="arrow-right" />
             </a>
           </div>
@@ -62,20 +68,5 @@ const listed = featured ? rest : articles;
     )}
   </>
 ) : (
-  <div class="empty-note">
-    <h3>A home for notes and essays.</h3>
-    <p>
-      I write about bioinformatics, genomics, research, and scientific
-      computing. The first articles are in preparation — no posts have been
-      published yet.
-    </p>
-    <div class="record-actions">
-      <a class="link-arrow" href="/blog/">
-        Visit the writing page <Icon name="arrow-right" />
-      </a>
-      <a class="link-arrow" href="/rss.xml">
-        Follow via RSS <Icon name="rss" />
-      </a>
-    </div>
-  </div>
+  context === 'archive' && <p class="quiet-note">No articles published yet.</p>
 )}
