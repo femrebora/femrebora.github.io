@@ -3,7 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import WritingList from '../components/WritingList.astro';
 import MethodSchematic from '../components/MethodSchematic.astro';
 import Icon from '../components/Icon.astro';
-import { profile } from '../data/profile';
+import { profile, experience, education } from '../data/profile';
 import {
   getWriting,
   getResearch,
@@ -13,6 +13,20 @@ import {
 const articles = await getWriting();
 const homePosts = selectHomepageWriting(articles);
 const hasWriting = homePosts.length > 0;
+const currentRole = experience
+  .filter((entry) => entry.track === 'work' && !entry.end)
+  .sort((a, b) => b.start.localeCompare(a.start))[0];
+const latestDegree = education
+  .filter((entry) => entry.track === 'education')
+  .sort((a, b) => b.start.localeCompare(a.start))[0];
+const backgroundSummary = [
+  currentRole ? `${currentRole.title} at ${currentRole.institution}.` : '',
+  latestDegree
+    ? `${latestDegree.title}, ${latestDegree.institution}, ${latestDegree.period}.`
+    : '',
+]
+  .filter(Boolean)
+  .join(' ');
 const researchEntries = await getResearch();
 const research =
   researchEntries.find((entry) => entry.data.featured) ?? researchEntries[0];
@@ -131,10 +145,7 @@ const project = projects.find((entry) => entry.data.featured) ?? projects[0];
   <section class="home-close" id="background">
     <div>
       <h2>About</h2>
-      <p>
-        Bioinformatician at Ecegen Genetic Diseases Assessment Center. MSc in
-        Biotechnology, Bezmialem Vakif University, completed July 2026.
-      </p>
+      {backgroundSummary && <p>{backgroundSummary}</p>}
       <a class="link-arrow" href="/about/">
         About <Icon name="arrow-right" />
       </a>

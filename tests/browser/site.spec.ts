@@ -3,14 +3,18 @@ import AxeBuilder from '@axe-core/playwright';
 import { readFile } from 'node:fs/promises';
 import { resolve, join, extname } from 'node:path';
 
-async function routeFixture(page: import('@playwright/test').Page) {
-  const fixtureRoot = resolve('test-results/content-fixture');
+async function routeFixture(
+  page: import('@playwright/test').Page,
+  name = 'content-fixture',
+) {
+  const fixtureRoot = resolve('test-results', name);
   const types: Record<string, string> = {
     '.html': 'text/html',
     '.css': 'text/css',
     '.js': 'text/javascript',
     '.woff2': 'font/woff2',
     '.png': 'image/png',
+    '.webp': 'image/webp',
     '.svg': 'image/svg+xml',
     '.xml': 'application/xml',
   };
@@ -371,14 +375,10 @@ test('writing filters show matching articles and recover from an empty result', 
   await expect(page.locator('.post-list > li:visible')).toHaveCount(6);
 });
 
-test('empty writing, credentials, and the ECEGEN case study stay free of audit clutter', async ({
+test('production pages keep the shared background, CV print layout, and ECEGEN links', async ({
   page,
 }) => {
   await page.goto('/');
-  const order = await page
-    .locator('#research, #work, #blog, #background, #contact')
-    .evaluateAll((elements) => elements.map((element) => element.id));
-  expect(order).toEqual(['research', 'work', 'blog', 'background', 'contact']);
   await expect(
     page.getByRole('link', { name: 'Explore research' }),
   ).toHaveAttribute('href', '#research');
@@ -388,46 +388,30 @@ test('empty writing, credentials, and the ECEGEN case study stay free of audit c
   );
   const pdf = page.getByRole('link', { name: 'Download CV (PDF)' });
   await expect(pdf).toHaveAttribute('href', '/cv/furkan-emre-bora-cv.pdf');
-  await expect(page.locator('main')).not.toContainText(/in preparation/i);
+  await expect(page.locator('#background')).toContainText(
+    'Bioinformatician at Ecegen Genetic Diseases Assessment Center',
+  );
+  await expect(page.locator('#background')).toContainText(
+    'MSc · Biotechnology, Bezmialem Vakif University, Sept 2024 – July 2026',
+  );
+  await expect(page.locator('#background')).not.toContainText(
+    'completed July 2026',
+  );
   await expect(page.locator('main')).not.toContainText(/credentials/i);
 
-  await page.goto('/blog/');
-  await expect(page.locator('main')).toContainText(
-    'No articles published yet.',
-  );
-  await expect(page.locator('main').getByRole('link')).toHaveCount(0);
-  await expect(page.locator('.writing-filters')).toHaveCount(0);
-
   await page.goto('/cv/');
-  await expect(
-    page.getByRole('heading', { name: 'Certificates & training' }),
-  ).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'Education' })).toBeVisible();
   await page.emulateMedia({ media: 'print' });
   await expect(page.locator('.masthead')).toBeHidden();
   await expect(page.getByRole('heading', { name: 'Education' })).toBeVisible();
   await page.emulateMedia({ media: 'screen' });
 
-  await page.goto('/about/');
-  await expect(
-    page.getByRole('heading', { name: 'Certificates & training' }),
-  ).toHaveCount(0);
-
-  await page.goto('/credentials/');
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(
-    'Certificates & training',
-  );
-  await expect(page.getByRole('link', { name: 'View the CV' })).toHaveAttribute(
-    'href',
-    '/cv/',
-  );
-  await expect(page.locator('main')).not.toContainText(
-    /approved|sanitized|verified/i,
-  );
-
   await page.goto('/work/ecegen/');
   await expect(page.locator('main')).not.toContainText('Source record');
   await expect(page.locator('main')).not.toContainText('49793de');
+  await expect(page.locator('main')).not.toContainText(
+    'does not imply a specific job title',
+  );
   await expect(
     page.getByRole('link', { name: 'Visit website' }),
   ).toHaveAttribute('href', 'https://www.ecegen.com/');
@@ -460,4 +444,62 @@ test('the homepage shows at most four posts and does not repeat the featured one
     .locator('.post-list a')
     .evaluateAll((links) => links.map((link) => link.getAttribute('href')));
   expect(listed.some((href) => href?.includes('qa-featured'))).toBe(false);
+  await page.goto('http://content.test/cv/');
+  await expect(
+    page.getByRole('heading', { name: 'Certificates & training' }),
+  ).toHaveCount(0);
+  await page.goto('http://content.test/credentials/');
+  await expect(page.getByRole('link', { name: 'View the CV' })).toHaveAttribute(
+    'href',
+    '/cv/',
+  );
+  await expect(page.locator('main')).not.toContainText(
+    'approved and sanitized',
+  );
+});
+
+test('one published post is shown once and does not add certificate copy', async ({
+  page,
+}) => {
+  await routeFixture(page, 'content-fixture-one');
+  await page.goto('http://content.test/');
+  await expect(page.locator('main a[href="/blog/qa-only/"]')).not.toHaveCount(
+    0,
+  );
+  await expect(page.locator('.post-list')).toHaveCount(0);
+  await page.goto('http://content.test/blog/');
+  await expect(page.locator('.writing-filters')).toHaveCount(0);
+  await expect(page.locator('.post-list > li')).toHaveCount(1);
+  await page.goto('http://content.test/cv/');
+  await expect(
+    page.getByRole('heading', { name: 'Certificates & training' }),
+  ).toHaveCount(0);
+});
+
+test('no published posts keep research first and a fixture credential is rendered', async ({
+  page,
+}) => {
+  await routeFixture(page, 'content-fixture-zero');
+  await page.goto('http://content.test/');
+  const order = await page
+    .locator('#research, #work, #blog, #background, #contact')
+    .evaluateAll((elements) => elements.map((element) => element.id));
+  expect(order).toEqual(['research', 'work', 'blog', 'background', 'contact']);
+  await expect(page.locator('main a[href*="/blog/qa-"]')).toHaveCount(0);
+
+  await page.goto('http://content.test/blog/');
+  await expect(page.locator('main')).toContainText(
+    'No articles published yet.',
+  );
+  await expect(page.locator('main').getByRole('link')).toHaveCount(0);
+  await expect(page.locator('.writing-filters')).toHaveCount(0);
+
+  for (const route of ['/cv/', '/about/', '/credentials/']) {
+    await page.goto(`http://content.test${route}`);
+    await expect(page.locator('main')).toContainText('QA fixture certificate');
+    await expect(page.locator('main')).toContainText('Fixture Institute');
+    await expect(page.locator('main')).not.toContainText(
+      'approved and sanitized',
+    );
+  }
 });
