@@ -2,6 +2,7 @@ export const profile = {
   name: 'F. Emre Bora',
   fullName: 'Furkan Emre Bora',
   fields: 'Genetics · Bioinformatics · Computational Biology',
+  tagline: 'Bioinformatics · Computational biology',
   description:
     'Research, writing, and selected work at the intersection of genetics, bioinformatics, computational biology, and software.',
   introduction:
@@ -207,14 +208,7 @@ export const languages = [
   { name: 'Spanish', description: 'Limited working proficiency' },
 ];
 
-export interface Credential {
-  title: string;
-  institution: string;
-  date: string;
-  description: string;
-  credentialURL?: string;
-  preview?: { src: string; alt: string };
-}
-// Add a certificate only with an owner-supplied title, issuer, date, and a
-// sanitized preview. Empty arrays omit the section on the CV and About page.
-export const credentials: Credential[] = [];
+// Certificates, training, and awards live in the `credentials` content
+// collection (src/content/credentials/). Add one file per credential; leave
+// the collection without published entries until owner-supplied material
+// exists. Empty output omits the section on the CV and About page.

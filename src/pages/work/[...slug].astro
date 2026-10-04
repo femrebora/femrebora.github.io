@@ -1,8 +1,9 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Icon from '../../components/Icon.astro';
+import BackLink from '../../components/BackLink.astro';
 import ProjectPreview from '../../components/ProjectPreview.astro';
+import Icon from '../../components/Icon.astro';
 import { getProjects } from '../../lib/content';
 export async function getStaticPaths() {
   return (await getProjects()).map((entry) => ({
@@ -23,9 +24,7 @@ const { Content } = await render(entry);
   image={entry.data.image}
 >
   <div class="detail-shell">
-    <a class="back-link" href="/work/">
-      <Icon name="arrow-left" /> Selected work
-    </a>
+    <BackLink href="/work/" label="Selected work" />
     <header class="page-head detail-heading">
       <p class="label">{entry.data.category}</p>
       <h1>{entry.data.title}</h1>
@@ -33,18 +32,34 @@ const { Content } = await render(entry);
     </header>
     {entry.data.image && <ProjectPreview image={entry.data.image} eager lead />}
     <div class="record-bar">
-      <div>
-        <span class="label">Stack</span>
-        <ul>
-          {entry.data.stack.map((item) => (
-            <li>{item}</li>
-          ))}
-        </ul>
-      </div>
+      {entry.data.stack.length > 0 && (
+        <div>
+          <span class="label">Stack</span>
+          <ul>
+            {entry.data.stack.map((item) => (
+              <li>{item}</li>
+            ))}
+          </ul>
+        </div>
+      )}
       {entry.data.contribution && (
         <div>
           <span class="label">Contribution</span>
           <p>{entry.data.contribution}</p>
+        </div>
+      )}
+      {entry.data.role && (
+        <div>
+          <span class="label">Role</span>
+          <p>{entry.data.role}</p>
+        </div>
+      )}
+      {(entry.data.year || entry.data.status) && (
+        <div>
+          <span class="label">Context</span>
+          <p>
+            {[entry.data.status, entry.data.year].filter(Boolean).join(' · ')}
+          </p>
         </div>
       )}
       {(entry.data.website || entry.data.repository) && (

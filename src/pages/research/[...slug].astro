@@ -1,8 +1,10 @@
 ---
 import { render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import BackLink from '../../components/BackLink.astro';
+import TagList from '../../components/TagList.astro';
 import Icon from '../../components/Icon.astro';
-import { getResearch } from '../../lib/content';
+import { getResearch, getWriting, formatDate } from '../../lib/content';
 export async function getStaticPaths() {
   return (await getResearch()).map((entry) => ({
     params: { slug: entry.id },
@@ -14,24 +16,22 @@ interface Props {
 }
 const { entry } = Astro.props;
 const { Content } = await render(entry);
+const writing = await getWriting();
+const related = entry.data.relatedWriting
+  .map((slug) => writing.find((post) => post.id === slug))
+  .filter((post): post is CollectionEntry<'writing'> => Boolean(post));
 ---
 
 <BaseLayout title={entry.data.title} description={entry.data.description}>
   <div class="detail-shell">
-    <a class="back-link" href="/research/">
-      <Icon name="arrow-left" /> Research
-    </a>
+    <BackLink href="/research/" label="Research" />
     <header class="page-head detail-heading">
       <p class="label">
         {entry.data.kind} / {entry.data.status}
       </p>
       <h1>{entry.data.title}</h1>
       <p class="lede">{entry.data.description}</p>
-      <p class="tag-list">
-        {entry.data.tags.map((tag) => (
-          <span>{tag}</span>
-        ))}
-      </p>
+      <TagList tags={entry.data.tags} />
     </header>
     <div class="record-bar">
       {entry.data.question && (
@@ -44,6 +44,18 @@ const { Content } = await render(entry);
         <div>
           <span class="label">Role</span>
           <p>{entry.data.role}</p>
+        </div>
+      )}
+      {entry.data.institution && (
+        <div>
+          <span class="label">Institution</span>
+          <p>{entry.data.institution}</p>
+        </div>
+      )}
+      {entry.data.period && (
+        <div>
+          <span class="label">Period</span>
+          <p>{entry.data.period}</p>
         </div>
       )}
       {entry.data.methods.length > 0 && (
@@ -70,5 +82,22 @@ const { Content } = await render(entry);
     <article class="prose">
       <Content />
     </article>
+    {related.length > 0 && (
+      <section class="article-related" aria-labelledby="related-writing">
+        <h2 id="related-writing">Related writing</h2>
+        <ul>
+          {related.map((post) => (
+            <li>
+              <a href={`/blog/${post.id}/`}>
+                {post.data.title}
+                <span class="meta">
+                  · {formatDate(post.data.publishedDate)}
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )}
   </div>
 </BaseLayout>

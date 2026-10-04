@@ -2,63 +2,82 @@
 
 ## Rendering and routing
 
-Astro builds static HTML for a set of pages: the homepage at `/`; indexes at `/research/`, `/work/`, `/blog/`, `/about/`, `/cv/`, and `/credentials/`; and detail pages under `/research/` and `/work/` plus `/blog/[slug]/`. A standalone `404.html` supports GitHub Pages. There are no server endpoints at runtime: `rss.xml.ts` executes at build time. Trailing slashes match directory-based static hosting.
+Astro builds static HTML: the homepage at `/`; indexes at `/research/`, `/work/`, `/blog/`, `/about/`, `/cv/`, and `/credentials/`; detail pages under `/research/` and `/work/` plus `/blog/[slug]/`; and a standalone `404.html` for GitHub Pages. There are no server endpoints at runtime: `rss.xml.ts` executes at build time. Trailing slashes match directory-based static hosting.
 
-The homepage is an overview, not the whole site: it introduces the work and links to the dedicated pages. It keeps the legacy anchors `#research`, `#background`, `#work`, `#blog`, and `#contact` so older links still resolve. `/blog/` is the canonical writing index; the navigation label is "Writing". Research and project detail routes keep their existing paths.
+The homepage is an overview, not the whole site. It keeps the legacy anchors `#research`, `#background`, `#work`, `#blog`, and `#contact` so older links resolve. `/blog/` is the canonical writing index; the navigation label is "Writing". Research and project detail routes keep their existing paths.
 
 The official sitemap integration receives only generated routes. All detail routes use the same content helpers as their indexes. `isPublished` rejects drafts and future-dated writing before routing or rendering. New content is visible only after a build.
 
 ## Content model
 
-| Collection | Purpose                                    | Key additions to common metadata                                                                     |
-| ---------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------- |
-| writing    | Articles and essays                        | publishedDate, updatedDate, category, language, heroImage, canonicalURL, references, relatedProjects |
-| research   | Research contexts and outputs              | kind, status, methods, links, order, role, question, contribution, outputs                           |
-| projects   | Selected technical work                    | category, stack, website, repository, order, contribution                                            |
-| notes      | Original observations / sourced quotations | discriminated kind; quotations require author, source, locator                                       |
+| Collection  | Purpose                                    | Notable fields                                                                                                         |
+| ----------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| writing     | Articles and essays                        | publishedDate, updatedDate, category, language, heroImage, canonicalURL, references, relatedProjects                   |
+| research    | Research contexts and outputs              | kind, status, institution, period, methods, links, order, role, question, contribution, outputs, relatedWriting, image |
+| projects    | Selected technical work                    | category, year, status, role, stack, website, repository, order, contribution, image                                   |
+| credentials | Certificates, training, awards, workshops  | issuer, date, category, credentialId, credentialUrl, image, description                                                |
+| notes       | Original observations / sourced quotations | discriminated kind; quotations require author, source, locator                                                         |
 
-Every collection has title, description, draft (defaults to true), featured, and tags. Schemas run at build time. Dates use UTC when rendered. Updated dates cannot precede publication dates. Hero images require nonempty alt text. Writing entries carry a `language` field (`en` or `tr`) used for the document `lang`; it defaults to `en` and no empty language switcher is rendered.
+Every collection has title, description, `draft` (defaults to `true`), `featured`, and `tags`. Schemas run at build time. Dates use UTC when rendered; updated dates cannot precede publication dates; hero images require nonempty alt text. Writing entries carry `language` (`en`/`tr`) used for the document `lang`. Draft templates exist for writing, research, projects, and credentials: copy one, replace every field, set `draft: false`.
 
-`src/data/profile.ts` keeps personal data separate from presentation. Typed arrays hold experience, education, credentials, capabilities, and languages. Biography, education, employment, tools, and contact links come from the owner-supplied September 2026 CV. The Erasmus period is identified as exchange study. The public PDF is a sanitized copy with phone details removed; the original is not stored in the repository. Credentials stay unpublished until issuer and date details are supplied; an empty list omits the section on the CV and About page. There are no fabricated employers, degrees, dates, credentials, quotes, research findings, or published writing.
+`src/data/profile.ts` keeps personal data separate from presentation: identity, tagline, biography, contact links, experience and education timeline entries (with `start`/`end` months that drive the GenomeTrack), capabilities, languages. The Erasmus period is identified as exchange study, never as a second degree. Credentials live in the credentials collection and stay unpublished until owner-supplied issuer and date details exist; an empty output omits the section on the CV and About page. Nothing factual is invented anywhere.
 
-The research entry reflects the context supplied by the owner; its question and contribution fields restate the thesis aim and the documented analysis work, and the page keeps the distinction between candidate prioritization and experimental validation. The ECEGEN case study describes the website, a narrow supported contribution, and the technology. The commit-level source inventory stays in `docs/ecegen-source-record.md` and must not be rendered again.
+The research entry reflects owner-supplied context. Its `question` and `contribution` restate the thesis aim and the documented analysis work; the pages keep the distinction between candidate prioritization and experimental validation. The ECEGEN case study describes the website, a narrow supported contribution, and the technology; the commit-level inventory stays in `docs/ecegen-source-record.md` and must not be rendered.
 
 ## Presentation
 
-`BaseLayout` owns the document, metadata, JSON-LD, masthead, footer, and early theme selection. Components handle reusable content patterns (post list, records, career timeline, icons). Route templates compose these components and render Markdown through Astro's `render()`.
+`BaseLayout` owns the document, metadata, JSON-LD, masthead, footer, and pre-paint theme selection. Reusable primitives (`PageHeader`, `FeatureSection`, `MetadataList`, `TagList`, `ContactList`, `BackLink`) give indexes and detail pages one consistent structure; content-pattern components (`WritingList`, `ProjectRecord`, `ProjectPreview`, `MethodSchematic`, `GenomeTrack`, `ProfilePhoto`, `Icon`, `ResearchNotes`) render specific data shapes. Route templates compose these and render Markdown through Astro's `render()`.
 
-CSS tokens define a warm paper background (`#F7F5F0`), deep ink, muted secondary text, and a restrained forest-green accent (`#185C50`). The dark theme is designed separately with warm near-black surfaces and a lightened sage accent, not a mechanical inversion. Newsreader serves expressive headings and long-form reading; DM Sans serves navigation, labels, and interface text. Both are local assets with latin and latin-ext subsets, so Turkish renders correctly. There is no external font request.
+### CSS architecture
 
-Navigation is a compact horizontal masthead: wordmark, Writing, Research, Work, About, CV, and a theme control. On small screens the inline nav is hidden and a `<details>` disclosure menu ("Menu") exposes the same links; it opens without JavaScript, and the summary and theme control meet the 44px touch-target minimum. Research and work are presented as structured records and case studies rather than decorative cards.
+`src/styles/global.css` is an import chain; ownership is by file:
 
-The homepage is typography-led and asymmetric: an expressive introduction, then a two-column feature grid (a pinned label column beside the content) for Writing, the Research spotlight, Selected work, and Background/Contact. The personal photograph is an About-page element only, not the homepage's dominant visual. `ProjectRecord` places a project's text and screenshot side by side from 1040px and stacks them below that.
+```text
+src/styles/
+  global.css          import order (the only file BaseLayout imports)
+  fonts.css           self-hosted variable fonts (latin + latin-ext)
+  tokens.css          design tokens: color themes, motion, layout, z
+  reset.css           element defaults, focus, skip-link guarantees
+  base.css            site shell, text primitives (.label/.meta/.lede), footer
+  primitives.css      .button, .link-arrow, .tag-list
+  layout.css          .page-head, feature grid, records, .record-bar, detail scaffolding
+  prose.css           .prose long-form reading surface + Shiki theming
+  components/
+    header.css        masthead, navigation, disclosure menu, theme control
+    home.css          hero, research spotlight, method schematic, work/writing/close sections
+    writing.css       archive list, featured post, filters, article layout, TOC
+    work.css          project records and previews
+    about.css         narrative, milestones, interest lists, notes
+    credentials.css   credential records
+    cv.css            CV page
+  motion.css          view transitions, microinteractions, reduced motion
+  print.css           print targets (CV, articles)
+```
 
-`GenomeTrack` draws education, exchange, research, and work as features on one time axis, positioned from the `start` and `end` months in `src/data/profile.ts`. Each feature is a link to its written record in the lists above, so the timeline works without JavaScript; with it, hovering or focusing a feature highlights its record, a readout names it, and a cursor reports the month under the pointer. On narrow screens the lanes scroll sideways with the track names pinned. Supplied images are never cropped: frames size to the image's intrinsic proportions, which a browser test asserts.
+Component-owned styles live in the component: GenomeTrack's track styles are scoped inside `GenomeTrack.astro`. New page styles belong in the owning file under `components/`, not in a new global block. Tokens (spacing, motion timing, z-index, shadows, radii) come from `tokens.css` — avoid magic values in new rules.
 
-Article text is limited to 68 characters per line in the reading face, with generous leading, serif hierarchical headings, tables, footnotes, references, a table of contents, related reading, previous/next navigation, and theme-aware Shiki highlighting. Long code and tables scroll inside the article. The contents list is sticky beside the reading column on larger screens and becomes a normal document section on phones. Section headings receive a small link (`.heading-anchor`) through a tiny progress-enhancement script; the headings keep their `id`s and the contents list works without it.
+There is no Tailwind: the site is deliberately custom CSS, and the unused dependency was removed.
 
-## Client JavaScript
+### Motion and view transitions
 
-Client-side JavaScript is limited to theme control, the blog category/topic filter, the career-timeline hover details, the article heading links, and the CV print button. There is no framework hydration. The theme is set before first paint, respects system preference until explicitly chosen, persists when local storage is available, and remains functional when storage is blocked. Without JavaScript, CSS respects the system theme, the mobile menu opens natively, and all content and navigation remain usable; inactive controls are hidden.
+Navigation uses the browser's native **cross-document View Transitions** (`@view-transition { navigation: auto; }` in `motion.css`). This is a zero-JavaScript, CSS-only enhancement: the masthead and wordmark are named elements (`view-transition-name`), so they hold still while `main` enters with a 320ms fade-and-rise. Browsers without support navigate normally. Because there is no client-side router, every page is a full document — all existing scripts (theme, filters, timeline, heading anchors) keep running exactly as before, and `prefers-reduced-motion: reduce` disables every transition and animation.
 
-Filters are progressive enhancement: all published articles are visible without scripts. They never determine publication visibility; filtering drafts happens at build time.
+### Client JavaScript
 
-Markdown is rendered by Astro 7's default processor. The homepage heading-link script is the only reason no rehype plugin is required, which keeps the default processor and the lockfile free of extra Markdown dependencies.
+Client-side JavaScript is limited to theme control, the blog category/topic filter, the career-timeline hover details, article heading anchors, and the CV print button. No framework hydration. The theme is set before first paint, respects system preference until explicitly chosen, persists when local storage is available, and works when storage is blocked. Without JavaScript: CSS respects the system theme, the mobile menu opens natively (`<details>`), all content and navigation remain usable, and inactive controls stay hidden.
 
 ## Accessibility, metadata, and deployment
 
-Semantic landmarks, one h1 per page, visible focus, a skip link, current-page navigation, accessible controls, reduced-motion overrides, and print styles are shared. Pages carry canonical URLs, descriptions, OpenGraph/Twitter metadata, and a local 1200×630 PNG social preview. Articles add BlogPosting data and published/updated timestamps. Person metadata contains only the supplied name and confirmed links.
+Semantic landmarks, one h1 per page, visible focus, a skip link, current-page navigation, accessible controls, reduced-motion overrides, and print styles are shared. Pages carry canonical URLs, descriptions, OpenGraph/Twitter metadata, and a local 1200×630 PNG social preview. Articles add BlogPosting data and published/updated timestamps. Person metadata contains only the supplied name and confirmed links. No visitor request goes to external font, analytics, or application services.
 
-The social card's editable SVG lives in `assets/`; the PNG is in `public/`. No visitor requests go to external font, analytics, or application services.
-
-Only `dist/` is uploaded by the Astro GitHub Action. PRs validate; authorized future main-branch pushes can deploy. The repository is configured for a user-site root, not a project subdirectory. Node 24 and the lockfile make installations repeatable. TypeScript is constrained to the version range supported by Astro's checker.
+Only `dist/` is uploaded by the Astro GitHub Action. PRs validate; authorized main-branch pushes deploy. Node 24 and the lockfile make installations repeatable.
 
 ## Verification strategy
 
-- Astro check for strict component and TypeScript diagnostics; Prettier for formatting.
-- Node tests for publication behavior and reading-time bounds.
-- An isolated temporary copy of the site tests actual Markdown/MDX article builds, footnotes, tables, contents lists, previous/next navigation, related reading, RSS, sitemap, and draft/future-date exclusion. Test articles never enter the deliverable site.
-- A generated-output checker follows every local link, asset, and fragment and verifies metadata and required output files.
-- Playwright checks all public routes at 320, 375, 768, 1280, and 1440 pixels; axe checks both themes. Additional tests cover keyboard use, persistence, no-JavaScript navigation (including the mobile menu), blocked storage, reduced motion, phone menu fit and touch-target size, the career timeline, image loading and proportions, and the article layout.
+- Astro check for strict component/TypeScript diagnostics; Prettier for formatting.
+- Node tests for publication behavior, reading time, and public copy.
+- An isolated temporary copy of the site builds real Markdown/MDX articles, footnotes, tables, TOCs, previous/next navigation, related reading, a credential, RSS, sitemap, and draft/future-date exclusion. Test content never enters the deliverable site.
+- A generated-output checker follows every local link, asset, and fragment; verifies metadata, required output files; and asserts draft templates never leak.
+- Playwright checks all public routes at 320, 375, 768, 1280, and 1440 pixels; axe checks both themes. Additional tests cover keyboard use, persistence, no-JavaScript navigation, blocked storage, reduced motion, the career timeline, image proportions, and the article layout.
 
-Automated checks have practical limits: no remote Pages deployment is exercised locally, no owner credentials are independently attested, and automated accessibility scanning is not a full manual accessibility audit.
+Automated checks have practical limits: no remote Pages deployment is exercised locally, and automated scanning is not a full manual accessibility audit.

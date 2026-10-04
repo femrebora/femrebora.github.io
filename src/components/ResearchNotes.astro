@@ -1,6 +1,8 @@
 ---
 import { render } from 'astro:content';
 import { getNotes } from '../lib/content';
+
+/* Renders nothing until a featured note is published. */
 const notes = await Promise.all(
   (await getNotes())
     .filter((note) => note.data.featured)
@@ -8,19 +10,32 @@ const notes = await Promise.all(
 );
 ---
 
-{notes.map(({ data, rendered: { Content } }) => (
-  <aside class="note">
-    <p class="label">
-      {data.kind === 'thought' ? data.label : 'From the reading desk'}
-    </p>
-    <div class="prose">
-      <Content />
+{notes.length > 0 && (
+  <section class="feature" aria-labelledby="reading-desk-title">
+    <div class="feature-grid">
+      <div class="feature-label">
+        <h2 id="reading-desk-title">From the reading desk</h2>
+        <p class="meta">Short observations</p>
+      </div>
+      <div>
+        {notes.map(({ data, rendered: { Content } }) => (
+          <aside class="note">
+            <p class="label">
+              {data.kind === 'thought' ? data.label : 'Reading'}
+            </p>
+            <div class="prose">
+              <Content />
+            </div>
+            {data.kind === 'quotation' && (
+              <p class="note-source">
+                — {data.author} ·{' '}
+                <a href={data.source.url}>{data.source.title}</a>,{' '}
+                {data.locator}
+              </p>
+            )}
+          </aside>
+        ))}
+      </div>
     </div>
-    {data.kind === 'quotation' && (
-      <p class="note-source">
-        — {data.author} · <a href={data.source.url}>{data.source.title}</a>,{' '}
-        {data.locator}
-      </p>
-    )}
-  </aside>
-))}
+  </section>
+)}

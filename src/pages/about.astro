@@ -1,30 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
 import GenomeTrack from '../components/GenomeTrack.astro';
 import ProfilePhoto from '../components/ProfilePhoto.astro';
+import ContactList from '../components/ContactList.astro';
 import Icon from '../components/Icon.astro';
-import {
-  profile,
-  experience,
-  education,
-  interests,
-  credentials,
-} from '../data/profile';
+import { profile, experience, education, interests } from '../data/profile';
+import { getCredentials } from '../lib/content';
 
 const milestones = [...education, ...experience].sort(
   (a, b) => b.start.localeCompare(a.start) || a.title.localeCompare(b.title),
 );
+const credentials = await getCredentials();
 ---
 
 <BaseLayout
   title="About"
   description="About F. Emre Bora: genetics, bioinformatics, computational research, education, and selected technical work."
 >
-  <header class="page-head">
-    <p class="label">About</p>
-    <h1>{profile.fullName}</h1>
-    <p class="lede">{profile.fields}</p>
-  </header>
+  <PageHeader label="About" title={profile.fullName} lede={profile.fields} />
 
   <section class="about-intro" aria-label="Profile">
     <div class="prose profile-bio">
@@ -73,9 +67,9 @@ const milestones = [...education, ...experience].sort(
       <ul class="interest-lines">
         {credentials.map((credential) => (
           <li>
-            <strong>{credential.title}</strong>
+            <strong>{credential.data.title}</strong>
             <span>
-              {credential.institution} · {credential.date}
+              {credential.data.issuer} · {credential.data.date}
             </span>
           </li>
         ))}
@@ -89,20 +83,8 @@ const milestones = [...education, ...experience].sort(
   <h2 class="subsection-title" id="contact">
     Contact
   </h2>
-  <div class="contact-list">
-    {profile.email && (
-      <a class="link-arrow" href={`mailto:${profile.email}`}>
-        {profile.email} <Icon name="mail" />
-      </a>
-    )}
-    {profile.linkedin && (
-      <a class="link-arrow" href={profile.linkedin}>
-        LinkedIn <Icon name="external" />
-      </a>
-    )}
-    <a class="link-arrow" href={profile.github}>
-      GitHub <Icon name="external" />
-    </a>
+  <ContactList showCv={false} />
+  <div class="record-actions">
     <a class="link-arrow" href="/cv/">
       View CV <Icon name="arrow-right" />
     </a>

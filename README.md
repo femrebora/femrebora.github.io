@@ -9,7 +9,7 @@ The site is a small research journal: a typography-led homepage with teasers, pl
 | Route           | Contents                                                                                                                                |
 | --------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
 | `/`             | Introduction, research spotlight, selected work, a short writing note, and contact. Writing leads once articles are published           |
-| `/research/`    | Research interests, completed work, methods, and the thesis case study                                                                  |
+| `/research/`    | Research interests, research records with institution/period/method metadata, methods, and the thesis case study                        |
 | `/blog/`        | Writing index with filters, categories, tags, and RSS (canonical writing path)                                                          |
 | `/work/`        | Selected work, including the ECEGEN website case study                                                                                  |
 | `/about/`       | Narrative, education and experience, the career timeline, skills, and languages                                                         |
@@ -21,18 +21,17 @@ Research and project detail pages keep their existing paths (`/research/trail-re
 ## Built with
 
 - [Astro](https://astro.build) 7 with strict TypeScript, generating static HTML
-- [Tailwind CSS](https://tailwindcss.com) v4 and a small set of design tokens in one stylesheet
-- Astro Content Collections for Markdown and MDX, with schemas checked at build time
+- A tokenized custom-CSS system under `src/styles/` (no utility framework)
+- Astro Content Collections for Markdown and MDX — writing, research, projects, credentials, notes — with schemas checked at build time
 - Self-hosted Newsreader (display and reading) and DM Sans (interface), latin and latin-ext for Turkish
+- Native cross-document View Transitions for continuous-feeling navigation (CSS only, reduced-motion aware)
 - GitHub Actions for verification and deployment to GitHub Pages
 
 Client-side JavaScript is limited to the theme switch, the blog filters, the About career-timeline details, the article heading links, and the CV print button. All content and navigation work without it.
 
 ## Design
 
-A warm editorial "contemporary research journal": warm paper (`#F7F5F0`) and deep ink, a restrained forest-green accent (`#185C50`), Newsreader for expressive headings and long-form reading, and DM Sans for navigation and interface text. The masthead is a compact horizontal bar — name, Writing, Research, Work, About, CV, and a theme control — with a no-JavaScript disclosure menu on small screens. Pages share one system but play different roles: an expressive introduction, a concise writing index, a larger research feature, and an image-led ECEGEN work preview. See [the design note](docs/DESIGN.md).
-
-The About page draws education, exchange, research, and work on a shared time axis, with a short text entry for each period. The CV carries the full descriptions, skills, and languages. Motion is limited to short hover feedback and a subtle entrance for timeline features, and is switched off for visitors who prefer reduced motion.
+A warm editorial "contemporary research journal": warm paper and deep ink, a restrained forest-green accent, Newsreader headings and DM Sans interface text. The masthead is a compact horizontal bar — name, Writing, Research, Work, About, CV, and a theme control — with a no-JavaScript disclosure menu on small screens. Motion is limited to short hover feedback, a subtle timeline entrance, and native view transitions, and is switched off for visitors who prefer reduced motion. See [the design note](docs/DESIGN.md).
 
 ## Run it locally
 
@@ -63,16 +62,20 @@ npm run test:browser
 
 ```text
 src/
-  components/    Masthead, records, post list, career timeline, icons
-  content/       Writing, research, projects, and notes in Markdown/MDX
-  data/          Profile, experience, education, skills, and credentials
+  components/    Header/footer, page primitives, records, post list, timeline, icons
+  content/       Writing, research, projects, credentials, and notes in Markdown/MDX
+  data/          Profile, experience, education, skills, and languages
   layouts/       Shared document shell, metadata, and themes
   pages/         Routes, RSS feed, and 404
-  styles/        Design tokens and all styling
+  styles/        Design tokens and the split stylesheet (see docs/ARCHITECTURE.md)
 public/          Images, CV, favicon, and social preview
-tests/           Publication rules and browser checks
+tests/           Publication rules, content-build integration, and browser checks
 docs/            Architecture, design, maintenance, and verification notes
 ```
+
+## Adding content
+
+One file per addition, no layout edits required: copy the collection's template in `src/content/<collection>/`, replace every field, set `draft: false`, and run `npm run verify`. Personal data (contact links, timeline entries, skills) lives in `src/data/profile.ts`. Details in [Maintaining the site](docs/MAINTAINING.md).
 
 ## Quality checks
 
@@ -80,7 +83,7 @@ Every push runs formatting, type checking, unit tests, a production build, and a
 
 ## Documentation
 
-- [Architecture](docs/ARCHITECTURE.md): rendering, content model, presentation, and accessibility
+- [Architecture](docs/ARCHITECTURE.md): rendering, content model, CSS map, motion, and accessibility
 - [Design note](docs/DESIGN.md): the visual system and content workflow
 - [Maintaining the site](docs/MAINTAINING.md): adding content, publishing, and dependency notes
 - [Verification record](docs/VERIFICATION.md): what was tested and the results

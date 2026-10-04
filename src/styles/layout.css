@@ -1,0 +1,249 @@
+/* Shared page structure: page headers, feature sections, records, and
+   detail-page scaffolding. Every index and detail page composes these. */
+
+/* ---------- Page header (the one h1 per page) ---------- */
+
+.page-head {
+  padding-block: 4px 40px;
+}
+.page-head h1 {
+  font-family: var(--font-display);
+  font-size: clamp(34px, 6vw, 60px);
+  line-height: 1.05;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-block: 12px 18px;
+  text-wrap: balance;
+}
+.page-head h1 em {
+  font-style: italic;
+}
+.page-head .lede {
+  max-width: 58ch;
+  font-size: clamp(19px, 2.3vw, 24px);
+}
+.page-head .hero-actions {
+  margin-top: 24px;
+}
+
+/* ---------- Asymmetric feature layout ---------- */
+/* Label column + content on wide screens; the label column pins. */
+
+.feature {
+  border-top: 1px solid var(--rule);
+  padding-block: clamp(34px, 5vw, 56px);
+}
+.feature:last-child {
+  padding-bottom: 16px;
+}
+.feature-grid {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 24px 56px;
+  align-items: start;
+}
+.feature-label {
+  position: sticky;
+  top: 88px;
+}
+.feature-label h2 {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.4vw, 28px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+.feature-label .label {
+  margin-top: 8px;
+}
+
+.subsection-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  margin-block: 44px 18px;
+}
+
+/* ---------- Records (research entries, projects) ---------- */
+
+.record {
+  padding-block: 28px;
+}
+.record + .record {
+  border-top: 1px solid var(--rule);
+}
+.record:first-child {
+  padding-top: 0;
+}
+.record-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 20px;
+}
+.record-status {
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.record-title {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.4vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+  margin-block: 10px 12px;
+  text-wrap: balance;
+}
+.record-title a {
+  text-decoration: none;
+}
+.record-title svg {
+  width: 0.66em;
+  height: 0.66em;
+  color: var(--accent);
+}
+.record-desc {
+  font-size: 16.5px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  max-width: 64ch;
+}
+.record .meta-grid {
+  margin-top: 20px;
+}
+.record-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 26px;
+  margin-top: 8px;
+}
+
+/* Metadata definition grid shared by records and detail pages. */
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 18px 32px;
+}
+.meta-grid > div {
+  min-width: 0;
+}
+.meta-grid dt {
+  font-size: 12.5px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.meta-grid dd {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+
+/* ---------- Detail pages ---------- */
+
+.detail-shell {
+  padding-top: 8px;
+}
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: var(--tap);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  text-decoration: none;
+}
+.back-link svg {
+  width: 14px;
+  height: 14px;
+}
+.detail-heading {
+  padding-block: 12px 30px;
+}
+.detail-heading h1 {
+  font-size: clamp(32px, 5.4vw, 52px);
+}
+
+/* Fact panel under a detail heading. */
+.record-bar {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px 40px;
+  border-block: 1px solid var(--rule);
+  padding-block: 22px;
+  margin-bottom: 40px;
+}
+.record-bar .label {
+  margin-bottom: 8px;
+}
+.record-bar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.record-bar li {
+  padding-block: 2px;
+}
+.record-bar p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink);
+}
+.record-bar .link-arrow {
+  display: flex;
+  width: fit-content;
+}
+
+/* ---------- Interest grid (research index) ---------- */
+
+.interest-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 28px 40px;
+}
+.interest-grid li {
+  border-top: 1px solid var(--rule-strong);
+  padding-top: 14px;
+}
+.interest-grid h3 {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.interest-grid p {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.interest-grid .interest-topics {
+  margin-top: 10px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.method-note {
+  margin-top: 16px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 920px) {
+  .feature-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+  }
+  .feature-label {
+    position: static;
+  }
+}

@@ -1,0 +1,66 @@
+/* Interaction primitives: buttons, arrow links, tags. */
+
+.button {
+  display: inline-flex;
+  min-height: var(--tap);
+  padding: 10px 20px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--button-bg);
+  color: var(--button-ink);
+  border: 1px solid var(--button-bg);
+  border-radius: var(--radius);
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.button:hover {
+  background: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
+.button svg {
+  width: 16px;
+  height: 16px;
+}
+.button-secondary {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--rule-strong);
+}
+.button-secondary:hover {
+  background: var(--surface-2);
+  border-color: var(--rule-strong);
+  color: var(--ink);
+}
+
+.link-arrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: var(--tap);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+}
+.link-arrow:hover {
+  text-decoration: underline;
+}
+.link-arrow svg {
+  width: 15px;
+  height: 15px;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 16px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.tag-list span:not(:last-child)::after {
+  content: '·';
+  margin-left: 10px;
+}

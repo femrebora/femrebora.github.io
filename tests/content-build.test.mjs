@@ -21,37 +21,17 @@ const ecegenAuditMarkers = [
   'does not imply a specific job title',
 ];
 
-const fixtureCredential = `[
-  {
-    title: 'QA fixture certificate',
-    institution: 'Fixture Institute',
-    date: '2020',
-    description: 'Test-only credential. Not an owner document.',
-  },
-]`;
-
-function replaceCredentials(source, literal) {
-  const marker = 'export const credentials: Credential[] = ';
-  const start = source.indexOf(marker);
-  if (start < 0) throw new Error('credentials export not found');
-  let index = start + marker.length;
-  if (source[index] !== '[') {
-    throw new Error('credentials export is not an array literal');
-  }
-  let depth = 0;
-  for (let cursor = index; cursor < source.length; cursor += 1) {
-    const char = source[cursor];
-    if (char === '[') depth += 1;
-    else if (char === ']') {
-      depth -= 1;
-      if (depth === 0) {
-        const end = source[cursor + 1] === ';' ? cursor + 2 : cursor + 1;
-        return `${source.slice(0, start)}export const credentials: Credential[] = ${literal};${source.slice(end)}`;
-      }
-    }
-  }
-  throw new Error('credentials array did not close');
-}
+const fixtureCredential = `---
+title: QA fixture certificate
+issuer: Fixture Institute
+date: '2020'
+category: training
+description: Test-only credential. Not an owner document.
+draft: false
+featured: false
+tags: []
+---
+`;
 
 test(
   'publishing builds use temporary posts and credentials instead of owner content',
@@ -66,7 +46,12 @@ test(
       join(root, 'src/content/writing/article-template.md'),
       'utf8',
     );
+    const ownerCredential = await readFile(
+      join(root, 'src/content/credentials/credential-template.md'),
+      'utf8',
+    );
     assert.ok(!ownerProfile.includes('QA fixture certificate'));
+    assert.ok(!ownerCredential.includes('QA fixture certificate'));
 
     const fixture = await mkdtemp(join(tmpdir(), 'emre-content-test-'));
     try {
@@ -95,10 +80,6 @@ test(
       );
       const ordinaryBody = ordinary.replace(/^---[\s\S]*?---\s*/, '').trim();
       assert.ok(ordinaryBody.includes('Correlation does not imply causation'));
-      const profileSource = await readFile(
-        join(fixture, 'src/data/profile.ts'),
-        'utf8',
-      );
       const writingDir = join(fixture, 'src/content/writing');
 
       const resetWriting = async () => {
@@ -117,11 +98,20 @@ test(
         );
       };
 
-      const setCredentials = async (literal) => {
+      const setCredentials = async (markdown) => {
+        const dir = join(fixture, 'src/content/credentials');
+        await rm(dir, { recursive: true, force: true });
+        await mkdir(dir, { recursive: true });
         await writeFile(
-          join(fixture, 'src/data/profile.ts'),
-          replaceCredentials(profileSource, literal),
+          join(dir, 'credential-template.md'),
+          await readFile(
+            join(root, 'src/content/credentials/credential-template.md'),
+            'utf8',
+          ),
         );
+        if (markdown) {
+          await writeFile(join(dir, 'qa-credential.md'), markdown);
+        }
       };
 
       const build = async () => {
@@ -154,7 +144,7 @@ test(
       const readDist = (path) => readFile(join(fixture, 'dist', path), 'utf8');
 
       await resetWriting();
-      await setCredentials('[]');
+      await setCredentials(null);
       const published = `${template
         .replace(
           'Article template — replace before publishing',
@@ -275,7 +265,7 @@ ${ordinaryBody}
       await publish('content-fixture');
 
       await resetWriting();
-      await setCredentials('[]');
+      await setCredentials(null);
       await writeFile(
         join(writingDir, 'qa-only.md'),
         `---\ntitle: QA only fixture\ndescription: Test-only fixture, not an owner article.\npublishedDate: 2024-01-01\ndraft: false\nfeatured: true\ncategory: Notes\ntags: [QA]\n---\n\nA single published fixture.\n`,
@@ -374,6 +364,13 @@ ${ordinaryBody}
           'utf8',
         ),
         ownerWriting,
+      );
+      assert.equal(
+        await readFile(
+          join(root, 'src/content/credentials/credential-template.md'),
+          'utf8',
+        ),
+        ownerCredential,
       );
     } finally {
       await rm(fixture, { recursive: true, force: true });

@@ -1,0 +1,130 @@
+/* Motion system.
+
+   Navigation uses the browser's native cross-document View Transitions
+   (`@view-transition`), so this static MPA gets continuous-feeling
+   navigation with zero client JavaScript and no router. Browsers without
+   support simply navigate as before. The masthead and wordmark are named
+   elements, so they hold still while page content enters; `main` receives
+   a short fade-and-rise. Everything collapses under
+   `prefers-reduced-motion: reduce`. */
+
+@view-transition {
+  navigation: auto;
+}
+
+.masthead {
+  view-transition-name: masthead;
+}
+.wordmark {
+  view-transition-name: wordmark;
+}
+.main {
+  view-transition-name: main;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  ::view-transition-old(main) {
+    animation: 170ms var(--ease) both vt-fade-out;
+  }
+  ::view-transition-new(main) {
+    animation: 320ms var(--ease) both vt-enter;
+  }
+  /* Named header layers simply cross-fade; no movement. */
+  ::view-transition-old(masthead),
+  ::view-transition-new(masthead),
+  ::view-transition-old(wordmark),
+  ::view-transition-new(wordmark) {
+    animation: 170ms var(--ease) both vt-fade;
+    mix-blend-mode: normal;
+  }
+  @keyframes vt-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes vt-enter {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+  }
+  @keyframes vt-fade {
+    from {
+      opacity: 0;
+    }
+  }
+}
+
+/* ---------- Microinteractions ---------- */
+
+a,
+.button,
+.theme-toggle,
+.project-preview-link,
+.writing-filters select {
+  transition:
+    color var(--quick) var(--ease),
+    background-color var(--quick) var(--ease),
+    border-color var(--quick) var(--ease),
+    box-shadow var(--quick) var(--ease),
+    opacity var(--quick) var(--ease);
+}
+a svg,
+.button svg {
+  transition: transform 200ms var(--ease);
+}
+.link-arrow:hover svg,
+.link-arrow:focus-visible svg {
+  transform: translateX(3px);
+}
+.back-link:hover {
+  color: var(--accent);
+}
+.back-link:hover svg,
+.back-link:focus-visible svg {
+  transform: translateX(-3px);
+}
+.record-title a,
+.post-list h3 a {
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 5px;
+}
+.record-title a:hover,
+.record-title a:focus-visible,
+.post-list h3 a:hover,
+.post-list h3 a:focus-visible,
+.home-research-copy h2 a:focus-visible,
+.home-work-copy h2 a:focus-visible {
+  text-decoration-color: currentColor;
+}
+.button:active {
+  transform: translateY(1px);
+}
+
+/* Project imagery settles gently on hover; no crop, no bounce. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .project-preview-link:hover img {
+    transform: scale(1.012);
+  }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}

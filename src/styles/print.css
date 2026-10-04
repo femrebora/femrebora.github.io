@@ -1,0 +1,46 @@
+/* Print: the CV is the primary print target; articles print cleanly too. */
+
+@media print {
+  .masthead,
+  .site-footer,
+  .skip-link,
+  .theme-toggle,
+  .site-menu,
+  .back-link,
+  .toc,
+  .writing-filters,
+  .article-pagination,
+  .cv-actions {
+    display: none !important;
+  }
+  .main {
+    padding: 0;
+  }
+  :root {
+    --paper: #fff;
+    --surface: #fff;
+    --surface-2: #f4f4f2;
+    --ink: #000;
+    --ink-soft: #222;
+    --muted: #333;
+    --accent: #14524a;
+    --rule: #cccccc;
+    --rule-strong: #999999;
+  }
+  .article-body {
+    display: block;
+  }
+  .prose {
+    max-width: none;
+    font-size: 12pt;
+  }
+  .cv {
+    max-width: none;
+  }
+  .cv-section {
+    break-inside: avoid;
+  }
+  a {
+    text-decoration: underline;
+  }
+}

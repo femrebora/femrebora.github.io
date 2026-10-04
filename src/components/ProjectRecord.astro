@@ -11,12 +11,16 @@ interface Props {
 
 const { project, heading: Heading, eager = false } = Astro.props;
 const href = `/work/${project.id}/`;
+const context = [project.data.status, project.data.year]
+  .filter(Boolean)
+  .join(' · ');
 ---
 
 <article class="record project-record">
   <div class="project-record-head">
     <div class="record-head">
       <span class="label">{project.data.category}</span>
+      {context && <span class="record-status">{context}</span>}
     </div>
     <Heading class="record-title">
       <a href={href}>
@@ -24,6 +28,9 @@ const href = `/work/${project.id}/`;
       </a>
     </Heading>
     <p class="record-desc">{project.data.description}</p>
+    {project.data.contribution && (
+      <p class="meta record-contribution">{project.data.contribution}</p>
+    )}
   </div>
   {project.data.image && (
     <ProjectPreview image={project.data.image} href={href} eager={eager} />
@@ -34,6 +41,12 @@ const href = `/work/${project.id}/`;
         <dt>Stack</dt>
         <dd>{project.data.stack.join(' · ')}</dd>
       </div>
+      {project.data.role && (
+        <div>
+          <dt>Role</dt>
+          <dd>{project.data.role}</dd>
+        </div>
+      )}
     </dl>
     <div class="record-actions">
       <a class="link-arrow" href={href}>

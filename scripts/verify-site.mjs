@@ -82,7 +82,10 @@ for (const file of files.filter((file) =>
   const source = await readFile(file, 'utf8');
   if (
     source.includes('Article template — replace before publishing') ||
-    source.includes('Research note template')
+    source.includes('Research note template') ||
+    source.includes('Research entry template — replace before publishing') ||
+    source.includes('Project template — replace before publishing') ||
+    source.includes('Credential template — replace before publishing')
   )
     errors.push(`${relative(root, file)}: unpublished template leaked`);
 }

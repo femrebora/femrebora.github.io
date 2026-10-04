@@ -14,6 +14,10 @@ export const getProjects = async () =>
     (a, b) => a.data.order - b.data.order,
   );
 export const getNotes = async () => getCollection('notes', isPublished);
+export const getCredentials = async () =>
+  (await getCollection('credentials', isPublished)).sort((a, b) =>
+    b.data.date.localeCompare(a.data.date),
+  );
 export const formatDate = (date: Date) =>
   date.toLocaleDateString('en-GB', {
     day: 'numeric',

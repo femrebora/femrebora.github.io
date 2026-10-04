@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import WritingList from '../components/WritingList.astro';
 import MethodSchematic from '../components/MethodSchematic.astro';
+import ContactList from '../components/ContactList.astro';
 import Icon from '../components/Icon.astro';
 import { profile, experience, education } from '../data/profile';
 import {
@@ -39,6 +40,11 @@ const project = projects.find((entry) => entry.data.featured) ?? projects[0];
     <p class="label">Bioinformatician · Genetics &amp; computational biology</p>
     <h1>{profile.name}</h1>
     <p class="lede">{profile.introduction}</p>
+    <ul class="intro-focus" aria-label="Focus areas">
+      <li>Clinical genomics</li>
+      <li>Cancer &amp; functional genomics</li>
+      <li>Scientific computing</li>
+    </ul>
     <div class="hero-actions">
       <a class="button" href="#research">
         Explore research <Icon name="arrow-right" />
@@ -75,6 +81,26 @@ const project = projects.find((entry) => entry.data.featured) ?? projects[0];
         {research.data.question && (
           <p class="home-question">{research.data.question}</p>
         )}
+        <dl class="home-research-meta">
+          {research.data.institution && (
+            <div>
+              <dt>Institution</dt>
+              <dd>{research.data.institution}</dd>
+            </div>
+          )}
+          {research.data.period && (
+            <div>
+              <dt>Period</dt>
+              <dd>{research.data.period}</dd>
+            </div>
+          )}
+          {research.data.role && (
+            <div>
+              <dt>Role</dt>
+              <dd>{research.data.role}</dd>
+            </div>
+          )}
+        </dl>
       </div>
       <p class="home-research-summary">{research.data.description}</p>
       <MethodSchematic />
@@ -146,30 +172,15 @@ const project = projects.find((entry) => entry.data.featured) ?? projects[0];
     <div>
       <h2>About</h2>
       {backgroundSummary && <p>{backgroundSummary}</p>}
-      <a class="link-arrow" href="/about/">
-        About <Icon name="arrow-right" />
-      </a>
+      <div class="record-actions">
+        <a class="link-arrow" href="/about/">
+          About <Icon name="arrow-right" />
+        </a>
+      </div>
     </div>
     <div id="contact">
       <h2>Contact</h2>
-      <div class="contact-list">
-        {profile.email && (
-          <a class="link-arrow" href={`mailto:${profile.email}`}>
-            {profile.email} <Icon name="mail" />
-          </a>
-        )}
-        {profile.linkedin && (
-          <a class="link-arrow" href={profile.linkedin}>
-            LinkedIn <Icon name="external" />
-          </a>
-        )}
-        <a class="link-arrow" href={profile.github}>
-          GitHub <Icon name="external" />
-        </a>
-        <a class="link-arrow" href={profile.cv} download>
-          Download CV (PDF) <Icon name="download" />
-        </a>
-      </div>
+      <ContactList />
     </div>
   </section>
 </BaseLayout>

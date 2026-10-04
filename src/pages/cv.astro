@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactList from '../components/ContactList.astro';
 import Icon from '../components/Icon.astro';
 import {
   profile,
@@ -7,8 +8,10 @@ import {
   education,
   capabilities,
   languages,
-  credentials,
 } from '../data/profile';
+import { getCredentials } from '../lib/content';
+
+const credentials = await getCredentials();
 ---
 
 <BaseLayout
@@ -18,18 +21,8 @@ import {
   <div class="cv">
     <header class="cv-header">
       <h1>{profile.fullName}</h1>
-      <p class="cv-title">
-        Bioinformatician · Genetics, bioinformatics &amp; computational biology
-      </p>
-      <div class="cv-contact">
-        {profile.email && (
-          <a href={`mailto:${profile.email}`}>{profile.email}</a>
-        )}
-        {profile.linkedin && (
-          <a href={profile.linkedin}>linkedin.com/in/femre-bora</a>
-        )}
-        <a href={profile.github}>github.com/femrebora</a>
-      </div>
+      <p class="cv-title">{profile.fields}</p>
+      <ContactList variant="plain" showCv={false} />
       <div class="cv-actions">
         <a class="button" href={profile.cv} download>
           Download CV (PDF) <Icon name="download" />
@@ -108,11 +101,13 @@ import {
           {credentials.map((credential) => (
             <li class="cv-entry">
               <header>
-                <h3>{credential.title}</h3>
-                <span class="cv-when">{credential.date}</span>
+                <h3>{credential.data.title}</h3>
+                <span class="cv-when">{credential.data.date}</span>
               </header>
-              <p class="cv-where">{credential.institution}</p>
-              <p>{credential.description}</p>
+              <p class="cv-where">{credential.data.issuer}</p>
+              {credential.data.description && (
+                <p>{credential.data.description}</p>
+              )}
             </li>
           ))}
         </ol>

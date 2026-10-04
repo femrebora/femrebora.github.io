@@ -1,0 +1,27 @@
+---
+/** Definition grid of labeled facts. Empty values render nothing. */
+interface Item {
+  label: string;
+  value?: string | null;
+  list?: string[];
+}
+interface Props {
+  items: Item[];
+  class?: string;
+}
+const { items, class: className = 'meta-grid' } = Astro.props;
+const visible = items.filter(
+  (item) => item.value ?? (item.list && item.list.length > 0),
+);
+---
+
+{visible.length > 0 && (
+  <dl class={className}>
+    {visible.map((item) => (
+      <div>
+        <dt>{item.label}</dt>
+        {item.value ? <dd>{item.value}</dd> : <dd>{item.list!.join(' · ')}</dd>}
+      </div>
+    ))}
+  </dl>
+)}

@@ -1,0 +1,58 @@
+/* Work records and project imagery. Frames keep intrinsic proportions;
+   the only cropped image on the site is the homepage preview. */
+
+.project-preview {
+  margin: 0;
+}
+.project-preview-link {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+.project-preview-link img {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform var(--smooth) var(--ease);
+}
+.project-preview figcaption {
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--muted);
+}
+.project-preview-lead {
+  margin-bottom: 8px;
+}
+.project-preview-lead .project-preview-link {
+  background: var(--surface-2);
+}
+.project-record .project-preview {
+  margin-top: 22px;
+}
+.record-contribution {
+  margin-top: 10px;
+  max-width: 64ch;
+}
+@media (min-width: 1040px) {
+  .project-record {
+    display: grid;
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-areas:
+      'head preview'
+      'foot preview';
+    grid-template-rows: auto 1fr;
+    column-gap: 48px;
+  }
+  .project-record-head {
+    grid-area: head;
+  }
+  .project-record-foot {
+    grid-area: foot;
+  }
+  .project-record .project-preview {
+    grid-area: preview;
+    margin-top: 0;
+  }
+}

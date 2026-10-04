@@ -1,0 +1,45 @@
+---
+/** Contact links, generated from profile data. Never fabricates a link:
+    absent values are skipped. `variant="arrows"` is the site-wide style;
+    `variant="plain"` is used by the CV contact line. */
+import Icon from './Icon.astro';
+import { profile } from '../data/profile';
+
+interface Props {
+  variant?: 'arrows' | 'plain';
+  showCv?: boolean;
+}
+const { variant = 'arrows', showCv = true } = Astro.props;
+type IconName = 'mail' | 'external' | 'download';
+const links: { href: string; text: string; icon: IconName }[] = [
+  { href: `mailto:${profile.email}`, text: profile.email, icon: 'mail' },
+  { href: profile.linkedin, text: 'LinkedIn', icon: 'external' },
+  { href: profile.github, text: 'GitHub', icon: 'external' },
+];
+---
+
+{variant === 'plain' ? (
+  <div class="cv-contact">
+    {links.map((link) => (
+      <a href={link.href}>{link.text}</a>
+    ))}
+    {showCv && (
+      <a href={profile.cv} download>
+        PDF
+      </a>
+    )}
+  </div>
+) : (
+  <div class="contact-list">
+    {links.map((link) => (
+      <a class="link-arrow" href={link.href}>
+        {link.text} <Icon name={link.icon} />
+      </a>
+    ))}
+    {showCv && (
+      <a class="link-arrow" href={profile.cv} download>
+        Download CV (PDF) <Icon name="download" />
+      </a>
+    )}
+  </div>
+)}

@@ -1,0 +1,164 @@
+/* Long-form reading: .prose is the shared article surface for writing,
+   research, and work detail pages. 68ch measure in Newsreader. */
+
+.prose {
+  max-width: var(--prose-measure);
+  font-family: var(--font-reading);
+  font-size: 20px;
+  line-height: 1.72;
+  color: var(--ink);
+  overflow-wrap: break-word;
+}
+.prose > :first-child {
+  margin-top: 0;
+}
+.prose h2,
+.prose h3,
+.prose h4 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  line-height: 1.22;
+  letter-spacing: -0.012em;
+  scroll-margin-top: 88px;
+}
+.prose h2 {
+  font-size: clamp(27px, 3.2vw, 34px);
+  margin-block: 1.4em 0.5em;
+}
+.prose h3 {
+  font-size: 23px;
+  margin-block: 1.3em 0.5em;
+}
+.prose h4 {
+  font-size: 19px;
+  margin-block: 1.3em 0.5em;
+}
+.prose p,
+.prose ul,
+.prose ol {
+  margin-block: 0 1.2em;
+}
+.prose ul,
+.prose ol {
+  padding-left: 1.3em;
+}
+.prose ul {
+  list-style-type: disc;
+}
+.prose ol {
+  list-style-type: decimal;
+}
+.prose li {
+  margin-block: 0.3em;
+}
+.prose li > p {
+  margin-block: 0.3em;
+}
+.prose a {
+  color: var(--accent);
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+.prose strong {
+  font-weight: 650;
+}
+.prose blockquote {
+  border-left: 2px solid var(--accent);
+  margin: 1.6em 0;
+  padding: 0.1em 0 0.1em 1.2em;
+  font-style: italic;
+  color: var(--ink-soft);
+}
+.prose blockquote p {
+  margin: 0;
+}
+.prose code {
+  font-size: 0.82em;
+  background: var(--code-bg);
+  padding: 0.12em 0.32em;
+  border-radius: 3px;
+}
+.prose pre {
+  padding: 20px;
+  margin-block: 1.7em;
+  overflow: auto;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  font-size: 14px;
+  line-height: 1.7;
+}
+.prose pre code {
+  padding: 0;
+  background: transparent;
+  font-size: inherit;
+}
+
+/* Theme-aware Shiki tokens. */
+.astro-code,
+.astro-code span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+[data-theme='dark'] .astro-code,
+[data-theme='dark'] .astro-code span {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) .astro-code,
+  :root:not([data-theme]) .astro-code span {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
+}
+
+.prose table {
+  display: block;
+  max-width: 100%;
+  width: max-content;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin-block: 1.7em;
+  font-family: var(--font-ui);
+  font-size: 14.5px;
+}
+.prose th,
+.prose td {
+  padding: 10px 16px;
+  border: 1px solid var(--rule);
+  text-align: left;
+}
+.prose th {
+  background: var(--surface-2);
+  font-weight: 600;
+}
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin-block: 2em;
+}
+.prose img {
+  display: block;
+  border-radius: var(--radius);
+  margin-block: 1.5em;
+}
+.prose .footnotes {
+  border-top: 1px solid var(--rule);
+  margin-top: 3em;
+  padding-top: 1.4em;
+  font-size: 15px;
+  color: var(--muted);
+}
+.prose .heading-anchor {
+  margin-left: 0.4em;
+  font-family: var(--font-ui);
+  font-size: 0.62em;
+  color: var(--muted);
+  text-decoration: none;
+  opacity: 0.7;
+}
+.prose .heading-anchor:hover,
+.prose .heading-anchor:focus-visible {
+  color: var(--accent);
+  opacity: 1;
+}

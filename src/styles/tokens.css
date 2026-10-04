@@ -1,0 +1,112 @@
+/* Design tokens. The single source of truth for color, type, space, and
+   motion decisions. Themes are designed individually — the dark values are
+   not a mechanical inversion of the light ones.
+
+   Naming:
+   --paper / --surface / --surface-2   page and elevated planes
+   --ink / --ink-soft / --muted        primary, secondary, tertiary text
+   --rule / --rule-strong              hairlines and structural borders
+   --accent / --accent-hover / --accent-soft   the biological green
+   --focus                             keyboard focus ring
+   --quick / --smooth / --ease         interaction timing
+   --z-*                               stacking layers
+   --wrap / --prose-measure            content widths */
+
+:root {
+  color-scheme: light;
+
+  /* Typography */
+  --font-ui: 'DM Sans Variable', system-ui, sans-serif;
+  --font-display: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --font-reading: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
+  --font-code: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
+
+  /* Color: light theme (warm paper) */
+  --paper: #f7f5f0;
+  --surface: #fdfcfa;
+  --surface-2: #f0ede5;
+  --ink: #1e2523;
+  --ink-soft: #3c4441;
+  --muted: #555f5b;
+  --rule: #dcdad0;
+  --rule-strong: #c6c3b6;
+  --accent: #185c50;
+  --accent-hover: #124840;
+  --accent-soft: #e6ede9;
+  --button-bg: #185c50;
+  --button-ink: #f7f5f0;
+  --code-bg: #efede5;
+  --focus: #185c50;
+
+  /* Elevation and shape */
+  --shadow: 0 1px 2px rgba(30, 37, 35, 0.05);
+  --shadow-raised:
+    0 2px 6px rgba(30, 37, 35, 0.07), 0 12px 32px rgba(30, 37, 35, 0.06);
+  --radius: 4px;
+  --radius-lg: 8px;
+
+  /* Motion */
+  --quick: 170ms;
+  --smooth: 280ms;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+  /* Layout */
+  --tap: 44px;
+  --wrap: 1180px;
+  --prose-measure: 68ch;
+
+  /* Stacking layers */
+  --z-masthead: 20;
+  --z-skip: 40;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+
+  /* Color: dark theme (warm near-black, lightened sage accent) */
+  --paper: #15130f;
+  --surface: #1e1b15;
+  --surface-2: #26221b;
+  --ink: #ede8dd;
+  --ink-soft: #d3ccbf;
+  --muted: #a9a294;
+  --rule: #322e26;
+  --rule-strong: #474036;
+  --accent: #7fbfa9;
+  --accent-hover: #98cfbb;
+  --accent-soft: #22302b;
+  --button-bg: #7fbfa9;
+  --button-ink: #12100c;
+  --code-bg: #1b1813;
+  --focus: #7fbfa9;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-raised:
+    0 2px 6px rgba(0, 0, 0, 0.45), 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+
+    --paper: #15130f;
+    --surface: #1e1b15;
+    --surface-2: #26221b;
+    --ink: #ede8dd;
+    --ink-soft: #d3ccbf;
+    --muted: #a9a294;
+    --rule: #322e26;
+    --rule-strong: #474036;
+    --accent: #7fbfa9;
+    --accent-hover: #98cfbb;
+    --accent-soft: #22302b;
+    --button-bg: #7fbfa9;
+    --button-ink: #12100c;
+    --code-bg: #1b1813;
+    --focus: #7fbfa9;
+
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-raised:
+      0 2px 6px rgba(0, 0, 0, 0.45), 0 12px 32px rgba(0, 0, 0, 0.35);
+  }
+}

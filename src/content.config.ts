@@ -49,6 +49,8 @@ const research = defineCollection({
       ])
       .default('research'),
     status: z.string(),
+    institution: z.string().optional(),
+    period: z.string().optional(),
     methods: z.array(z.string()).default([]),
     links: z.array(reference).default([]),
     order: z.number().default(0),
@@ -56,6 +58,14 @@ const research = defineCollection({
     question: z.string().optional(),
     contribution: z.string().optional(),
     outputs: z.array(z.string()).default([]),
+    relatedWriting: z.array(z.string()).default([]),
+    image: image
+      .extend({
+        width: z.number().int().positive(),
+        height: z.number().int().positive(),
+        caption: z.string().optional(),
+      })
+      .optional(),
   }),
 });
 const projects = defineCollection({
@@ -63,6 +73,9 @@ const projects = defineCollection({
   schema: z.object({
     ...common,
     category: z.string(),
+    year: z.string().optional(),
+    status: z.string().optional(),
+    role: z.string().optional(),
     stack: z.array(z.string()).default([]),
     image: image
       .extend({
@@ -75,6 +88,21 @@ const projects = defineCollection({
     repository: z.url().optional(),
     order: z.number().default(0),
     contribution: z.string().optional(),
+  }),
+});
+const credentials = defineCollection({
+  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/credentials' }),
+  schema: z.object({
+    ...common,
+    issuer: z.string(),
+    date: z.string(),
+    credentialId: z.string().optional(),
+    credentialUrl: z.url().optional(),
+    category: z
+      .enum(['certificate', 'training', 'award', 'workshop', 'professional'])
+      .default('certificate'),
+    description: z.string().optional(),
+    image: image.optional(),
   }),
 });
 const notes = defineCollection({
@@ -94,4 +122,4 @@ const notes = defineCollection({
     }),
   ]),
 });
-export const collections = { writing, research, projects, notes };
+export const collections = { writing, research, projects, credentials, notes };

@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
 import WritingList from '../../components/WritingList.astro';
 import { getWriting } from '../../lib/content';
 const articles = await getWriting();
@@ -14,16 +15,11 @@ const showFilters = showCategories || showTags;
   title="Writing"
   description="Notes and essays on bioinformatics, genomics, research, scientific computing, and software."
 >
-  <header class="page-head">
-    <p class="label">Writing / Notes &amp; essays</p>
-    <h1>
-      Working through ideas. <em>Writing them down.</em>
-    </h1>
-    <p class="lede">
-      Notes and essays on bioinformatics, genomics, research, and the tools that
-      support it.
-    </p>
-  </header>
+  <PageHeader
+    label="Writing / Notes & essays"
+    title="Working through ideas. <em>Writing them down.</em>"
+    lede="Notes and essays on bioinformatics, genomics, research, and the tools that support it."
+  />
   {showFilters && (
     <form class="writing-filters" hidden>
       {showCategories && (

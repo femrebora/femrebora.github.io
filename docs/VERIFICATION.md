@@ -154,3 +154,20 @@ Screenshots were captured by the browser suite for `/`, `/research/`, `/research
 The root-domain Astro configuration and GitHub Actions workflow are ready for review. Publishing still requires the owner to select GitHub Actions in Pages settings and authorize a commit/push. Neither deployment nor settings changes were attempted.
 
 The site has an empty writing feed and no published research thoughts. Following the owner-supplied CV, education, employment, research methods, tools, languages, contact links, and a sanitized downloadable CV are populated. Credentials still require issuer/date details. See `CONTENT-TODO.md`. Research findings and website-specific responsibilities were not invented to fill the layout.
+
+## Refactor v3 — architecture, design system, and credentials collection (4 October 2026)
+
+The owner requested a senior-level design, frontend-architecture, and maintainability refactor without changing the stack or factual content. Changes: `global.css` (2281 lines) was split into a token-based stylesheet under `src/styles/` with per-owner component files; GenomeTrack styles moved scoped into the component; unused CSS classes and the unused `Timeline.astro` component were removed; the unused Tailwind dependency was removed; credentials moved from `profile.ts` into a `credentials` content collection (one file per credential); research/projects schemas gained `institution`, `period`, `relatedWriting`, `image`, `year`, `status`, `role`; reusable primitives (`PageHeader`, `FeatureSection`, `MetadataList`, `TagList`, `ContactList`, `BackLink`) replaced duplicated markup; the homepage hero now states the focus areas and the research spotlight shows institution/period/role; native cross-document View Transitions (`@view-transition`) replaced full-reload navigation with zero client JavaScript; draft templates were added for research, projects, and credentials with leak checks in the site verifier. The earlier "Data Atlas" presentation described above was superseded before this record; the live design remains the warm-paper research journal.
+
+Local verification (Node.js 24.18.0, local Google Chrome):
+
+| Check                  | Result                                                                     |
+| ---------------------- | -------------------------------------------------------------------------- |
+| `npm run format:check` | Passed (Prettier)                                                          |
+| `npm run check`        | 0 errors, 0 warnings, 0 hints                                              |
+| `npm test`             | 8 passed, 0 failed (content-build test now builds a fixture credential md) |
+| `npm run build`        | 10 static pages plus RSS, sitemap, assets, robots, `.nojekyll`             |
+| `npm run verify:site`  | 10 HTML pages; 225 local links/assets/anchors; no broken targets or leaks  |
+| `npm run test:browser` | 16 Playwright tests passed, both themes, five widths                       |
+
+Reduced-motion behavior (including disabled view transitions), no-JavaScript navigation, keyboard use, the article fixture layouts, and the CV PDF download were re-verified by the same suite. No commits, pushes, merges, history rewrites, or GitHub setting changes were performed.

@@ -18,7 +18,7 @@ const onHome = path === '/';
   <div class="wrap masthead-inner">
     <a class="wordmark" href="/" aria-current={onHome ? 'page' : undefined}>
       <strong>{profile.name}</strong>
-      <span>Bioinformatics · Computational biology</span>
+      <span>{profile.tagline}</span>
     </a>
     <nav class="site-nav site-nav--inline" aria-label="Main navigation">
       {links.map(({ href, label, match }) => (

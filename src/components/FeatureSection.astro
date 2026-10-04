@@ -1,0 +1,27 @@
+---
+/** Asymmetric section: a pinned label column beside slotted content. */
+interface Props {
+  title: string;
+  kicker?: string;
+  id?: string;
+  labelId?: string;
+}
+const {
+  title,
+  kicker,
+  id,
+  labelId = `${id ?? title.toLowerCase().replace(/[^a-z0-9]+/g, '-')}-title`,
+} = Astro.props;
+---
+
+<section class="feature" id={id} aria-labelledby={labelId}>
+  <div class="feature-grid">
+    <div class="feature-label">
+      <h2 id={labelId}>{title}</h2>
+      {kicker && <p class="meta">{kicker}</p>}
+    </div>
+    <div class="feature-content">
+      <slot />
+    </div>
+  </div>
+</section>

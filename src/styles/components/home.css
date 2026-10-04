@@ -1,0 +1,277 @@
+/* Homepage: hero, research spotlight, selected work, writing, close. */
+
+.intro {
+  padding-block: 8px 12px;
+}
+.intro .label {
+  margin-bottom: 14px;
+}
+.intro h1 {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 8vw, 76px);
+  line-height: 1.02;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  margin-bottom: 22px;
+}
+.intro .lede {
+  max-width: 18em;
+  font-size: clamp(22px, 2.8vw, 30px);
+  line-height: 1.28;
+  text-wrap: balance;
+}
+.intro-focus {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin-top: 18px;
+  font-size: 14px;
+  letter-spacing: 0.01em;
+  color: var(--muted);
+}
+.intro-focus li:not(:last-child)::after {
+  content: '·';
+  margin-left: 14px;
+  color: var(--rule-strong);
+}
+.intro .hero-actions {
+  margin-top: 28px;
+}
+
+/* ---------- Section rhythm ---------- */
+
+.home-research,
+.home-work,
+.home-writing,
+.home-close {
+  margin-top: clamp(56px, 8vw, 92px);
+}
+
+/* Featured research: a full-bleed band, the homepage's strongest moment. */
+.home-research {
+  margin-inline: calc(clamp(20px, 5vw, 40px) * -1);
+  padding: clamp(32px, 4.5vw, 52px) clamp(20px, 5vw, 40px);
+  background: var(--surface-2);
+  display: grid;
+  gap: 18px 48px;
+}
+.home-research-copy h2,
+.home-work-copy h2,
+.home-writing-head h2,
+.home-writing-quiet h2,
+.home-close h2 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+.home-research-copy h2 {
+  font-size: clamp(34px, 4.8vw, 54px);
+  margin-block: 10px 14px;
+}
+.home-research-copy h2 a,
+.home-work-copy h2 a {
+  text-decoration: none;
+}
+.home-question {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(22px, 2.5vw, 30px);
+  line-height: 1.25;
+  text-wrap: balance;
+  max-width: 22em;
+}
+.home-research-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 28px;
+  margin-top: 18px;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.home-research-meta div {
+  min-width: 0;
+}
+.home-research-meta dt {
+  display: inline;
+  font-weight: 500;
+  color: var(--ink-soft);
+}
+.home-research-meta dt::after {
+  content: ':';
+  margin-right: 6px;
+  color: var(--muted);
+}
+.home-research-meta dd {
+  display: inline;
+  margin: 0;
+}
+.home-research-summary,
+.home-work-copy p,
+.home-writing-quiet p,
+.home-close p {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 42em;
+}
+.home-research .record-actions,
+.home-work .record-actions {
+  margin-top: 0;
+}
+
+/* ---------- Method schematic (thesis analysis sequence) ---------- */
+
+.method-schematic {
+  margin: 8px 0 0;
+}
+.method-flow {
+  list-style: none;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+}
+.method-flow li {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  padding-top: 12px;
+  border-top: 2px solid var(--accent);
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.25;
+  text-wrap: balance;
+}
+.method-index {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+.method-schematic figcaption {
+  margin-top: 14px;
+  max-width: 62ch;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+/* ---------- Selected work ---------- */
+
+.home-work {
+  display: grid;
+  gap: 22px 48px;
+  align-items: center;
+}
+.home-shot-figure {
+  margin: 0;
+  min-width: 0;
+}
+.home-shot {
+  display: block;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--rule-strong);
+  border-radius: var(--radius);
+  background: var(--surface-2);
+}
+.home-shot img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 22%;
+}
+.home-shot-figure figcaption {
+  margin-top: 10px;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--muted);
+}
+.home-work-copy h2 {
+  font-size: clamp(32px, 4vw, 46px);
+  margin-block: 8px 12px;
+}
+.home-work-copy .meta {
+  margin-top: 12px;
+}
+
+/* ---------- Writing ---------- */
+
+.home-writing {
+  padding-top: 8px;
+}
+.home-writing-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-bottom: 22px;
+}
+.home-writing-head h2,
+.home-writing-quiet h2 {
+  font-size: clamp(32px, 4vw, 44px);
+}
+.home-writing-quiet {
+  max-width: 36em;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+.home-writing-quiet p {
+  margin-top: 10px;
+}
+.home-writing .post-featured:last-child {
+  border-bottom: 0;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* ---------- About + contact close ---------- */
+
+.home-close {
+  display: grid;
+  gap: 32px 64px;
+  padding-top: 28px;
+  border-top: 1px solid var(--rule);
+}
+.home-close h2 {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 720px) {
+  .home-research {
+    margin-inline: calc(clamp(20px, 5vw, 40px) * -1);
+  }
+}
+@media (min-width: 800px) {
+  .method-flow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px 28px;
+  }
+}
+@media (min-width: 860px) {
+  .home-research {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: end;
+  }
+  .home-research .method-schematic,
+  .home-research .record-actions {
+    grid-column: 1 / -1;
+  }
+  .home-work {
+    grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.8fr);
+  }
+  .home-close {
+    grid-template-columns: minmax(0, 1.15fr) minmax(220px, 0.85fr);
+  }
+}
