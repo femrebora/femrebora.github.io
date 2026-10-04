@@ -67,6 +67,15 @@ const listed = featured
       </ol>
     )}
   </>
+) : context === 'archive' ? (
+  <p class="quiet-note">
+    No articles published yet. Essays and notes on genomics, bioinformatics, and
+    the tools I use will appear here.
+  </p>
 ) : (
-  context === 'archive' && <p class="quiet-note">No articles published yet.</p>
+  <p class="quiet-note">
+    I am preparing the first pieces: essays and notes on genomics,
+    bioinformatics, and the tools I use. They will appear here as they are
+    published.
+  </p>
 )}

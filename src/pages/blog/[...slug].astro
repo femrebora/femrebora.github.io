@@ -171,5 +171,37 @@ const relatedProjects = (await getProjects()).filter((project) =>
       link.textContent = '#';
       heading.append(link);
     }
+
+    // Copy controls for code blocks. The button is appended outside <code>,
+    // so the copied value is exactly the block's text content.
+    for (const pre of document.querySelectorAll<HTMLPreElement>('.prose pre')) {
+      const code = pre.querySelector('code');
+      if (!code) continue;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block';
+      pre.replaceWith(wrapper);
+      wrapper.append(pre);
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'code-copy';
+      button.textContent = 'Copy';
+      button.setAttribute('aria-label', 'Copy code to clipboard');
+      wrapper.append(button);
+      let reset: ReturnType<typeof setTimeout> | undefined;
+      button.addEventListener('click', async () => {
+        let copied = false;
+        try {
+          await navigator.clipboard.writeText(code.textContent ?? '');
+          copied = true;
+        } catch {
+          copied = false;
+        }
+        button.textContent = copied ? 'Copied' : 'Copy failed';
+        if (reset) clearTimeout(reset);
+        reset = setTimeout(() => {
+          button.textContent = 'Copy';
+        }, 2000);
+      });
+    }
   </script>
 </BaseLayout>

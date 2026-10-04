@@ -18,15 +18,15 @@ const {
   canonicalURL,
   image = {
     src: '/social-card.png',
-    alt: 'F. Emre Bora — Genetics, Bioinformatics, Computational Biology',
+    alt: 'F. Emre Bora: Genetics, Bioinformatics, Computational Biology',
   },
   article,
   noindex = false,
   lang = 'en',
 } = Astro.props;
 const pageTitle = title
-  ? `${title} — ${profile.name}`
-  : `${profile.name} — Genetics & Bioinformatics`;
+  ? `${title} | ${profile.name}`
+  : `${profile.name} | Writing & Bioinformatics`;
 const canonical = canonicalURL || new URL(Astro.url.pathname, Astro.site).href;
 const socialImage = new URL(image.src, Astro.site).href;
 const person = {
@@ -109,7 +109,7 @@ const structured = {
     <link
       rel="alternate"
       type="application/rss+xml"
-      title={`${profile.name} — Blog`}
+      title={`Writing | ${profile.name}`}
       href="/rss.xml"
     />
     <meta property="og:type" content={article ? 'article' : 'website'} />

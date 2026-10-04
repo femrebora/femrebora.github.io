@@ -10,6 +10,7 @@
   .toc,
   .writing-filters,
   .article-pagination,
+  .code-copy,
   .cv-actions {
     display: none !important;
   }

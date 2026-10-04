@@ -4,7 +4,7 @@ export const profile = {
   fields: 'Genetics · Bioinformatics · Computational Biology',
   tagline: 'Bioinformatics · Computational biology',
   description:
-    'Research, writing, and selected work at the intersection of genetics, bioinformatics, computational biology, and software.',
+    'Research and writing in genetics, bioinformatics, computational biology, and scientific software.',
   introduction:
     'I work with genomic data and build tools for research and clinical genomics.',
   biography: [
@@ -73,7 +73,7 @@ export const experience: TimelineEntry[] = [
     label: 'Clinical bioinformatics',
     title: 'Bioinformatician',
     institution: 'Ecegen Genetic Diseases Assessment Center',
-    period: 'Jan 2026 – present',
+    period: 'Jan 2026 to present',
     description:
       'Genomic data analysis and variant interpretation for clinical and research-oriented genetic testing. NGS quality control, alignment, annotation, filtering, and prioritization, alongside reproducible Linux workflows and pipeline automation.',
   },
@@ -87,7 +87,7 @@ export const experience: TimelineEntry[] = [
     title: 'Project Assistant / Graduate Researcher',
     institution:
       'Bezmialem Vakif University · Life Science and Biotechnology Institute · Cingoz Lab',
-    period: 'Sept 2024 – June 2026',
+    period: 'Sept 2024 to June 2026',
     description:
       'Research supported by the TÜBİTAK 3501 Career Development Support Program. Pooled CRISPR/Cas9 screen analysis with MAGeCK RRA, pathway analysis, and integration with transcriptomics, metabolomics, and TCGA-GBM data. Laboratory work included mammalian cell culture, viability assays, and metabolomics sample preparation.',
     href: '/research/trail-resistance/',
@@ -101,7 +101,7 @@ export const experience: TimelineEntry[] = [
     label: 'Clinical genetics internship',
     title: 'Intern',
     institution: 'Istinye University Genetic Diseases Diagnostic Center',
-    period: 'June 2022 – Sept 2022',
+    period: 'June 2022 to Sept 2022',
     description:
       'Clinical genetics and cytogenetic workflows under laboratory specialist supervision. Review of VCF, BAM, and BED datasets, genomic annotation assessment, and mutation detection and microsatellite instability analysis using SeqScape.',
   },
@@ -114,7 +114,7 @@ export const experience: TimelineEntry[] = [
     label: 'Pharmaceutical internship',
     title: 'Intern',
     institution: 'Biofarma Pharmaceutical Company',
-    period: 'June 2020 – Aug 2020',
+    period: 'June 2020 to Aug 2020',
     description:
       'Scientific literature review related to pharmaceutical research and therapeutic discovery, with exposure to research, regulatory, development, and testing workflows.',
   },
@@ -129,7 +129,7 @@ export const education: TimelineEntry[] = [
     label: 'Master’s degree',
     title: 'MSc · Biotechnology',
     institution: 'Bezmialem Vakif University',
-    period: 'Sept 2024 – July 2026',
+    period: 'Sept 2024 to July 2026',
     description:
       'Full scholarship; GPA 3.92/4.00. Thesis: Bioinformatic Analysis of a CRISPR/Cas9-Based Metabolic Gene Screen to Investigate TRAIL Resistance in Glioblastoma.',
     href: '/research/trail-resistance/',
@@ -143,7 +143,7 @@ export const education: TimelineEntry[] = [
     label: 'Bachelor’s degree',
     title: 'BSc · Bioinformatics and Genetics',
     institution: 'Kadir Has University',
-    period: 'Sept 2017 – June 2023',
+    period: 'Sept 2017 to June 2023',
     description:
       'English-taught program. Project: Computational and in Vitro Analysis of GAT-3 Structure and Function as a Potential Therapeutic Target. Coursework included bioinformatics, computational drug design, and molecular modeling and simulations.',
   },
@@ -156,7 +156,7 @@ export const education: TimelineEntry[] = [
     label: 'Erasmus exchange',
     title: 'Biology · Exchange study',
     institution: 'Universidad de A Coruña',
-    period: 'Sept 2020 – June 2021',
+    period: 'Sept 2020 to June 2021',
     description:
       'Erasmus coursework in molecular techniques, genomic analysis, and statistics, with instruction in Spanish. Project: Computational Analysis of Viral Mutations.',
   },

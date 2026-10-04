@@ -335,6 +335,12 @@ test('long-form Markdown and MDX remain readable and accessible in both themes',
       await expect(page.locator('table')).toBeVisible();
       await expect(page.locator('pre')).toBeVisible();
       await expect(page.locator('.heading-anchor').first()).toBeAttached();
+      const copy = page
+        .getByRole('button', { name: 'Copy code to clipboard' })
+        .first();
+      await expect(copy).toBeVisible();
+      await copy.focus();
+      await expect(copy).toBeFocused();
       expect(
         await page.evaluate(
           () => document.documentElement.scrollWidth <= innerWidth,
@@ -364,7 +370,7 @@ test('writing filters show matching articles and recover from an empty result', 
 }) => {
   await routeFixture(page);
   await page.goto('http://content.test/blog/');
-  await expect(page.locator('.post-list > li:visible')).toHaveCount(6);
+  await expect(page.locator('.post-list > li:visible')).toHaveCount(7);
   await page.getByLabel('Category', { exact: true }).selectOption('Software');
   await expect(page.locator('.post-list > li:visible')).toHaveCount(1);
   await page.getByLabel('Topic', { exact: true }).selectOption('Notes');
@@ -372,7 +378,7 @@ test('writing filters show matching articles and recover from an empty result', 
   await expect(page.locator('.filter-empty')).toBeVisible();
   await page.getByLabel('Category', { exact: true }).selectOption('');
   await page.getByLabel('Topic', { exact: true }).selectOption('');
-  await expect(page.locator('.post-list > li:visible')).toHaveCount(6);
+  await expect(page.locator('.post-list > li:visible')).toHaveCount(7);
 });
 
 test('production pages keep the shared background, CV print layout, and ECEGEN links', async ({
@@ -380,19 +386,18 @@ test('production pages keep the shared background, CV print layout, and ECEGEN l
 }) => {
   await page.goto('/');
   await expect(
-    page.getByRole('link', { name: 'Explore research' }),
-  ).toHaveAttribute('href', '#research');
-  await expect(page.getByRole('link', { name: 'View CV' })).toHaveAttribute(
-    'href',
-    '/cv/',
-  );
+    page.locator('.intro').getByRole('link', { name: 'Writing' }),
+  ).toHaveAttribute('href', '/blog/');
+  await expect(
+    page.locator('.intro').getByRole('link', { name: 'CV', exact: true }),
+  ).toHaveAttribute('href', '/cv/');
   const pdf = page.getByRole('link', { name: 'Download CV (PDF)' });
   await expect(pdf).toHaveAttribute('href', '/cv/furkan-emre-bora-cv.pdf');
   await expect(page.locator('#background')).toContainText(
     'Bioinformatician at Ecegen Genetic Diseases Assessment Center',
   );
   await expect(page.locator('#background')).toContainText(
-    'MSc · Biotechnology, Bezmialem Vakif University, Sept 2024 – July 2026',
+    'MSc · Biotechnology, Bezmialem Vakif University, Sept 2024 to July 2026',
   );
   await expect(page.locator('#background')).not.toContainText(
     'completed July 2026',
@@ -476,16 +481,19 @@ test('one published post is shown once and does not add certificate copy', async
   ).toHaveCount(0);
 });
 
-test('no published posts keep research first and a fixture credential is rendered', async ({
+test('no published posts keep writing first and a fixture credential is rendered', async ({
   page,
 }) => {
   await routeFixture(page, 'content-fixture-zero');
   await page.goto('http://content.test/');
   const order = await page
-    .locator('#research, #work, #blog, #background, #contact')
+    .locator('#blog, #research, #work, #background, #contact')
     .evaluateAll((elements) => elements.map((element) => element.id));
-  expect(order).toEqual(['research', 'work', 'blog', 'background', 'contact']);
+  expect(order).toEqual(['blog', 'research', 'work', 'background', 'contact']);
   await expect(page.locator('main a[href*="/blog/qa-"]')).toHaveCount(0);
+  await expect(page.locator('#blog')).toContainText(
+    'I am preparing the first pieces',
+  );
 
   await page.goto('http://content.test/blog/');
   await expect(page.locator('main')).toContainText(

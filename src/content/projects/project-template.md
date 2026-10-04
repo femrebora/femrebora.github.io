@@ -1,5 +1,5 @@
 ---
-title: 'Project template — replace before publishing'
+title: 'Project template: replace before publishing'
 description: 'One sentence describing what the project is and for whom.'
 draft: true
 featured: false

@@ -2,6 +2,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
+import {
+  decodeEntities,
+  findForbiddenPunctuation,
+  stripNonProse,
+} from '../scripts/copy-check.mjs';
 
 /** Phrases that belong only to the removed ECEGEN source-audit block. */
 const ecegenAuditMarkers = [
@@ -79,6 +84,25 @@ test('an ordinary scientific article may say correlation does not imply causatio
   for (const phrase of ecegenAuditMarkers) {
     assert.ok(hits.includes(phrase), `audit detector missed “${phrase}”`);
   }
+});
+
+test('the copy guard flags prose dashes, not code, identifiers, or flags', () => {
+  assert.deepEqual(findForbiddenPunctuation('A plain sentence.'), []);
+  assert.ok(findForbiddenPunctuation('A range 2024\u20132026.').length > 0);
+  assert.ok(findForbiddenPunctuation('A break \u2014 here.').length > 0);
+  assert.ok(findForbiddenPunctuation('A standalone -- dash.').length > 0);
+  assert.ok(findForbiddenPunctuation('Encoded &mdash; dash.').length > 0);
+  assert.ok(findForbiddenPunctuation('Encoded &#8211; dash.').length > 0);
+  assert.deepEqual(
+    findForbiddenPunctuation('Keep --paper and --help intact.'),
+    [],
+  );
+  assert.deepEqual(findForbiddenPunctuation('Hyphenated read-only text.'), []);
+  assert.equal(decodeEntities('&amp;&#8212;'), '&\u2014');
+  assert.deepEqual(
+    findForbiddenPunctuation(stripNonProse('<pre>a -- b \u2014</pre>')),
+    [],
+  );
 });
 
 test('the homepage summary is taken from profile data', async () => {

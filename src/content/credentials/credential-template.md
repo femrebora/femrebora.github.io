@@ -1,5 +1,5 @@
 ---
-title: 'Credential template — replace before publishing'
+title: 'Credential template: replace before publishing'
 description: 'An unpublished authoring template for a certificate, training record, or award.'
 issuer: Issuer name
 date: '2026-01'
@@ -15,5 +15,5 @@ tags: []
 ---
 
 This file is an authoring template, not a credential. Replace every field
-with owner-supplied facts — title, issuer, and date are required — then set
+with owner-supplied facts (title, issuer, and date are required), then set
 `draft: false`. Optional body text appears under the record.

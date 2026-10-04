@@ -28,7 +28,7 @@ const notes = await Promise.all(
             </div>
             {data.kind === 'quotation' && (
               <p class="note-source">
-                — {data.author} ·{' '}
+                {data.author} ·{' '}
                 <a href={data.source.url}>{data.source.title}</a>,{' '}
                 {data.locator}
               </p>

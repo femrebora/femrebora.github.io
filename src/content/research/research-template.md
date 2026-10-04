@@ -1,5 +1,5 @@
 ---
-title: 'Research entry template — replace before publishing'
+title: 'Research entry template: replace before publishing'
 description: 'One sentence describing the research context for indexes and previews.'
 draft: true
 featured: false
@@ -7,7 +7,7 @@ kind: research
 status: 'Ongoing · Lab, institution'
 order: 10
 # institution: 'University · Lab'
-# period: 'Sept 2024 – June 2026'
+# period: 'Sept 2024 to June 2026'
 # role: 'Your role in the project'
 # question: 'The research question, phrased as one sentence.'
 # contribution: 'What you personally built, analyzed, or contributed.'

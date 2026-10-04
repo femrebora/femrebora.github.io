@@ -5,7 +5,7 @@ import { profile } from '../data/profile';
 
 export async function GET(context: APIContext) {
   return rss({
-    title: `${profile.name} — Blog`,
+    title: `Writing | ${profile.name}`,
     description:
       'Notes and essays on bioinformatics, genomics, research, and scientific computing.',
     site: context.site!,

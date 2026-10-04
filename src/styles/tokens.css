@@ -52,8 +52,8 @@
 
   /* Layout */
   --tap: 44px;
-  --wrap: 1180px;
-  --prose-measure: 68ch;
+  --wrap: 1080px;
+  --prose-measure: 66ch;
 
   /* Stacking layers */
   --z-masthead: 20;

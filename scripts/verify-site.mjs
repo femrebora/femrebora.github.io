@@ -1,6 +1,11 @@
 import { readFile, readdir, stat } from 'node:fs/promises';
 import { resolve, join, extname, relative } from 'node:path';
 import assert from 'node:assert/strict';
+import {
+  decodeEntities,
+  findForbiddenPunctuation,
+  stripNonProse,
+} from './copy-check.mjs';
 
 const root = resolve(process.argv[2] || 'dist');
 const origin = 'https://femrebora.github.io';
@@ -61,6 +66,16 @@ for (const [file, html] of contents) {
       errors.push(`${page}: missing local target ${raw}`);
     }
   }
+  for (const finding of findForbiddenPunctuation(stripNonProse(html))) {
+    errors.push(`${page}: ${finding} in page copy`);
+  }
+  for (const match of html.matchAll(
+    /<script[^>]*application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi,
+  )) {
+    for (const finding of findForbiddenPunctuation(match[1])) {
+      errors.push(`${page}: ${finding} in structured data`);
+    }
+  }
 }
 for (const name of [
   'rss.xml',
@@ -76,20 +91,47 @@ for (const name of [
     errors.push(`Missing ${name}`);
   }
 }
+for (const name of ['rss.xml', 'sitemap-0.xml', 'sitemap-index.xml']) {
+  for (const finding of findForbiddenPunctuation(
+    await readFile(join(root, name), 'utf8'),
+  )) {
+    errors.push(`${name}: ${finding}`);
+  }
+}
+
+/* Required title patterns for the writing-first redesign. */
+const titleOf = (page) => {
+  const html = contents.get(join(root, page));
+  const match = html?.match(/<title>([\s\S]*?)<\/title>/);
+  return decodeEntities(match?.[1] ?? '');
+};
+for (const [page, expected] of [
+  ['index.html', 'F. Emre Bora | Writing & Bioinformatics'],
+  ['blog/index.html', 'Writing | F. Emre Bora'],
+]) {
+  const actual = titleOf(page);
+  if (actual !== expected)
+    errors.push(`${page}: title "${actual}" should be "${expected}"`);
+}
+for (const file of htmlFiles) {
+  const page = relative(root, file);
+  if (!page.startsWith('blog/') || page === 'blog/index.html') continue;
+  const actual = titleOf(page);
+  if (!actual.endsWith('| F. Emre Bora'))
+    errors.push(`${page}: title "${actual}" should end with "| F. Emre Bora"`);
+}
+
 for (const file of files.filter((file) =>
   ['.html', '.xml', '.js'].includes(extname(file)),
 )) {
   const source = await readFile(file, 'utf8');
   if (
-    source.includes('Article template — replace before publishing') ||
-    source.includes('Research note template') ||
-    source.includes('Research entry template — replace before publishing') ||
-    source.includes('Project template — replace before publishing') ||
-    source.includes('Credential template — replace before publishing')
+    source.includes('Article template: replace before publishing') ||
+    source.includes('Research note template')
   )
     errors.push(`${relative(root, file)}: unpublished template leaked`);
 }
 assert.equal(errors.length, 0, errors.join('\n'));
 console.log(
-  `PASS: ${htmlFiles.length} HTML pages, ${checked} local links/assets/anchors, metadata, feeds, sitemap, 404, and draft exclusion.`,
+  `PASS: ${htmlFiles.length} HTML pages, ${checked} local links/assets/anchors, metadata, titles, punctuation, feeds, sitemap, 404, and draft exclusion.`,
 );

@@ -90,7 +90,7 @@ test(
           join(writingDir, 'qa-future.md'),
           template
             .replace(
-              'Article template — replace before publishing',
+              'Article template: replace before publishing',
               'QA future hidden',
             )
             .replace('draft: true', 'draft: false')
@@ -147,7 +147,7 @@ test(
       await setCredentials(null);
       const published = `${template
         .replace(
-          'Article template — replace before publishing',
+          'Article template: replace before publishing',
           'QA formatting fixture',
         )
         .replace('draft: true', 'draft: false')
@@ -172,6 +172,10 @@ ${ordinaryBody}
           `---\ntitle: ${title}\ndescription: Test-only fixture, not an owner article.\npublishedDate: ${date}\ndraft: false\nfeatured: ${featured}\ncategory: Notes\ntags: [QA]\n---\n\nFixture body for ${id}.\n`,
         );
       }
+      await writeFile(
+        join(writingDir, 'qa-turkish.md'),
+        `---\ntitle: QA Türkçe deneme\ndescription: Test-only Turkish fixture, not an owner article.\npublishedDate: 2018-01-01\ndraft: false\ncategory: Notes\nlanguage: tr\ntags: [QA]\n---\n\nBu bir deneme metnidir. Türkçe karakterler: ğüşiöçİĞÜŞÖÇ.\n`,
+      );
       await build();
 
       const article = await readDist('blog/qa-formatting/index.html');
@@ -184,8 +188,26 @@ ${ordinaryBody}
         'min read',
         '/blog/qa-newer/',
         'Correlation does not imply causation',
+        '<title>QA formatting fixture | F. Emre Bora</title>',
       ])
         assert.ok(article.includes(expected), `Article missing ${expected}`);
+      assert.ok(
+        !article.includes('\u2014'),
+        'article output contains an em dash',
+      );
+      const turkish = await readDist('blog/qa-turkish/index.html');
+      assert.ok(
+        turkish.includes('<html lang="tr">'),
+        'Turkish post should set the document language',
+      );
+      assert.ok(
+        turkish.includes('Türkçe karakterler'),
+        'Turkish characters should render',
+      );
+      assert.ok(
+        turkish.includes('QA Türkçe deneme | F. Emre Bora'),
+        'Turkish post title should follow the shared pattern',
+      );
       assert.deepEqual(
         ecegenAuditMarkers.filter((phrase) => article.includes(phrase)),
         [],
@@ -305,8 +327,12 @@ ${ordinaryBody}
       await build();
       const zeroHome = await readDist('index.html');
       assert.ok(
-        zeroHome.indexOf('id="research"') < zeroHome.indexOf('id="blog"'),
-        'homepage without published posts should keep research ahead of writing',
+        zeroHome.indexOf('id="blog"') < zeroHome.indexOf('id="research"'),
+        'homepage should lead with writing even without published posts',
+      );
+      assert.ok(
+        zeroHome.includes('I am preparing the first pieces'),
+        'homepage writing empty state should welcome readers',
       );
       assert.ok(!zeroHome.includes('qa-future'));
       assert.ok(!zeroHome.includes('article-template'));

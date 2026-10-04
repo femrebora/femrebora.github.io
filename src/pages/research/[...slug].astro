@@ -3,6 +3,7 @@ import { render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BackLink from '../../components/BackLink.astro';
 import TagList from '../../components/TagList.astro';
+import MethodSchematic from '../../components/MethodSchematic.astro';
 import Icon from '../../components/Icon.astro';
 import { getResearch, getWriting, formatDate } from '../../lib/content';
 export async function getStaticPaths() {
@@ -79,6 +80,7 @@ const related = entry.data.relatedWriting
         </div>
       )}
     </div>
+    {entry.data.methods.length > 0 && <MethodSchematic />}
     <article class="prose">
       <Content />
     </article>

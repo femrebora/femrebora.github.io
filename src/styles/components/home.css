@@ -1,277 +1,218 @@
-/* Homepage: hero, research spotlight, selected work, writing, close. */
+/* Homepage: a writing-first journal. A compact identity band, then a side
+   note beside the main column. Writing leads; research and work are small
+   selected entries; About and contact close quietly. */
+
+/* ---------- Identity band ---------- */
 
 .intro {
-  padding-block: 8px 12px;
-}
-.intro .label {
-  margin-bottom: 14px;
+  padding-block: 4px 8px;
 }
 .intro h1 {
   font-family: var(--font-display);
-  font-size: clamp(40px, 8vw, 76px);
-  line-height: 1.02;
+  font-size: clamp(36px, 6vw, 58px);
+  line-height: 1.04;
   font-weight: 500;
   letter-spacing: -0.02em;
-  margin-bottom: 22px;
+  margin-block: 12px 16px;
 }
-.intro .lede {
-  max-width: 18em;
-  font-size: clamp(22px, 2.8vw, 30px);
-  line-height: 1.28;
+.intro-lede {
+  font-family: var(--font-reading);
+  font-size: clamp(20px, 2.4vw, 26px);
+  line-height: 1.35;
+  color: var(--ink-soft);
+  max-width: 34ch;
   text-wrap: balance;
 }
-.intro-focus {
-  list-style: none;
+.intro-links {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 14px;
-  margin-top: 18px;
-  font-size: 14px;
-  letter-spacing: 0.01em;
-  color: var(--muted);
+  align-items: center;
+  gap: 8px 22px;
+  margin-top: 22px;
 }
-.intro-focus li:not(:last-child)::after {
-  content: '·';
-  margin-left: 14px;
-  color: var(--rule-strong);
-}
-.intro .hero-actions {
-  margin-top: 28px;
-}
-
-/* ---------- Section rhythm ---------- */
-
-.home-research,
-.home-work,
-.home-writing,
-.home-close {
-  margin-top: clamp(56px, 8vw, 92px);
-}
-
-/* Featured research: a full-bleed band, the homepage's strongest moment. */
-.home-research {
-  margin-inline: calc(clamp(20px, 5vw, 40px) * -1);
-  padding: clamp(32px, 4.5vw, 52px) clamp(20px, 5vw, 40px);
-  background: var(--surface-2);
-  display: grid;
-  gap: 18px 48px;
-}
-.home-research-copy h2,
-.home-work-copy h2,
-.home-writing-head h2,
-.home-writing-quiet h2,
-.home-close h2 {
-  font-family: var(--font-display);
+.intro-links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 15px;
   font-weight: 500;
-  letter-spacing: -0.02em;
-  line-height: 1.08;
-  text-wrap: balance;
-}
-.home-research-copy h2 {
-  font-size: clamp(34px, 4.8vw, 54px);
-  margin-block: 10px 14px;
-}
-.home-research-copy h2 a,
-.home-work-copy h2 a {
+  color: var(--accent);
   text-decoration: none;
 }
-.home-question {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: clamp(22px, 2.5vw, 30px);
-  line-height: 1.25;
-  text-wrap: balance;
-  max-width: 22em;
+.intro-links a:hover {
+  text-decoration: underline;
 }
-.home-research-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 28px;
-  margin-top: 18px;
-  font-size: 13.5px;
-  color: var(--muted);
-}
-.home-research-meta div {
-  min-width: 0;
-}
-.home-research-meta dt {
-  display: inline;
-  font-weight: 500;
-  color: var(--ink-soft);
-}
-.home-research-meta dt::after {
-  content: ':';
-  margin-right: 6px;
-  color: var(--muted);
-}
-.home-research-meta dd {
-  display: inline;
-  margin: 0;
-}
-.home-research-summary,
-.home-work-copy p,
-.home-writing-quiet p,
-.home-close p {
-  font-size: 17px;
-  line-height: 1.6;
-  color: var(--ink-soft);
-  max-width: 42em;
-}
-.home-research .record-actions,
-.home-work .record-actions {
-  margin-top: 0;
+.intro-links a svg {
+  width: 15px;
+  height: 15px;
 }
 
-/* ---------- Method schematic (thesis analysis sequence) ---------- */
+/* ---------- Journal grid ---------- */
 
-.method-schematic {
-  margin: 8px 0 0;
-}
-.method-flow {
-  list-style: none;
+.home-journal {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 16px;
-  margin: 0;
+  gap: 36px;
+  margin-top: clamp(36px, 5vw, 56px);
+}
+
+.home-note {
+  display: grid;
+  gap: 22px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+.home-note .label {
+  margin-bottom: 6px;
+}
+.home-note p {
+  max-width: 30ch;
+}
+.home-note-block p + p {
+  margin-top: 6px;
+}
+.home-note ul {
+  list-style: none;
+  display: grid;
+  gap: 3px;
   padding: 0;
+  margin: 0;
 }
-.method-flow li {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 0;
-  padding-top: 12px;
-  border-top: 2px solid var(--accent);
-  font-family: var(--font-display);
-  font-size: clamp(18px, 2vw, 22px);
-  line-height: 1.25;
-  text-wrap: balance;
+.home-note a {
+  color: var(--ink-soft);
+  text-decoration: none;
 }
-.method-index {
-  font-family: var(--font-ui);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
+.home-note a:hover {
   color: var(--accent);
 }
-.method-schematic figcaption {
-  margin-top: 14px;
-  max-width: 62ch;
-  font-size: 14px;
-  line-height: 1.5;
-  color: var(--muted);
-}
 
-/* ---------- Selected work ---------- */
-
-.home-work {
-  display: grid;
-  gap: 22px 48px;
-  align-items: center;
-}
-.home-shot-figure {
-  margin: 0;
+.home-column {
   min-width: 0;
 }
-.home-shot {
+.home-block {
+  border-top: 1px solid var(--rule);
+  padding-block: clamp(30px, 4vw, 44px);
+}
+.home-block:first-child {
+  border-top: 0;
+  padding-top: 0;
+}
+
+/* The one editorial gesture: a small green index square before each
+   section heading. */
+.section-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-bottom: 22px;
+}
+.section-head h2 {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3.2vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.section-head h2::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  background: var(--accent);
+}
+
+/* ---------- Selected entries ---------- */
+
+.compact-record {
+  min-width: 0;
+}
+.compact-record h3 {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 32px);
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.12;
+  margin-block: 8px 12px;
+  text-wrap: balance;
+}
+.compact-record h3 a {
+  text-decoration: none;
+}
+.compact-record p {
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 62ch;
+}
+.compact-record .meta {
+  margin-top: 12px;
+  font-size: 14px;
+}
+.compact-work {
+  display: grid;
+  gap: 20px 40px;
+  align-items: center;
+}
+.compact-shot {
   display: block;
   overflow: hidden;
   aspect-ratio: 16 / 10;
-  border: 1px solid var(--rule-strong);
+  border: 1px solid var(--rule);
   border-radius: var(--radius);
   background: var(--surface-2);
 }
-.home-shot img {
+.compact-shot img {
   display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center 22%;
 }
-.home-shot-figure figcaption {
-  margin-top: 10px;
-  font-size: 13.5px;
-  line-height: 1.45;
-  color: var(--muted);
-}
-.home-work-copy h2 {
-  font-size: clamp(32px, 4vw, 46px);
-  margin-block: 8px 12px;
-}
-.home-work-copy .meta {
-  margin-top: 12px;
-}
 
-/* ---------- Writing ---------- */
+/* ---------- About and contact ---------- */
 
-.home-writing {
-  padding-top: 8px;
-}
-.home-writing-head {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 8px 24px;
-  margin-bottom: 22px;
-}
-.home-writing-head h2,
-.home-writing-quiet h2 {
-  font-size: clamp(32px, 4vw, 44px);
-}
-.home-writing-quiet {
-  max-width: 36em;
-  padding-top: 28px;
-  border-top: 1px solid var(--rule);
-}
-.home-writing-quiet p {
-  margin-top: 10px;
-}
-.home-writing .post-featured:last-child {
-  border-bottom: 0;
-  margin-bottom: 0;
-  padding-bottom: 0;
-}
-
-/* ---------- About + contact close ---------- */
-
-.home-close {
+.home-about {
   display: grid;
-  gap: 32px 64px;
-  padding-top: 28px;
-  border-top: 1px solid var(--rule);
+  gap: 28px 64px;
 }
-.home-close h2 {
-  font-size: 28px;
+.home-about h2 {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
   margin-bottom: 10px;
+}
+.home-about p {
+  font-size: 16.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 44ch;
 }
 
 /* ---------- Responsive ---------- */
 
-@media (max-width: 720px) {
-  .home-research {
-    margin-inline: calc(clamp(20px, 5vw, 40px) * -1);
+@media (min-width: 720px) {
+  .compact-work {
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  }
+  .home-about {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   }
 }
-@media (min-width: 800px) {
-  .method-flow {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 18px 28px;
+@media (min-width: 960px) {
+  .home-journal {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 64px;
+    align-items: start;
   }
-}
-@media (min-width: 860px) {
-  .home-research {
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-    align-items: end;
-  }
-  .home-research .method-schematic,
-  .home-research .record-actions {
-    grid-column: 1 / -1;
-  }
-  .home-work {
-    grid-template-columns: minmax(0, 1.35fr) minmax(240px, 0.8fr);
-  }
-  .home-close {
-    grid-template-columns: minmax(0, 1.15fr) minmax(220px, 0.85fr);
+  .home-note {
+    position: sticky;
+    top: 88px;
   }
 }

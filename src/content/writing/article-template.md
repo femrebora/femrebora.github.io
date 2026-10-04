@@ -1,5 +1,5 @@
 ---
-title: 'Article template — replace before publishing'
+title: 'Article template: replace before publishing'
 description: 'An unpublished authoring template for a scientific or technical article.'
 publishedDate: 2026-10-03
 tags: [Notes]
