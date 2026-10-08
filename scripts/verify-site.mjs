@@ -8,7 +8,7 @@ import {
 } from './copy-check.mjs';
 
 const root = resolve(process.argv[2] || 'dist');
-const origin = 'https://femrebora.github.io';
+const origin = 'https://femrebora.com';
 async function walk(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
   return (
@@ -44,6 +44,20 @@ for (const [file, html] of contents) {
   ]) {
     if (!html.includes(required)) errors.push(`${page}: missing ${required}`);
   }
+  const canonical = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
+  const ogURL = html.match(/property="og:url" content="([^"]+)"/)?.[1];
+  if (canonical !== ogURL)
+    errors.push(`${page}: canonical and Open Graph URL disagree`);
+  if (html.includes('https://femrebora.github.io'))
+    errors.push(`${page}: old production origin remains`);
+  if (page !== '404.html' && /name="robots" content="[^"]*noindex/.test(html))
+    errors.push(`${page}: public page unexpectedly has noindex`);
+  if (page === '404.html' && !html.includes('content="noindex, follow"'))
+    errors.push(`${page}: 404 must remain excluded from indexing`);
+  for (const match of html.matchAll(/property="og:image" content="([^"]+)"/g)) {
+    if (new URL(decodeEntities(match[1])).origin !== origin)
+      errors.push(`${page}: social image must use the production origin`);
+  }
   for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
     const raw = match[1].replaceAll('&amp;', '&');
     if (/^(mailto:|tel:|data:|javascript:)/.test(raw)) continue;
@@ -72,6 +86,19 @@ for (const [file, html] of contents) {
   for (const match of html.matchAll(
     /<script[^>]*application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi,
   )) {
+    const graph = JSON.parse(match[1])['@graph'];
+    for (const node of graph) {
+      if (
+        ['Person', 'WebSite'].includes(node['@type']) &&
+        new URL(node.url).origin !== origin
+      )
+        errors.push(`${page}: structured identity uses the wrong origin`);
+      if (
+        node['@type'] === 'BlogPosting' &&
+        node.mainEntityOfPage !== decodeEntities(canonical)
+      )
+        errors.push(`${page}: article structured canonical disagrees`);
+    }
     for (const finding of findForbiddenPunctuation(match[1])) {
       errors.push(`${page}: ${finding} in structured data`);
     }
@@ -92,12 +119,29 @@ for (const name of [
   }
 }
 for (const name of ['rss.xml', 'sitemap-0.xml', 'sitemap-index.xml']) {
+  const xml = await readFile(join(root, name), 'utf8');
+  if (xml.includes('https://femrebora.github.io'))
+    errors.push(`${name}: old production origin remains`);
+  for (const match of xml.matchAll(
+    /<(?:loc|link)>(https?:[^<]+)<\/(?:loc|link)>/g,
+  )) {
+    if (new URL(decodeEntities(match[1])).origin !== origin)
+      errors.push(`${name}: generated link uses the wrong origin`);
+  }
+  if (name === 'sitemap-0.xml' && xml.includes('/404'))
+    errors.push(`${name}: 404 must not appear in the sitemap`);
   for (const finding of findForbiddenPunctuation(
     await readFile(join(root, name), 'utf8'),
   )) {
     errors.push(`${name}: ${finding}`);
   }
 }
+if (
+  !(await readFile(join(root, 'robots.txt'), 'utf8')).includes(
+    `${origin}/sitemap-index.xml`,
+  )
+)
+  errors.push('robots.txt: sitemap uses the wrong origin');
 
 /* Required title patterns for the writing-first redesign. */
 const titleOf = (page) => {

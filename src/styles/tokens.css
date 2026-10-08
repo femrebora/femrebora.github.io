@@ -6,7 +6,7 @@
    --paper / --surface / --surface-2   page and elevated planes
    --ink / --ink-soft / --muted        primary, secondary, tertiary text
    --rule / --rule-strong              hairlines and structural borders
-   --accent / --accent-hover / --accent-soft   the biological green
+   --accent / --accent-hover / --accent-soft   warm sage green
    --focus                             keyboard focus ring
    --quick / --smooth / --ease         interaction timing
    --z-*                               stacking layers
@@ -21,27 +21,27 @@
   --font-reading: 'Newsreader Variable', Georgia, 'Times New Roman', serif;
   --font-code: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, monospace;
 
-  /* Color: light theme (warm paper) */
-  --paper: #f7f5f0;
-  --surface: #fdfcfa;
-  --surface-2: #f0ede5;
-  --ink: #1e2523;
-  --ink-soft: #3c4441;
-  --muted: #555f5b;
-  --rule: #dcdad0;
-  --rule-strong: #c6c3b6;
-  --accent: #185c50;
-  --accent-hover: #124840;
-  --accent-soft: #e6ede9;
-  --button-bg: #185c50;
-  --button-ink: #f7f5f0;
-  --code-bg: #efede5;
-  --focus: #185c50;
+  /* Color: default light theme (neutral warm white, sage accents, deep ink) */
+  --paper: #faf9f6;
+  --surface: #ffffff;
+  --surface-2: #f2f1ec;
+  --ink: #292e2b;
+  --ink-soft: #49514c;
+  --muted: #636a65;
+  --rule: #deded5;
+  --rule-strong: #bfc4b8;
+  --accent: #496842;
+  --accent-hover: #365331;
+  --accent-soft: #e3ecd9;
+  --button-bg: #496842;
+  --button-ink: #faf9f6;
+  --code-bg: #eeeee8;
+  --focus: #496842;
 
   /* Elevation and shape */
-  --shadow: 0 1px 2px rgba(30, 37, 35, 0.05);
+  --shadow: 0 1px 2px rgba(40, 51, 43, 0.05);
   --shadow-raised:
-    0 2px 6px rgba(30, 37, 35, 0.07), 0 12px 32px rgba(30, 37, 35, 0.06);
+    0 2px 6px rgba(40, 51, 43, 0.07), 0 12px 32px rgba(40, 51, 43, 0.06);
   --radius: 4px;
   --radius-lg: 8px;
 
@@ -54,6 +54,12 @@
   --tap: 44px;
   --wrap: 1080px;
   --prose-measure: 66ch;
+  --header-offset: 128px;
+  --space-xs: 8px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 32px;
+  --space-xl: 48px;
 
   /* Stacking layers */
   --z-masthead: 20;
@@ -63,50 +69,24 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
-  /* Color: dark theme (warm near-black, lightened sage accent) */
-  --paper: #15130f;
-  --surface: #1e1b15;
-  --surface-2: #26221b;
-  --ink: #ede8dd;
-  --ink-soft: #d3ccbf;
-  --muted: #a9a294;
-  --rule: #322e26;
-  --rule-strong: #474036;
-  --accent: #7fbfa9;
-  --accent-hover: #98cfbb;
-  --accent-soft: #22302b;
-  --button-bg: #7fbfa9;
-  --button-ink: #12100c;
-  --code-bg: #1b1813;
-  --focus: #7fbfa9;
+  /* Color: optional dark theme (neutral charcoal, light sage accents) */
+  --paper: #1c1f1d;
+  --surface: #252926;
+  --surface-2: #2e332f;
+  --ink: #eef1e9;
+  --ink-soft: #d4dbd1;
+  --muted: #b3bdb0;
+  --rule: #3b423b;
+  --rule-strong: #535d50;
+  --accent: #b4cf9b;
+  --accent-hover: #cadeb8;
+  --accent-soft: #2c3b29;
+  --button-bg: #b4cf9b;
+  --button-ink: #1c1f1d;
+  --code-bg: #202420;
+  --focus: #b4cf9b;
 
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-raised:
     0 2px 6px rgba(0, 0, 0, 0.45), 0 12px 32px rgba(0, 0, 0, 0.35);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) {
-    color-scheme: dark;
-
-    --paper: #15130f;
-    --surface: #1e1b15;
-    --surface-2: #26221b;
-    --ink: #ede8dd;
-    --ink-soft: #d3ccbf;
-    --muted: #a9a294;
-    --rule: #322e26;
-    --rule-strong: #474036;
-    --accent: #7fbfa9;
-    --accent-hover: #98cfbb;
-    --accent-soft: #22302b;
-    --button-bg: #7fbfa9;
-    --button-ink: #12100c;
-    --code-bg: #1b1813;
-    --focus: #7fbfa9;
-
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
-    --shadow-raised:
-      0 2px 6px rgba(0, 0, 0, 0.45), 0 12px 32px rgba(0, 0, 0, 0.35);
-  }
 }

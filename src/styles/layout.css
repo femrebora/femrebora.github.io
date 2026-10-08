@@ -44,7 +44,7 @@
 }
 .feature-label {
   position: sticky;
-  top: 88px;
+  top: var(--header-offset);
 }
 .feature-label h2 {
   font-family: var(--font-display);

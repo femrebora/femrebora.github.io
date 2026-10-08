@@ -1,193 +1,38 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import WritingList from '../components/WritingList.astro';
-import ContactList from '../components/ContactList.astro';
+import WritingTopics from '../components/WritingTopics.astro';
 import Icon from '../components/Icon.astro';
-import { profile, experience, education, interests } from '../data/profile';
-import {
-  getWriting,
-  getResearch,
-  getProjects,
-  selectHomepageWriting,
-} from '../lib/content';
+import { profile } from '../data/profile';
+import { getWriting, selectHomepageWriting } from '../lib/content';
 const articles = await getWriting();
 const homePosts = selectHomepageWriting(articles);
-const researchEntries = await getResearch();
-const research =
-  researchEntries.find((entry) => entry.data.featured) ?? researchEntries[0];
-const projects = await getProjects();
-const project = projects.find((entry) => entry.data.featured) ?? projects[0];
-const currentRole = experience
-  .filter((entry) => entry.track === 'work' && !entry.end)
-  .sort((a, b) => b.start.localeCompare(a.start))[0];
-const latestDegree = education
-  .filter((entry) => entry.track === 'education')
-  .sort((a, b) => b.start.localeCompare(a.start))[0];
-const backgroundSummary = [
-  currentRole ? `${currentRole.title} at ${currentRole.institution}.` : '',
-  latestDegree
-    ? `${latestDegree.title}, ${latestDegree.institution}, ${latestDegree.period}.`
-    : '',
-]
-  .filter(Boolean)
-  .join(' ');
 ---
 
 <BaseLayout>
-  <header class="intro">
-    <p class="label">Bioinformatician · Genetics &amp; computational biology</p>
-    <h1>{profile.name}</h1>
-    <p class="intro-lede">{profile.introduction}</p>
-    <nav class="intro-links" aria-label="Start here">
-      <a href="/blog/">
-        Writing <Icon name="arrow-right" />
-      </a>
-      <a href="/about/">About</a>
-      <a href="/cv/">CV</a>
-    </nav>
-  </header>
-
-  <div class="home-journal">
-    <aside class="home-note" aria-label="About this site">
-      <div class="home-note-block">
-        <p class="label">Currently</p>
-        {currentRole && (
-          <p>
-            {currentRole.title} at {currentRole.institution}
-          </p>
-        )}
-        {latestDegree && (
-          <p>
-            {latestDegree.title}, {latestDegree.institution}
-          </p>
-        )}
+  <div class="home-publication">
+    <header class="intro">
+      <div>
+        <p class="label">Notes &amp; essays</p>
+        <h1>{profile.name}</h1>
       </div>
-      <div class="home-note-block">
-        <p class="label">Focus</p>
-        <ul>
-          {interests.map((interest) => (
-            <li>{interest.title}</li>
-          ))}
-        </ul>
-      </div>
-      <div class="home-note-block">
-        <p class="label">Elsewhere</p>
-        <ul>
-          <li>
-            <a href="/about/">About</a>
-          </li>
-          <li>
-            <a href="/cv/">CV</a>
-          </li>
-          <li>
-            <a href="/rss.xml">RSS</a>
-          </li>
-          <li>
-            <a href={profile.github}>GitHub</a>
-          </li>
-        </ul>
-      </div>
-    </aside>
+      <p class="intro-lede">{profile.writingIntroduction}</p>
+    </header>
 
-    <div class="home-column">
-      <section class="home-block" id="blog" aria-labelledby="blog-title">
-        <div class="section-head">
-          <h2 id="blog-title">Writing</h2>
-          <a class="link-arrow" href="/blog/">
-            All writing <Icon name="arrow-right" />
-          </a>
-        </div>
-        <WritingList articles={homePosts} featured context="home" />
-      </section>
-
-      {research && (
-        <section
-          class="home-block"
-          id="research"
-          aria-labelledby="research-title"
-        >
-          <div class="section-head">
-            <h2 id="research-title">Selected research</h2>
-            <a class="link-arrow" href="/research/">
-              All research <Icon name="arrow-right" />
-            </a>
-          </div>
-          <article class="compact-record">
-            <p class="label">{research.data.status}</p>
-            <h3>
-              <a href={`/research/${research.id}/`}>{research.data.title}</a>
-            </h3>
-            <p>{research.data.description}</p>
-            {research.data.methods.length > 0 && (
-              <p class="meta">{research.data.methods.join(' · ')}</p>
-            )}
-            <div class="record-actions">
-              <a class="link-arrow" href={`/research/${research.id}/`}>
-                Read the research <Icon name="arrow-right" />
-              </a>
-            </div>
-          </article>
+    <section class="home-writing" id="blog" aria-labelledby="blog-title">
+      <div class="section-head">
+        <h2 id="blog-title">Writing</h2>
+        <a class="link-arrow" href="/blog/">
+          All writing <Icon name="arrow-right" />
+        </a>
+      </div>
+      <WritingList articles={homePosts} featured context="home" />
+      {articles.some((post) => post.data.tags.some((tag) => tag.trim())) && (
+        <section class="home-topics" aria-labelledby="topics-title">
+          <h3 id="topics-title">Explore by topic</h3>
+          <WritingTopics articles={articles} />
         </section>
       )}
-
-      {project && (
-        <section class="home-block" id="work" aria-labelledby="work-title">
-          <div class="section-head">
-            <h2 id="work-title">Selected work</h2>
-            <a class="link-arrow" href="/work/">
-              All work <Icon name="arrow-right" />
-            </a>
-          </div>
-          <article class="compact-record compact-work">
-            {project.data.image && (
-              <a class="compact-shot" href={`/work/${project.id}/`}>
-                <img
-                  class="is-cropped"
-                  src={project.data.image.src}
-                  alt={project.data.image.alt}
-                  width={project.data.image.width}
-                  height={project.data.image.height}
-                  loading="lazy"
-                  decoding="async"
-                />
-              </a>
-            )}
-            <div>
-              <p class="label">{project.data.category}</p>
-              <h3>
-                <a href={`/work/${project.id}/`}>{project.data.title}</a>
-              </h3>
-              <p>{project.data.description}</p>
-              {project.data.stack.length > 0 && (
-                <p class="meta">{project.data.stack.join(' · ')}</p>
-              )}
-              <div class="record-actions">
-                <a class="link-arrow" href={`/work/${project.id}/`}>
-                  Case study <Icon name="arrow-right" />
-                </a>
-              </div>
-            </div>
-          </article>
-        </section>
-      )}
-
-      <section class="home-block" id="background">
-        <div class="home-about">
-          <div>
-            <h2>About</h2>
-            {backgroundSummary && <p>{backgroundSummary}</p>}
-            <div class="record-actions">
-              <a class="link-arrow" href="/about/">
-                More about me <Icon name="arrow-right" />
-              </a>
-            </div>
-          </div>
-          <div id="contact">
-            <h2>Contact</h2>
-            <ContactList />
-          </div>
-        </div>
-      </section>
-    </div>
+    </section>
   </div>
 </BaseLayout>

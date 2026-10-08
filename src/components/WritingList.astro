@@ -6,7 +6,7 @@ interface Props {
   articles: CollectionEntry<'writing'>[];
   /** Homepage: one lead article and at most three others. */
   featured?: boolean;
-  /** Archive empty state must not link to itself or repeat the RSS link. */
+  /** Archive empty state must not link to itself. */
   context?: 'home' | 'archive';
 }
 const { articles, featured = false, context = 'archive' } = Astro.props;
@@ -29,9 +29,14 @@ const listed = featured
           <span>{readingTime(lead.body)} min read</span>
         </div>
         <div>
-          <span class="label label-muted">{lead.data.category}</span>
+          <span class="label">
+            {lead.data.featured ? 'Featured writing' : 'Latest writing'} ·{' '}
+            {lead.data.category}
+          </span>
           <h3>
-            <a href={`/blog/${lead.id}/`}>{lead.data.title}</a>
+            <a href={`/blog/${lead.id}/`} lang={lead.data.language}>
+              {lead.data.title}
+            </a>
           </h3>
           <p class="lede">{lead.data.description}</p>
           <div class="record-actions">
@@ -43,39 +48,50 @@ const listed = featured
       </article>
     )}
     {listed.length > 0 && (
-      <ol class="post-list">
-        {listed.map((post) => (
-          <li>
-            <div class="post-date">
-              <time datetime={post.data.publishedDate.toISOString()}>
-                {formatDate(post.data.publishedDate)}
-              </time>
-              <span>{readingTime(post.body)} min read</span>
-            </div>
-            <div>
-              <span class="label label-muted">{post.data.category}</span>
-              <h3>
-                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
-              </h3>
-              <p>{post.data.description}</p>
-            </div>
-            <span class="list-arrow" aria-hidden="true">
-              <Icon name="arrow-right" />
-            </span>
-          </li>
-        ))}
-      </ol>
+      <>
+        {featured && <h3 class="latest-heading">Latest writing</h3>}
+        <ol
+          class="post-list"
+          id={context === 'archive' ? 'writing-results' : undefined}
+        >
+          {listed.map((post) => (
+            <li
+              data-category={post.data.category}
+              data-tags={JSON.stringify(post.data.tags)}
+              data-search={[
+                post.data.title,
+                post.data.description,
+                ...post.data.tags,
+              ].join(' ')}
+            >
+              <div class="post-date">
+                <time datetime={post.data.publishedDate.toISOString()}>
+                  {formatDate(post.data.publishedDate)}
+                </time>
+                <span>{readingTime(post.body)} min read</span>
+              </div>
+              <div>
+                <span class="label label-muted">{post.data.category}</span>
+                <h3>
+                  <a href={`/blog/${post.id}/`} lang={post.data.language}>
+                    {post.data.title}
+                  </a>
+                </h3>
+                <p>{post.data.description}</p>
+              </div>
+              <span class="list-arrow" aria-hidden="true">
+                <Icon name="arrow-right" />
+              </span>
+            </li>
+          ))}
+        </ol>
+      </>
     )}
   </>
 ) : context === 'archive' ? (
-  <p class="quiet-note">
-    No articles published yet. Essays and notes on genomics, bioinformatics, and
-    the tools I use will appear here.
-  </p>
+  <p class="quiet-note">No articles published yet.</p>
 ) : (
-  <p class="quiet-note">
-    I am preparing the first pieces: essays and notes on genomics,
-    bioinformatics, and the tools I use. They will appear here as they are
-    published.
-  </p>
+  <div class="writing-empty">
+    <p class="quiet-note">No articles published yet.</p>
+  </div>
 )}

@@ -35,7 +35,7 @@ const person = {
   name: profile.fullName,
   alternateName: profile.name,
   url: Astro.site?.href,
-  sameAs: [profile.github, profile.linkedin].filter(Boolean),
+  sameAs: [profile.github, profile.linkedin, profile.medium].filter(Boolean),
 };
 const structured = {
   '@context': 'https://schema.org',
@@ -62,6 +62,7 @@ const structured = {
             mainEntityOfPage: canonical,
             image: socialImage,
             keywords: article.tags.join(', '),
+            inLanguage: lang,
           },
         ]
       : []),
@@ -74,6 +75,7 @@ const structured = {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#faf9f6" />
     <script is:inline>
       (() => {
         let theme;
@@ -84,24 +86,16 @@ const structured = {
           theme,
         )
           ? theme
-          : matchMedia('(prefers-color-scheme: dark)').matches
-            ? 'dark'
-            : 'light';
+          : 'light';
+        document.querySelector('meta[name="theme-color"]').content =
+          document.documentElement.dataset.theme === 'dark'
+            ? '#1c1f1d'
+            : '#faf9f6';
       })();
     </script>
     <title>{pageTitle}</title>
     <meta name="description" content={description} />
     <meta name="color-scheme" content="light dark" />
-    <meta
-      name="theme-color"
-      content="#f7f5f0"
-      media="(prefers-color-scheme: light)"
-    />
-    <meta
-      name="theme-color"
-      content="#15130f"
-      media="(prefers-color-scheme: dark)"
-    />
     {noindex && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -110,14 +104,14 @@ const structured = {
       rel="alternate"
       type="application/rss+xml"
       title={`Writing | ${profile.name}`}
-      href="/rss.xml"
+      href={profile.rss}
     />
     <meta property="og:type" content={article ? 'article' : 'website'} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={profile.name} />
-    <meta property="og:locale" content="en_GB" />
+    <meta property="og:locale" content={lang === 'tr' ? 'tr_TR' : 'en_GB'} />
     <meta property="og:image" content={socialImage} />
     <meta property="og:image:alt" content={image.alt} />
     <meta name="twitter:card" content="summary_large_image" />

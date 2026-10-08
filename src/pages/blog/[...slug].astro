@@ -2,13 +2,13 @@
 import { render, type CollectionEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import BackLink from '../../components/BackLink.astro';
-import TagList from '../../components/TagList.astro';
 import Icon from '../../components/Icon.astro';
 import {
   getWriting,
   getProjects,
   formatDate,
   readingTime,
+  getWritingTopics,
 } from '../../lib/content';
 import { profile } from '../../data/profile';
 export async function getStaticPaths() {
@@ -29,6 +29,9 @@ const toc = headings.filter(
   (heading) => heading.depth === 2 || heading.depth === 3,
 );
 const allPosts = await getWriting();
+const topics = getWritingTopics(allPosts).filter((topic) =>
+  entry.data.tags.includes(topic.label),
+);
 const relatedPosts = allPosts
   .filter(
     (post) =>
@@ -53,9 +56,9 @@ const relatedProjects = (await getProjects()).filter((project) =>
     tags: entry.data.tags,
   }}
 >
-  <div class="detail-shell">
+  <div class="detail-shell article-shell">
     <BackLink href="/blog/" label="Writing" />
-    <header class="page-head detail-heading">
+    <header class="page-head detail-heading article-heading">
       <p class="label">{entry.data.category}</p>
       <h1>{entry.data.title}</h1>
       <p class="lede">{entry.data.description}</p>
@@ -74,7 +77,6 @@ const relatedProjects = (await getProjects()).filter((project) =>
           </time>
         </p>
       )}
-      <TagList tags={entry.data.tags} />
     </header>
     {entry.data.heroImage && (
       <figure class="article-hero">
@@ -88,8 +90,8 @@ const relatedProjects = (await getProjects()).filter((project) =>
       </figure>
     )}
     <div class="article-body">
-      <aside class="detail-aside">
-        {toc.length >= 4 && (
+      {toc.length >= 4 && (
+        <aside class="detail-aside">
           <nav class="toc" aria-label="Table of contents">
             <p class="label">On this page</p>
             <ol>
@@ -100,9 +102,9 @@ const relatedProjects = (await getProjects()).filter((project) =>
               ))}
             </ol>
           </nav>
-        )}
-      </aside>
-      <div>
+        </aside>
+      )}
+      <div class="article-reading">
         <article class="prose">
           <Content />
           {entry.data.references.length > 0 && (
@@ -118,6 +120,14 @@ const relatedProjects = (await getProjects()).filter((project) =>
             </section>
           )}
         </article>
+        {topics.length > 0 && (
+          <nav class="article-topics" aria-label="Article topics">
+            <span class="label-muted">Filed under</span>
+            {topics.map((topic) => (
+              <a href={topic.href}>{topic.label}</a>
+            ))}
+          </nav>
+        )}
         {(relatedPosts.length > 0 || relatedProjects.length > 0) && (
           <aside class="article-related">
             <h2>Related reading</h2>
@@ -187,6 +197,10 @@ const relatedProjects = (await getProjects()).filter((project) =>
       button.textContent = 'Copy';
       button.setAttribute('aria-label', 'Copy code to clipboard');
       wrapper.append(button);
+      const feedback = document.createElement('span');
+      feedback.className = 'sr-only';
+      feedback.setAttribute('role', 'status');
+      wrapper.append(feedback);
       let reset: ReturnType<typeof setTimeout> | undefined;
       button.addEventListener('click', async () => {
         let copied = false;
@@ -197,11 +211,24 @@ const relatedProjects = (await getProjects()).filter((project) =>
           copied = false;
         }
         button.textContent = copied ? 'Copied' : 'Copy failed';
+        feedback.textContent = copied
+          ? 'Code copied to clipboard.'
+          : 'Could not copy. Select the code to copy it manually.';
         if (reset) clearTimeout(reset);
         reset = setTimeout(() => {
           button.textContent = 'Copy';
         }, 2000);
       });
+    }
+    for (const table of document.querySelectorAll<HTMLTableElement>(
+      '.prose table',
+    )) {
+      table.tabIndex = 0;
+      table.setAttribute(
+        'aria-label',
+        table.caption?.textContent ||
+          'Data table, scroll horizontally if needed',
+      );
     }
   </script>
 </BaseLayout>

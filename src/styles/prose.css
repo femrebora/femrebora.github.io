@@ -4,8 +4,8 @@
 .prose {
   max-width: var(--prose-measure);
   font-family: var(--font-reading);
-  font-size: 19px;
-  line-height: 1.72;
+  font-size: 20px;
+  line-height: 1.75;
   color: var(--ink);
   overflow-wrap: break-word;
 }
@@ -19,7 +19,7 @@
   font-weight: 600;
   line-height: 1.22;
   letter-spacing: -0.012em;
-  scroll-margin-top: 88px;
+  scroll-margin-top: var(--header-offset);
 }
 .prose h2 {
   font-size: clamp(27px, 3.2vw, 34px);
@@ -104,13 +104,6 @@
   color: var(--shiki-dark);
   background-color: var(--shiki-dark-bg);
 }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme]) .astro-code,
-  :root:not([data-theme]) .astro-code span {
-    color: var(--shiki-dark);
-    background-color: var(--shiki-dark-bg);
-  }
-}
 
 .prose table {
   display: block;
@@ -161,12 +154,22 @@
    by a small progressive script; without it the block is unchanged. */
 .prose .code-block {
   position: relative;
+  margin-block: 1.7em;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--code-bg);
+}
+.prose .code-block pre {
+  margin: 0;
+  border: 0;
+  padding-top: 62px;
 }
 .prose .code-block .code-copy {
   position: absolute;
-  top: calc(1.7em + 10px);
+  top: 8px;
   right: 10px;
-  min-height: 32px;
+  min-height: var(--tap);
   padding: 4px 10px;
   border: 1px solid var(--rule-strong);
   border-radius: var(--radius);

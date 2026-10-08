@@ -109,6 +109,5 @@ test('the homepage summary is taken from profile data', async () => {
   const source = await readFile(resolve('src/pages/index.astro'), 'utf8');
   assert.ok(!source.includes('completed July 2026'));
   assert.match(source, /from '\.\.\/data\/profile'/);
-  assert.match(source, /\bexperience\b/);
-  assert.match(source, /\beducation\b/);
+  assert.match(source, /profile\.writingIntroduction/);
 });

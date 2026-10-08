@@ -20,6 +20,40 @@ export function selectHomepageWriting(articles, limit = 4) {
   return [articles[leadAt], ...rest.slice(0, cap - 1)];
 }
 
+/** Topics are derived only from the already-published writing collection. */
+export function getWritingTopics(articles) {
+  const counts = new Map();
+  for (const article of articles) {
+    for (const tag of new Set(article.data.tags.filter((tag) => tag.trim()))) {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+    }
+  }
+  const topics = [...counts].map(([label, count]) => ({
+    label,
+    count,
+    slug:
+      label
+        .normalize('NFKD')
+        .replace(/\p{M}/gu, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '') || 'topic',
+  }));
+  const slugCounts = new Map();
+  for (const topic of topics) {
+    slugCounts.set(topic.slug, (slugCounts.get(topic.slug) ?? 0) + 1);
+  }
+  // Preserve distinct labels such as C++ and C# without merging their counts.
+  for (const topic of topics) {
+    if (slugCounts.get(topic.slug) > 1) {
+      topic.slug += `-${Array.from(topic.label, (char) => char.codePointAt(0).toString(16)).join('')}`;
+    }
+  }
+  return topics
+    .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label, 'en'))
+    .map((topic) => ({ ...topic, href: `/blog/topics/${topic.slug}/` }));
+}
+
 /** Approximation for English prose; code and markup are excluded. */
 export function readingTime(body = '') {
   const prose = body

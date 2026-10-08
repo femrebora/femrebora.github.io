@@ -1,12 +1,23 @@
 ---
 import { profile } from '../data/profile';
 import Icon from './Icon.astro';
-const links: { href: string; label: string; match: string }[] = [
+const links: { href: string; label: string; match: string; id?: string }[] = [
   { href: '/blog/', label: 'Writing', match: '/blog/' },
-  { href: '/research/', label: 'Research', match: '/research/' },
-  { href: '/work/', label: 'Work', match: '/work/' },
-  { href: '/about/', label: 'About', match: '/about/' },
-  { href: '/cv/', label: 'CV', match: '/cv/' },
+  {
+    href: '/research/',
+    label: 'Research',
+    match: '/research/',
+    id: 'research',
+  },
+  { href: '/work/', label: 'Work', match: '/work/', id: 'work' },
+  { href: '/about/', label: 'About', match: '/about/', id: 'background' },
+  { href: profile.cvPage, label: 'CV', match: profile.cvPage },
+];
+const professionalLinks = [
+  { href: profile.github, label: 'GitHub', icon: 'github' as const },
+  { href: profile.linkedin, label: 'LinkedIn', icon: 'linkedin' as const },
+  { href: profile.medium, label: 'Medium', icon: 'medium' as const },
+  { href: `mailto:${profile.email}`, label: 'Email', icon: 'mail' as const },
 ];
 const path = Astro.url.pathname;
 const current = (match: string) =>
@@ -21,8 +32,12 @@ const onHome = path === '/';
       <span>{profile.tagline}</span>
     </a>
     <nav class="site-nav site-nav--inline" aria-label="Main navigation">
-      {links.map(({ href, label, match }) => (
-        <a href={href} aria-current={current(match) ? 'page' : undefined}>
+      {links.map(({ href, label, match, id }) => (
+        <a
+          id={onHome ? id : undefined}
+          href={href}
+          aria-current={current(match) ? 'page' : undefined}
+        >
           {label}
         </a>
       ))}
@@ -56,18 +71,24 @@ const onHome = path === '/';
       </button>
     </div>
   </div>
+  <div class="wrap masthead-utility">
+    <p>A Researcher’s Notebook</p>
+    <nav class="professional-links" aria-label="Professional links">
+      {professionalLinks.map(({ href, label, icon }) => (
+        <a id={onHome && label === 'Email' ? 'contact' : undefined} href={href}>
+          <Icon name={icon} /> <span>{label}</span>
+        </a>
+      ))}
+    </nav>
+  </div>
 </header>
 <script>
   const control = document.querySelector<HTMLButtonElement>('.theme-toggle');
-  const preference = window.matchMedia('(prefers-color-scheme: dark)');
-  let manual = false;
-  try {
-    manual = ['light', 'dark'].includes(localStorage.getItem('theme') || '');
-  } catch {
-    /* Storage is optional. */
-  }
   const apply = (dark: boolean) => {
     document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', dark ? '#1c1f1d' : '#faf9f6');
     control?.setAttribute('aria-pressed', String(dark));
     control?.setAttribute(
       'aria-label',
@@ -79,16 +100,12 @@ const onHome = path === '/';
     apply(document.documentElement.dataset.theme === 'dark');
     control.addEventListener('click', () => {
       const dark = document.documentElement.dataset.theme !== 'dark';
-      manual = true;
       apply(dark);
       try {
         localStorage.setItem('theme', dark ? 'dark' : 'light');
       } catch {
         /* Keep working without storage. */
       }
-    });
-    preference.addEventListener('change', (event) => {
-      if (!manual) apply(event.matches);
     });
   }
 </script>

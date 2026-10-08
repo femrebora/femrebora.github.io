@@ -7,6 +7,8 @@ export const profile = {
     'Research and writing in genetics, bioinformatics, computational biology, and scientific software.',
   introduction:
     'I work with genomic data and build tools for research and clinical genomics.',
+  writingIntroduction:
+    'A place for notes and essays on biology, computation, and the practice of research.',
   biography: [
     'I work as a Bioinformatician at Ecegen Genetic Diseases Assessment Center, supporting NGS analysis, variant interpretation, and reproducible Linux-based genomic workflows.',
     'I completed my MSc in Biotechnology at Bezmialem Vakif University in July 2026. In Cingoz Lab, my graduate research investigated TRAIL resistance in glioblastoma through pooled CRISPR/Cas9 screening, candidate gene prioritization, and integration of transcriptomic and metabolomic data.',
@@ -14,8 +16,11 @@ export const profile = {
   ],
   github: 'https://github.com/femrebora',
   linkedin: 'https://linkedin.com/in/femre-bora',
+  medium: 'https://medium.com/@furkanemrebora',
   email: 'furkanemrebora@gmail.com',
   cv: '/cv/furkan-emre-bora-cv.pdf',
+  cvPage: '/cv/',
+  rss: '/rss.xml',
 };
 
 export const interests = [

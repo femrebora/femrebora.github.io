@@ -43,7 +43,11 @@ test(
       'utf8',
     );
     const ownerWriting = await readFile(
-      join(root, 'src/content/writing/article-template.md'),
+      join(root, 'src/content/mywritings/article-template.md'),
+      'utf8',
+    );
+    const ownerWritingGuide = await readFile(
+      join(root, 'src/content/mywritings/README.md'),
       'utf8',
     );
     const ownerCredential = await readFile(
@@ -71,7 +75,7 @@ test(
       );
 
       const template = await readFile(
-        join(root, 'src/content/writing/article-template.md'),
+        join(root, 'src/content/mywritings/article-template.md'),
         'utf8',
       );
       const ordinary = await readFile(
@@ -80,12 +84,16 @@ test(
       );
       const ordinaryBody = ordinary.replace(/^---[\s\S]*?---\s*/, '').trim();
       assert.ok(ordinaryBody.includes('Correlation does not imply causation'));
-      const writingDir = join(fixture, 'src/content/writing');
+      const writingDir = join(fixture, 'src/content/mywritings');
 
       const resetWriting = async () => {
         await rm(writingDir, { recursive: true, force: true });
         await mkdir(writingDir, { recursive: true });
-        await writeFile(join(writingDir, 'article-template.md'), template);
+        await writeFile(join(writingDir, 'README.md'), ownerWritingGuide);
+        await writeFile(
+          join(writingDir, 'article-template.md'),
+          template.replace('tags: [Notes]', 'tags: [Draft-only]'),
+        );
         await writeFile(
           join(writingDir, 'qa-future.md'),
           template
@@ -94,6 +102,7 @@ test(
               'QA future hidden',
             )
             .replace('draft: true', 'draft: false')
+            .replace('tags: [Notes]', 'tags: [Scheduled-only]')
             .replace('2026-10-03', '2999-01-01'),
         );
       };
@@ -155,11 +164,21 @@ test(
         .trim()}
 
 ${ordinaryBody}
+
+## Wide data table
+
+| Identifier | Method | Description |
+| :--- | :--- | :--- |
+| ${'fixture_identifier_'.repeat(12)} | Test-only method | A wide, unbroken test value. |
+
+\`\`\`bash
+python analysis.py --input ${'test_input_'.repeat(18)}
+\`\`\`
 `;
       await writeFile(join(writingDir, 'qa-formatting.md'), published);
       await writeFile(
         join(writingDir, 'qa-newer.mdx'),
-        `---\ntitle: QA MDX fixture\ndescription: Test-only MDX entry\npublishedDate: 2020-02-01\ndraft: false\ncategory: Software\ntags: [QA]\nrelatedProjects: [ecegen]\nreferences:\n  - title: Astro documentation\n    url: https://docs.astro.build/\n---\n\n## MDX content\n\nA test-only expression: {2 + 2}.\n`,
+        `---\ntitle: QA MDX fixture\ndescription: Test-only MDX entry\npublishedDate: 2020-02-01\ndraft: false\ncategory: Software\ntags: [QA]\ncanonicalURL: https://example.org/original-mdx/\nrelatedProjects: [ecegen]\nreferences:\n  - title: Astro documentation\n    url: https://docs.astro.build/\n---\n\n## MDX content\n\nA test-only expression: {2 + 2}.\n`,
       );
       for (const [id, date, featured, title] of [
         ['qa-c', '2021-03-01', false, 'QA c fixture'],
@@ -219,10 +238,37 @@ ${ordinaryBody}
         'Related reading',
         'id="references"',
         '/blog/qa-formatting/',
+        'https://example.org/original-mdx/',
       ])
         assert.ok(mdx.includes(expected), `MDX missing ${expected}`);
+      const archive = await readDist('blog/index.html');
+      assert.ok(archive.includes('Search writing'));
+      assert.ok(archive.includes('data-search='));
+      assert.ok(archive.includes('/blog/topics/qa/'));
+      assert.ok(!archive.includes('Scheduled-only'));
+      assert.ok(!archive.includes('Draft-only'));
+      const topic = await readDist('blog/topics/qa/index.html');
+      assert.ok(topic.includes('6 articles in the notebook'));
+      assert.ok(topic.includes('/blog/qa-turkish/'));
+      assert.ok(!topic.includes('/blog/qa-formatting/'));
+      assert.ok(!topic.includes('qa-future'));
+      await assert.rejects(
+        access(join(fixture, 'dist/blog/topics/scheduled-only/index.html')),
+      );
+      await assert.rejects(
+        access(join(fixture, 'dist/blog/topics/draft-only/index.html')),
+      );
+      execFileSync(
+        process.execPath,
+        [join(root, 'scripts/verify-site.mjs'), join(fixture, 'dist')],
+        { cwd: root, stdio: 'pipe' },
+      );
       for (const path of ['blog/index.html', 'rss.xml', 'sitemap-0.xml']) {
         const html = await readDist(path);
+        assert.ok(
+          !html.includes('/blog/readme/'),
+          `${path} exposed the writing guide`,
+        );
         assert.ok(
           html.includes('qa-formatting'),
           `${path} missing published article`,
@@ -250,8 +296,9 @@ ${ordinaryBody}
         assert.ok(!home.includes(excluded), `homepage exposed ${excluded}`);
       }
       assert.ok(
-        home.indexOf('id="blog"') < home.indexOf('id="research"'),
-        'published homepage should lead with writing',
+        home.includes('id="blog"') &&
+          !/Selected research|Selected work|At the desk/.test(home),
+        'published homepage should contain writing without professional panels',
       );
       const ecegen = await readDist('work/ecegen/index.html');
       for (const phrase of ecegenAuditMarkers) {
@@ -282,6 +329,9 @@ ${ordinaryBody}
         access(join(fixture, 'dist/blog/article-template/index.html')),
       );
       await assert.rejects(
+        access(join(fixture, 'dist/blog/readme/index.html')),
+      );
+      await assert.rejects(
         access(join(fixture, 'dist/blog/qa-future/index.html')),
       );
       await publish('content-fixture');
@@ -290,7 +340,7 @@ ${ordinaryBody}
       await setCredentials(null);
       await writeFile(
         join(writingDir, 'qa-only.md'),
-        `---\ntitle: QA only fixture\ndescription: Test-only fixture, not an owner article.\npublishedDate: 2024-01-01\ndraft: false\nfeatured: true\ncategory: Notes\ntags: [QA]\n---\n\nA single published fixture.\n`,
+        `---\ntitle: QA only fixture\ndescription: Test-only fixture, not an owner article.\npublishedDate: 2024-01-01\ndraft: false\nfeatured: false\ncategory: Notes\ntags: [QA]\n---\n\nA single published fixture.\n`,
       );
       await build();
       const oneHome = await readDist('index.html');
@@ -299,11 +349,15 @@ ${ordinaryBody}
       assert.ok(!oneHome.includes('qa-future'));
       assert.ok(!oneHome.includes('article-template'));
       assert.ok(
-        oneHome.indexOf('id="blog"') < oneHome.indexOf('id="research"'),
+        oneHome.includes('id="blog"') &&
+          !/Selected research|Selected work|At the desk/.test(oneHome),
+        'single-post homepage should contain writing without professional panels',
       );
       const oneBlog = await readDist('blog/index.html');
       assert.ok(oneBlog.includes('/blog/qa-only/'));
-      assert.ok(!oneBlog.includes('writing-filters'));
+      assert.ok(oneBlog.includes('Search writing'));
+      assert.ok(!oneBlog.includes('id="category"'));
+      assert.ok(!oneBlog.includes('id="tag"'));
       assert.ok(!oneBlog.includes('qa-future'));
       assert.ok(!oneBlog.includes('article-template'));
       assert.ok(
@@ -327,11 +381,12 @@ ${ordinaryBody}
       await build();
       const zeroHome = await readDist('index.html');
       assert.ok(
-        zeroHome.indexOf('id="blog"') < zeroHome.indexOf('id="research"'),
-        'homepage should lead with writing even without published posts',
+        zeroHome.includes('id="blog"') &&
+          !/Selected research|Selected work|At the desk/.test(zeroHome),
+        'empty homepage should contain writing without professional panels',
       );
       assert.ok(
-        zeroHome.includes('I am preparing the first pieces'),
+        zeroHome.includes('No articles published yet.'),
         'homepage writing empty state should welcome readers',
       );
       assert.ok(!zeroHome.includes('qa-future'));
@@ -339,7 +394,7 @@ ${ordinaryBody}
       assert.ok(!zeroHome.includes('/blog/qa-'));
       const zeroBlog = await readDist('blog/index.html');
       assert.ok(zeroBlog.includes('No articles published yet.'));
-      assert.ok(!zeroBlog.includes('writing-filters'));
+      assert.ok(!zeroBlog.includes('class="writing-filters"'));
       assert.ok(!zeroBlog.includes('qa-future'));
       assert.ok(!zeroBlog.includes('article-template'));
       for (const path of [
@@ -386,7 +441,7 @@ ${ordinaryBody}
       );
       assert.equal(
         await readFile(
-          join(root, 'src/content/writing/article-template.md'),
+          join(root, 'src/content/mywritings/article-template.md'),
           'utf8',
         ),
         ownerWriting,

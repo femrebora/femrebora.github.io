@@ -1,0 +1,25 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { getWritingTopics } from '../lib/content';
+interface Props {
+  articles: CollectionEntry<'writing'>[];
+}
+const topics = getWritingTopics(Astro.props.articles);
+---
+
+{topics.length > 0 && (
+  <nav class="writing-topics" aria-label="Writing topics">
+    <ul>
+      {topics.map((topic) => (
+        <li>
+          <a href={topic.href}>
+            <span>{topic.label}</span>
+            <span class="topic-count">
+              {topic.count} {topic.count === 1 ? 'article' : 'articles'}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </nav>
+)}

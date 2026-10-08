@@ -1,0 +1,34 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BackLink from '../../../components/BackLink.astro';
+import PageHeader from '../../../components/PageHeader.astro';
+import WritingList from '../../../components/WritingList.astro';
+import { getWriting, getWritingTopics } from '../../../lib/content';
+
+export async function getStaticPaths() {
+  const articles = await getWriting();
+  return getWritingTopics(articles).map((topic) => ({
+    params: { topic: topic.slug },
+    props: {
+      topic,
+      articles: articles.filter((post) => post.data.tags.includes(topic.label)),
+    },
+  }));
+}
+const { topic, articles } = Astro.props;
+---
+
+<BaseLayout
+  title={`${topic.label} writing`}
+  description={`Notes and essays filed under ${topic.label}, by F. Emre Bora.`}
+>
+  <BackLink href="/blog/" label="All writing" />
+  <PageHeader
+    label="Writing / Topic"
+    title={topic.label}
+    lede={`${topic.count} ${topic.count === 1 ? 'article' : 'articles'} in the notebook.`}
+  />
+  <section class="writing-index" aria-label={`Articles on ${topic.label}`}>
+    <WritingList articles={articles} />
+  </section>
+</BaseLayout>

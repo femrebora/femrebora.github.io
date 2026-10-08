@@ -2,13 +2,15 @@
 
 ## Rendering and routing
 
-Astro builds static HTML: the homepage at `/`; indexes at `/research/`, `/work/`, `/blog/`, `/about/`, `/cv/`, and `/credentials/`; detail pages under `/research/` and `/work/` plus `/blog/[slug]/`; and a standalone `404.html` for GitHub Pages. There are no server endpoints at runtime: `rss.xml.ts` executes at build time. Trailing slashes match directory-based static hosting.
+Astro builds static HTML: the homepage at `/`; indexes at `/research/`, `/work/`, `/blog/`, `/about/`, `/cv/`, and `/credentials/`; detail pages under `/research/` and `/work/` plus `/blog/[slug]/`; static topic archives under `/blog/topics/[topic]/`; and a standalone `404.html` for GitHub Pages. There are no server endpoints at runtime: `rss.xml.ts` executes at build time. Trailing slashes match directory-based static hosting.
 
-The homepage is an overview, not the whole site. It keeps the legacy anchors `#research`, `#background`, `#work`, `#blog`, and `#contact` so older links resolve. `/blog/` is the canonical writing index; the navigation label is "Writing". Research and project detail routes keep their existing paths.
+The homepage contains writing and published topics only, with a compact introduction. `#blog` targets the writing section; legacy `#research`, `#background`, `#work`, and `#contact` targets now belong to the corresponding masthead links on the homepage. Research, work, About, and CV remain separate pages. `/blog/` is the canonical writing index; the navigation label is "Writing". Research and project detail routes keep their existing paths.
 
-The official sitemap integration receives only generated routes. All detail routes use the same content helpers as their indexes. `isPublished` rejects drafts and future-dated writing before routing or rendering. New content is visible only after a build.
+The official sitemap integration receives only generated routes. All detail routes use the same content helpers as their indexes. `isPublished` rejects drafts and future-dated writing before routing or rendering. New content is visible only after a build. The production origin is `https://femrebora.com`; the GitHub repository name stays unchanged.
 
 ## Content model
+
+The `writing` collection loads Markdown/MDX from `src/content/mywritings/`. Its `README.md` is an authoring guide and is excluded by the glob loader. The collection name stays `writing` so existing helpers, article routes, homepage lists, topic archives, search, and feed generation share the same publication rules. Moving the source folder does not change filename-based `/blog/<slug>/` URLs.
 
 | Collection  | Purpose                                    | Notable fields                                                                                                         |
 | ----------- | ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
@@ -26,7 +28,7 @@ The research entry reflects owner-supplied context. Its `question` and `contribu
 
 ## Presentation
 
-`BaseLayout` owns the document, metadata, JSON-LD, masthead, footer, and pre-paint theme selection. Reusable primitives (`PageHeader`, `FeatureSection`, `MetadataList`, `TagList`, `ContactList`, `BackLink`) give indexes and detail pages one consistent structure; content-pattern components (`WritingList`, `ProjectRecord`, `ProjectPreview`, `MethodSchematic`, `GenomeTrack`, `ProfilePhoto`, `Icon`, `ResearchNotes`) render specific data shapes. Route templates compose these and render Markdown through Astro's `render()`.
+`BaseLayout` owns the document, metadata, JSON-LD, masthead, footer, and pre-paint theme selection. Reusable primitives (`PageHeader`, `FeatureSection`, `MetadataList`, `TagList`, `ContactList`, `BackLink`) give indexes and detail pages one consistent structure; content-pattern components (`WritingList`, `WritingTopics`, `ProjectRecord`, `ProjectPreview`, `MethodSchematic`, `GenomeTrack`, `ProfilePhoto`, `Icon`, `ResearchNotes`) render specific data shapes. Route templates compose these and render Markdown through Astro's `render()`.
 
 ### CSS architecture
 
@@ -44,8 +46,8 @@ src/styles/
   prose.css           .prose long-form reading surface + Shiki theming
   components/
     header.css        masthead, navigation, disclosure menu, theme control
-    home.css          hero, research spotlight, method schematic, work/writing/close sections
-    writing.css       archive list, featured post, filters, article layout, TOC
+    home.css          compact introduction and writing-only publication column
+    writing.css       archive, featured/latest lists, topics, search/filters, reading layout, TOC
     work.css          project records and previews
     about.css         narrative, milestones, interest lists, notes
     credentials.css   credential records
@@ -60,15 +62,21 @@ There is no Tailwind: the site is deliberately custom CSS, and the unused depend
 
 ### Motion and view transitions
 
-Navigation uses the browser's native **cross-document View Transitions** (`@view-transition { navigation: auto; }` in `motion.css`). This is a zero-JavaScript, CSS-only enhancement: the masthead and wordmark are named elements (`view-transition-name`), so they hold still while `main` enters with a 320ms fade-and-rise. Browsers without support navigate normally. Because there is no client-side router, every page is a full document — all existing scripts (theme, filters, timeline, heading anchors) keep running exactly as before, and `prefers-reduced-motion: reduce` disables every transition and animation.
+Navigation uses the browser's native **cross-document View Transitions** (`@view-transition { navigation: auto; }` in `motion.css`). This is a zero-JavaScript, CSS-only enhancement: the masthead and wordmark are named elements (`view-transition-name`), so they hold still while `main` enters with a 320ms fade-and-rise. Browsers without support navigate normally. Because there is no client-side router, every page is a full document — all existing scripts (theme, filters, timeline, heading anchors) keep running exactly as before, and `prefers-reduced-motion: reduce` disables every transition and animation. The cross-document enhancement is enabled only when CSS reports `scripting: enabled` and motion is preferred, avoiding suspended transition layers in Chromium with scripts disabled. No-script navigation uses normal document loads.
 
 ### Client JavaScript
 
-Client-side JavaScript is limited to theme control, the blog category/topic filter, the career-timeline hover details, article heading anchors, and the CV print button. No framework hydration. The theme is set before first paint, respects system preference until explicitly chosen, persists when local storage is available, and works when storage is blocked. Without JavaScript: CSS respects the system theme, the mobile menu opens natively (`<details>`), all content and navigation remain usable, and inactive controls stay hidden.
+Client-side JavaScript is limited to theme control, the archive search and category/topic filter, the career-timeline hover details, article heading anchors, and the CV print button. No framework hydration. The theme is set before first paint: neutral warm off-white light is the default regardless of system preference, and an explicit stored light/dark choice takes precedence. Selection also updates the browser theme-color, persists when local storage is available, and works when storage is blocked. Without JavaScript: the palette stays light, the mobile menu opens natively (`<details>`), all content and navigation remain usable, and inactive controls stay hidden.
+
+### Writing discovery
+
+`getWriting()` is the publication gate and sorted collection for every article surface. `selectHomepageWriting` chooses one lead plus three recent entries without repetition. `getWritingTopics` derives distinct-article counts and unique topic paths; `WritingTopics` and the static topic route share that result. Empty tags are omitted. No empty topic route is built.
+
+The archive's generated `<li>` elements carry escaped title/summary/tag search text plus category/tag attributes. The client reads those existing rows, so there is no separate article array, fetch, external service, or parallel search endpoint. Search matches all whitespace-separated terms, ignores case and Latin accents, supports Turkish characters, intersects category/topic selections, and persists active state in URL parameters (`q`, `category`, `tag`). Text updates use `textContent`. With JavaScript disabled, the full archive and all static topic/article links are available.
 
 ## Accessibility, metadata, and deployment
 
-Semantic landmarks, one h1 per page, visible focus, a skip link, current-page navigation, accessible controls, reduced-motion overrides, and print styles are shared. Pages carry canonical URLs, descriptions, OpenGraph/Twitter metadata, and a local 1200×630 PNG social preview. Articles add BlogPosting data and published/updated timestamps. Person metadata contains only the supplied name and confirmed links. No visitor request goes to external font, analytics, or application services.
+Semantic landmarks, one h1 per page, visible focus, a skip link, current-page navigation, accessible controls, reduced-motion overrides, and print styles are shared. Pages carry canonical URLs, descriptions, OpenGraph/Twitter metadata, and a local 1200×630 PNG social preview. Articles add BlogPosting data, document language, and published/updated timestamps; external syndicated canonical URLs are preserved. The social card is rendered from `assets/social-card.svg`, whose visible address matches the production origin. Person metadata contains only the supplied name and confirmed links. No visitor request goes to external font, analytics, or application services.
 
 Only `dist/` is uploaded by the Astro GitHub Action. PRs validate; authorized main-branch pushes deploy. Node 24 and the lockfile make installations repeatable.
 
@@ -78,6 +86,6 @@ Only `dist/` is uploaded by the Astro GitHub Action. PRs validate; authorized ma
 - Node tests for publication behavior, reading time, and public copy.
 - An isolated temporary copy of the site builds real Markdown/MDX articles, footnotes, tables, TOCs, previous/next navigation, related reading, a credential, RSS, sitemap, and draft/future-date exclusion. Test content never enters the deliverable site.
 - A generated-output checker follows every local link, asset, and fragment; verifies metadata, required output files; and asserts draft templates never leak.
-- Playwright checks all public routes at 320, 375, 768, 1280, and 1440 pixels; axe checks both themes. Additional tests cover keyboard use, persistence, no-JavaScript navigation, blocked storage, reduced motion, the career timeline, image proportions, and the article layout.
+- Playwright uses a dedicated static preview on port 4322, avoiding the development toolbar on port 4321. It checks all public routes at 320, 360, 375, 768, 1280, and 1440 pixels; axe checks both themes. Additional tests cover keyboard use, persistence, no-JavaScript navigation, blocked storage, reduced motion, the career timeline, image proportions, and the article layout.
 
 Automated checks have practical limits: no remote Pages deployment is exercised locally, and automated scanning is not a full manual accessibility audit.

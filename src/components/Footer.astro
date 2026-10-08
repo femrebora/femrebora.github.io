@@ -17,7 +17,7 @@ const year = new Date().getUTCFullYear();
       {profile.email && <a href={`mailto:${profile.email}`}>Email</a>}
       {profile.linkedin && <a href={profile.linkedin}>LinkedIn</a>}
       <a href={profile.github}>GitHub</a>
-      <a href="/rss.xml">RSS</a>
+      {profile.medium && <a href={profile.medium}>Medium</a>}
     </nav>
   </div>
 </footer>

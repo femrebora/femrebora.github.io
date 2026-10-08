@@ -1,5 +1,97 @@
 # Verification record
 
+## Local commit validation: 8 October 2026
+
+The owner authorized a local commit using the configured Furkan Emre Bora author and committer identity, without assistant attribution. Before committing, `npm run verify` passed formatting, Astro check (45 files, no diagnostics), all 10 Node tests, the 10-page production build, and verification of 206 local links/assets/anchors plus metadata, sitemap, feed, and draft exclusion. `npm run test:browser` passed all 10 Node tests and all 20 Playwright tests in 40.6 seconds. The separate ECEGEN content edits and website-reference notes remain outside this commit's scope. No remote push, deployment, or account-setting change was performed.
+
+## Medium profile link: 8 October 2026
+
+The owner supplied `https://medium.com/@furkanemrebora`. That account is centralized as `profile.medium` and linked from the masthead, footer, and shared About/CV contact list. The masthead uses a native, decorative Medium icon with a visible label. Person structured data includes the supplied account in `sameAs`. Current profile/contact documentation was updated. No Medium article, embedded content, account integration, or external publication was created; the web tool could not open the external profile, so availability was not claimed from that check.
+
+The existing professional-links browser test now includes Medium and 320px screens, checks the footer destination, and continues to assert that no visible RSS link appears. Its first run exposed a second-row link at the narrowest width. The owning header stylesheet now reduces only icon spacing and horizontal padding at widths up to 360px, keeping visible labels and 44px targets; all four links fit in one row.
+
+`npm run verify` passed formatting, Astro check with no diagnostics, 10 Node tests, a 10-page static build, and the generated-site checks. After the narrow-screen adjustment, rebuilding and output verification passed again with 206 local links/assets/anchors. Seven targeted browser tests passed in 11.9 seconds: all public route widths, light/dark axe checks, no-JavaScript/mobile navigation, CV download, and named profile links at 320, 360, 768, and 1440px. `git diff --check` passed. Changes remain local, uncommitted, and undeployed; the CV PDF and reference repository were not edited.
+
+## Mywritings authoring folder: 8 October 2026
+
+The writing source folder is now `src/content/mywritings/`, with the existing draft `article-template.md` moved intact and a new authoring `README.md`. The guide explains creating one file per weekly post, metadata, draft/featured controls, local preview, validation, updates, and publication through the existing main-branch GitHub Pages workflow. No post was invented or published.
+
+`src/content.config.ts` loads Markdown/MDX from the new base while retaining the `writing` collection name and filename-based article URLs. Its README exclusion keeps authoring instructions out of the content collection and public output. Existing integration fixtures now write posts into the new folder, retain the real guide, and verify the guide never becomes an article or enters archive/feed/sitemap output. Homepage, search, topics, related reading, feeds, draft exclusion, and future-date exclusion use the existing publication helpers.
+
+Current authoring paths were updated in README, design, architecture, maintenance, and content-backlog documentation. Formatting of `docs/website-reference.md` corrected the previous whole-repository formatting blocker; a comparison verified that all wording and table alignment were preserved, with only whitespace and table separators normalized. Other owner content, the CV PDF, dependencies, and deployment configuration were preserved.
+
+`npm run verify` passed in full: formatting, Astro check (45 files, no errors/warnings/hints), all 10 Node tests, a 10-page static build, and 206 local links/assets/anchors plus metadata/publication checks. Seven targeted browser tests passed in 7.7 seconds: long-form Markdown/MDX in both themes, category/topic filtering, zero/one/many homepage states, search/reset/URL state, and topic/article navigation without JavaScript. `git diff --check` passed. The template and guide remain unpublished, and all changes are uncommitted and undeployed.
+
+## Visible RSS removal: 8 October 2026
+
+RSS links were removed from the shared masthead and footer at the owner's request. GitHub, LinkedIn, and Email remain visible; the professional navigation landmark and existing browser assertions now describe those three links. The `/rss.xml` endpoint and HTML feed-discovery metadata remain available. The production build passed, generated-site verification passed 10 HTML pages and 206 local links/assets/anchors, and all four targeted navigation/mobile/CV browser tests passed in 2.4 seconds. The professional-links test checks that no RSS anchor appears at 360, 768, or 1440px. Formatting of the changed files and `git diff --check` passed. Changes remain local, uncommitted, and undeployed.
+
+## Follow-up: writing-only homepage and neutral palette, 8 October 2026
+
+The owner requested a warmer default, rejected pink and a green-tinted background, and asked to keep the homepage for writing only. The current light palette uses neutral warm off-white `#FAF9F6`, white/neutral secondary surfaces, charcoal text, and small sage-green `#496842` accents. The optional dark palette uses neutral charcoal with light sage accents. Light is the default even on a dark-preferring device; stored explicit choices still take precedence. Browser theme-color follows the selected palette. The favicon and social preview were recoloured natively from their existing SVG sources.
+
+The homepage now has a compact introduction, one featured/latest article with up to three other articles, and real published topics. Research, work, biography/contact panels, and marginal background notes were removed from it. Dedicated pages, masthead navigation, professional links, and the CV PDF remain available. Legacy homepage anchors now target corresponding masthead links, while `#blog` remains on the writing section. Removed presentation styles were deleted from their owning stylesheet.
+
+Tests retain zero/one/many article coverage and now assert the writing-only homepage. Professional and academic facts are checked on their dedicated pages. Playwright uses a dedicated static preview on port 4322 so an existing development server's toolbar cannot add shadow-DOM headings to production checks. A test caught insufficient contrast during an animated theme change on native select controls; text and surface colours now switch together immediately, while border/underline/arrow motion remains.
+
+Validation with Node 24.18.0: Astro check passed with no errors, warnings, or hints; all 10 Node tests passed; the production build generated 10 HTML pages; output verification passed 226 local links/assets/anchors and all metadata/publication checks. The final browser run passed all 20 tests in 40.2 seconds, including both palettes, theme persistence/defaults, keyboard and no-JavaScript use, search/no-results/reset, and responsive checks. Formatting of the files changed for this follow-up and `git diff --check` passed. The whole-repository `npm run verify` stopped at formatting of the separately added `docs/website-reference.md`; that unrelated document was left untouched, and every remaining verify step was run and passed separately. Concurrent project-content and masthead-copy edits were preserved.
+
+The real homepage was captured as `test-results/palette-green-option.png` and, with only accent tokens changed inside the review browser, `palette-blue-option.png`. Both use the same neutral warm-white background. Muted blue `#3C6472` is an option preview, not a second production theme; its homepage also passed an axe WCAG A/AA scan. The source currently retains green accents while the owner compares the options. Current production and isolated-fixture screenshots were refreshed at 360, 768, and 1440px in both themes. The actual phone homepage and the populated fixture homepage were visually reviewed. Fixture articles remain test-only and excluded from production.
+
+This follow-up changes homepage/layout styles and tokens, theme initialization/control, the WritingList empty state, native preview assets, existing browser/publication checks, Playwright's preview port, and current design/architecture/maintenance documentation. No dependency, reference-repository, CV PDF, hosting-setting, commit, or deployment change was made. The static local preview is available at `http://127.0.0.1:4322/`.
+
+## Personal publication update: 8 October 2026
+
+The target checkout is `/home/emrebora/Desktop/Dev_Env/femrebora.github.io`, remote `https://github.com/femrebora/femrebora.github.io.git`, branch `main`, starting and final HEAD `72f5946773888fa1a5bf697d37d63f0d7d342899`. Its starting working tree was clean. The read-only reference is `/home/emrebora/Desktop/Dev_Env/taniarascia.com`, remote `https://github.com/taniarascia/taniarascia.com.git`, branch `master`, HEAD `eb61b7f11a2d32dac73db123fd072b9e6a3641e7`; its working tree remained clean. No dependencies were installed and no builds were run there. Its MIT license was inspected; no source code, artwork, personal copy, or article content was reused.
+
+### Design and implementation
+
+The warm publication direction keeps Newsreader, DM Sans, warm paper, deep ink, and forest green. A two-row masthead exposes named GitHub, LinkedIn, Email, and RSS links beside the five primary sections and theme control. A split introduction leads into writing with featured/latest hierarchy, counted static topic links, and compact selected research/work. Writing appears before the supporting biography on mobile; duplicate marginal background copy is hidden there.
+
+Archive search reads the published HTML rows and intersects title/description/tag terms with category and topic selections. It has URL state, an accessible count/selection summary, reset, and no-results feedback. Static topic archives use the same publication helpers and remain available without JavaScript. Article headers align with the 66-character reading column; topics move below the prose; code-copy controls use separate space and announce feedback; tables support horizontal keyboard scrolling.
+
+The production origin is now `https://femrebora.com`, including metadata, structured data, RSS, sitemap, robots, and the re-rendered social card. Syndicated article canonicals remain external when explicitly supplied. Important pages remain indexable; the 404 remains noindex and outside the sitemap.
+
+### Validation
+
+Node.js 24.18.0 was used throughout. The original `npm run verify` passed with 9 tests, no Astro diagnostics, 10 HTML pages, and 232 checked local links/assets/anchors. The original browser suite passed all 16 tests, so there were no baseline failures. Installation and browser/build execution required the environment's approved subprocess access after the sandbox blocked esbuild's binary check; this was resolved, not left as a blocker.
+
+| Command/check                                  | Actual final result                                                                                                                                                                                                                                                      |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `npm ci --no-audit --no-fund --prefer-offline` | Installed the existing lockfile; package.json and package-lock.json unchanged                                                                                                                                                                                            |
+| `npm run verify`                               | Passed formatting, Astro check (44 files, 0 errors/warnings/hints), 10 tests, static build, and site verification                                                                                                                                                        |
+| `npm run test:browser`                         | 10 tests passed, then 20 Playwright tests passed in 44.1 seconds                                                                                                                                                                                                         |
+| Generated-site check                           | 10 HTML pages and 240 local links/assets/anchors; new-origin metadata/feed/sitemap/robots, punctuation, 404, and draft exclusion passed                                                                                                                                  |
+| Responsive and accessibility                   | All public routes fit 320, 360, 375, 768, 1280, and 1440px; axe reports no tested WCAG A/AA violations on public pages, article fixtures, and archive no-results/search controls in both themes                                                                          |
+| Authoring/publication fixtures                 | Isolated zero, one, and seven-post builds; featured/newest selection, Markdown/MDX, Turkish language, topic counts/routes, related/previous/next links, explicit external canonical, references, footnotes, wide tables/code, and hidden draft/future-only topics passed |
+| Progressive enhancement                        | Ordinary archive/topic/article navigation and TOC links work with JavaScript disabled; theme persistence, blocked storage, reduced motion, skip link, and PDF download passed                                                                                            |
+| Code copying                                   | Keyboard activation passes exact code text to a controlled clipboard stub; success feedback and separation from code text verified                                                                                                                                       |
+| Final source/output audit                      | `git diff --check` clean; no excluded project names, fixture content, or old production origin in generated output; content, PDF, runtime dependencies, deployment workflow, and repository/domain marker unchanged                                                      |
+
+The first browser pass caught a real reset timing error, which was fixed with an explicit reset handler. A new no-JavaScript navigation check exposed suspended Chromium cross-document transition layers; transitions now activate only when scripting is enabled and motion is preferred. Coverage was retained and expanded, with no forced clicks or disabled checks.
+
+Screenshots were captured at 360, 768, and 1440px in light/dark for Home, Writing, Research, thesis, Work, ECEGEN, About, CV, credentials, article fixtures, and all three article-count states. Production pages were inspected through contact sheets and representative full-page images; article and populated writing screenshots were reviewed directly. A second refinement removed repeated mobile bio copy, put topics immediately after writing, aligned article titles with the reading column, and recaptured article screenshots from the top of the page.
+
+All screenshots and isolated build output are ignored in `test-results/`, never in the production feed, sitemap, search data, or content tree. Useful files: `home-light-1440.png`, `home-dark-360.png`, `home-many-light-360.png`, `archive-many-light-768.png`, `archive-one-dark-360.png`, `article-light-1440.png`, `article-dark-768.png`, and `review-{light,dark}-{360,768,1440}.png`. Article and populated writing images contain test fixtures, not owner publications.
+
+### Changed files by purpose
+
+- **Publication presentation:** `src/components/Header.astro`, `Footer.astro`, `WritingList.astro`, new `WritingTopics.astro`; `src/pages/index.astro`; `src/styles/components/header.css`, `home.css`, `writing.css`; shared `src/styles/tokens.css`, `reset.css`, `layout.css`, `motion.css`, and `prose.css`.
+- **Discovery and reading:** `src/lib/content.ts`, `publication.mjs`; `src/pages/blog/index.astro`, `[...slug].astro`, and new `topics/[topic].astro`.
+- **Identity and metadata:** `src/data/profile.ts`, `src/layouts/BaseLayout.astro`.
+- **Domain and social preview:** `astro.config.mjs`, `public/robots.txt`, `public/social-card.png`, `assets/social-card.svg`, `scripts/verify-site.mjs`.
+- **Tests and maintenance:** `tests/publication.test.mjs`, `content-build.test.mjs`, `browser/site.spec.ts`; `README.md`, `docs/DESIGN.md`, `ARCHITECTURE.md`, `MAINTAINING.md`, and this record.
+
+### Local review and hosting boundary
+
+The local development preview was started on `http://127.0.0.1:4321/` and returned HTTP 200. To restart it: `nvm use`, then `npm run dev -- --host 127.0.0.1`. The site still has no published owner articles; all populated-state previews are isolated tests. Add/feature/topic/preview/publish instructions are in `MAINTAINING.md`.
+
+Read-only live checks on 8 October 2026 returned HTTPS apex 200, `www` 301 to HTTPS apex, HTTP apex 200, and old-domain 301 to HTTP apex with the blog path preserved. A nonexistent live path returned HTTP 404. Live homepage canonical, RSS, robots sitemap address, and sitemap index still use the old GitHub origin: the source changes have not been deployed.
+
+Remaining owner actions: review these local changes; authorize publication through the existing GitHub Actions workflow when ready; check Pages custom-domain/Enforce HTTPS settings; confirm the new Search Console property, submit the new sitemap after deployment, and inspect important URLs. The documented `www` CNAME target remains `femrebora.github.io`. No Cloudflare, GitHub account/Pages settings, Search Console, commit, push, merge, or deployment was changed. Local verification and sitemap submission do not guarantee indexing or ranking. Automated scans are not a complete manual accessibility audit.
+
+## Earlier verification records
+
 Verified locally on 3 October 2026 with Node.js 24.18.0 and local Google Chrome. These are local production-build results; GitHub Pages has not been deployed or tested remotely.
 
 ## Repository starting state

@@ -2,13 +2,17 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import WritingList from '../../components/WritingList.astro';
+import WritingTopics from '../../components/WritingTopics.astro';
 import { getWriting } from '../../lib/content';
 const articles = await getWriting();
-const categories = [...new Set(articles.map((post) => post.data.category))];
-const tags = [...new Set(articles.flatMap((post) => post.data.tags))].sort();
-const showCategories = articles.length > 1 && categories.length > 1;
-const showTags = articles.length > 1 && tags.length > 1;
-const showFilters = showCategories || showTags;
+const categories = [
+  ...new Set(articles.map((post) => post.data.category)),
+].sort();
+const tags = [
+  ...new Set(
+    articles.flatMap((post) => post.data.tags).filter((tag) => tag.trim()),
+  ),
+].sort();
 ---
 
 <BaseLayout
@@ -16,16 +20,32 @@ const showFilters = showCategories || showTags;
   description="Notes and essays on bioinformatics, genomics, research, scientific computing, and software."
 >
   <PageHeader
-    label="Writing / Notes & essays"
-    title="Working through ideas. <em>Writing them down.</em>"
-    lede="Notes and essays on bioinformatics, genomics, research, and the tools that support it."
+    label="The notebook"
+    title="Writing"
+    lede="Notes and essays on biology, computation, and the practice of research."
   />
-  {showFilters && (
-    <form class="writing-filters" hidden>
-      {showCategories && (
+  {articles.length > 0 && (
+    <form
+      class="writing-filters"
+      role="search"
+      aria-label="Find writing"
+      hidden
+    >
+      <div class="writing-search">
+        <label for="writing-search">Search writing</label>
+        <input
+          id="writing-search"
+          name="q"
+          type="search"
+          placeholder="Titles, descriptions, and topics"
+          aria-controls="writing-results"
+          autocomplete="off"
+        />
+      </div>
+      {categories.length > 1 && (
         <div>
           <label for="category">Category</label>
-          <select id="category">
+          <select id="category" name="category" aria-controls="writing-results">
             <option value="">All categories</option>
             {categories.map((category) => (
               <option value={category}>{category}</option>
@@ -33,10 +53,10 @@ const showFilters = showCategories || showTags;
           </select>
         </div>
       )}
-      {showTags && (
+      {tags.length > 1 && (
         <div>
           <label for="tag">Topic</label>
-          <select id="tag">
+          <select id="tag" name="tag" aria-controls="writing-results">
             <option value="">All topics</option>
             {tags.map((tag) => (
               <option value={tag}>{tag}</option>
@@ -44,51 +64,114 @@ const showFilters = showCategories || showTags;
           </select>
         </div>
       )}
-      <p id="filter-status" role="status" aria-live="polite">
-        {articles.length} {articles.length === 1 ? 'article' : 'articles'}
-      </p>
+      <div class="filter-summary">
+        <p
+          id="filter-status"
+          role="status"
+          aria-live="polite"
+          aria-atomic="true"
+        >
+          {articles.length} {articles.length === 1 ? 'article' : 'articles'}
+        </p>
+        <button type="reset" class="filter-reset">
+          Reset filters
+        </button>
+      </div>
     </form>
   )}
-  <section class="writing-index" aria-label="Articles">
+  <section class="writing-index" id="articles" aria-label="Articles">
     <WritingList articles={articles} context="archive" />
-    <p class="filter-empty meta" hidden>
-      No articles match these filters. Try another category or topic.
-    </p>
+    <div class="filter-empty" hidden>
+      <h2>No matching articles</h2>
+      <p>Try a different search, or reset the filters to see all writing.</p>
+    </div>
   </section>
-  {showFilters && <script
-    define:vars={{
-      entries: articles.map((entry) => ({
-        category: entry.data.category,
-        tags: entry.data.tags,
-      })),
-    }}
-  >
-    const form = document.querySelector('.writing-filters');
+  {tags.length > 0 && (
+    <section class="archive-topics" aria-labelledby="archive-topics-title">
+      <h2 id="archive-topics-title">Explore by topic</h2>
+      <WritingTopics articles={articles} />
+    </section>
+  )}
+  <script>
+    const form = document.querySelector<HTMLFormElement>('.writing-filters');
     if (form) {
-      form.hidden = false;
-      const category = document.querySelector('#category');
-      const tag = document.querySelector('#tag');
-      const rows = [...document.querySelectorAll('.post-list > li')];
-      const update = () => {
+      const search = form.querySelector<HTMLInputElement>('[name="q"]')!;
+      const category =
+        form.querySelector<HTMLSelectElement>('[name="category"]');
+      const tag = form.querySelector<HTMLSelectElement>('[name="tag"]');
+      const normalize = (value: string) =>
+        value
+          .normalize('NFKD')
+          .toLowerCase()
+          .replace(/\p{M}/gu, '')
+          .replaceAll('ı', 'i');
+      const entries = [
+        ...document.querySelectorAll<HTMLElement>('#writing-results > li'),
+      ].map((row) => ({
+        row,
+        search: normalize(row.dataset.search ?? ''),
+        category: row.dataset.category,
+        tags: JSON.parse(row.dataset.tags ?? '[]') as string[],
+      }));
+      const status = document.querySelector('#filter-status')!;
+      const empty = document.querySelector<HTMLElement>('.filter-empty')!;
+      const reset = form.querySelector<HTMLButtonElement>('[type="reset"]')!;
+      const update = (syncURL = true) => {
+        const query = search.value.trim();
+        const terms = normalize(query).split(/\s+/).filter(Boolean);
         let count = 0;
-        rows.forEach((row, i) => {
+        for (const entry of entries) {
           const matches =
-            (!category ||
-              !category.value ||
-              entries[i].category === category.value) &&
-            (!tag || !tag.value || entries[i].tags.includes(tag.value));
-          row.hidden = !matches;
+            terms.every((term) => entry.search.includes(term)) &&
+            (!category?.value || entry.category === category.value) &&
+            (!tag?.value || entry.tags.includes(tag.value));
+          entry.row.hidden = !matches;
           if (matches) count++;
-        });
-        const status = document.querySelector('#filter-status');
-        if (status) {
-          status.textContent = `${count} ${count === 1 ? 'article' : 'articles'}`;
         }
-        const empty = document.querySelector('.filter-empty');
-        if (empty) empty.hidden = count !== 0;
+        const state = [
+          query && `Search: “${query}”`,
+          category?.value && `Category: ${category.value}`,
+          tag?.value && `Topic: ${tag.value}`,
+        ].filter(Boolean);
+        status.textContent = [
+          `${count} ${count === 1 ? 'article' : 'articles'}`,
+          ...state,
+        ].join(' · ');
+        empty.hidden = count !== 0;
+        reset.disabled = state.length === 0;
+        if (syncURL) {
+          const url = new URL(window.location.href);
+          for (const [key, value] of [
+            ['q', query],
+            ['category', category?.value],
+            ['tag', tag?.value],
+          ]) {
+            if (value) url.searchParams.set(key!, value);
+            else url.searchParams.delete(key!);
+          }
+          window.history.replaceState(null, '', url);
+        }
       };
-      form.addEventListener('change', update);
+      const restore = () => {
+        const params = new URLSearchParams(window.location.search);
+        search.value = params.get('q') ?? '';
+        if (category) category.value = params.get('category') ?? '';
+        if (tag) tag.value = params.get('tag') ?? '';
+        update(false);
+      };
+      form.addEventListener('input', () => update());
+      form.addEventListener('change', () => update());
+      form.addEventListener('reset', (event) => {
+        event.preventDefault();
+        search.value = '';
+        if (category) category.value = '';
+        if (tag) tag.value = '';
+        update();
+      });
       form.addEventListener('submit', (event) => event.preventDefault());
+      window.addEventListener('popstate', restore);
+      restore();
+      form.hidden = false;
     }
-  </script>}
+  </script>
 </BaseLayout>

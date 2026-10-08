@@ -12,7 +12,10 @@ const common = {
   tags: z.array(z.string()).default([]),
 };
 const writing = defineCollection({
-  loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/writing' }),
+  loader: glob({
+    pattern: ['**/*.{md,mdx}', '!**/README.md'],
+    base: './src/content/mywritings',
+  }),
   schema: z
     .object({
       ...common,

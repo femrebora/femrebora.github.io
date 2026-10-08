@@ -4,6 +4,7 @@ import {
   isPublished,
   readingTime,
   selectHomepageWriting,
+  getWritingTopics,
 } from '../src/lib/publication.mjs';
 
 const now = new Date('2026-10-03T12:00:00Z');
@@ -27,6 +28,22 @@ test('draft and scheduled content cannot pass the publication gate', () => {
     true,
   );
   assert.equal(isPublished({ data: { draft: false } }, now), true);
+});
+test('topics count distinct articles, omit empty labels, and keep colliding labels separate', () => {
+  assert.deepEqual(getWritingTopics([]), []);
+  const articles = [
+    { data: { tags: ['Genomics', 'Genomics', 'C++', 'C#', ''] } },
+    { data: { tags: ['Genomics', 'Türkçe', '  '] } },
+  ];
+  const topics = getWritingTopics(articles);
+  assert.equal(topics.length, 4);
+  assert.equal(topics[0].label, 'Genomics');
+  assert.equal(topics[0].count, 2);
+  assert.equal(new Set(topics.map((topic) => topic.href)).size, 4);
+  assert.deepEqual(getWritingTopics([...articles].reverse()), topics);
+  assert.ok(
+    topics.every((topic) => /^\/blog\/topics\/[a-z0-9-]+\/$/.test(topic.href)),
+  );
 });
 const post = (id, featured = false) => ({ id, data: { featured } });
 test('homepage writing keeps one lead and at most three others', () => {
