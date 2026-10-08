@@ -12,10 +12,10 @@ order: 1
 contribution: 'Supported the public website while working as a bioinformatician at ECEGEN.'
 image:
   src: /images/ecegen-homepage.webp
-  alt: 'ECEGEN website homepage with Turkish navigation, test catalogue search, online appointments, and a genomic analysis feature.'
+  alt: 'ECEGEN website homepage with test catalogue search, online appointments.'
   width: 1600
   height: 816
-  caption: 'ECEGEN homepage · Turkish interface'
+  caption: 'ECEGEN Homepage'
 ---
 
 ## Purpose
